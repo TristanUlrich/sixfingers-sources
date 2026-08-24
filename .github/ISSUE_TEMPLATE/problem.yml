@@ -1,0 +1,41 @@
+name: Something is wrong
+description: A source that stopped working, a wrong description, or a bug in the checker
+title: "problem: "
+labels: ["problem"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For anything about the site's own code, note that the site is closed and not
+        in this repository. Bugs in the site are still worth reporting here.
+
+        **If it is a security problem, do not describe it in a public issue** — see
+        [SECURITY.md](../blob/main/SECURITY.md).
+  - type: dropdown
+    id: what
+    attributes:
+      label: What is it about
+      options:
+        - a source in the catalogue
+        - the checker (tools/check-source.py)
+        - the schema documentation
+        - the site itself
+    validations:
+      required: true
+  - type: input
+    id: which
+    attributes:
+      label: Which source, if it is one
+      placeholder: first-light
+  - type: textarea
+    id: what_happens
+    attributes:
+      label: What happens
+      description: What you did, what you expected, what you got instead.
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Browser and device
+      placeholder: Safari on an iPhone 13

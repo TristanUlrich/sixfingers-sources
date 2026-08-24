@@ -1,0 +1,94 @@
+name: New picture machine
+description: Propose a free image generator for the SIXFINGERS shelf
+title: "source: "
+labels: ["new source"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Everything here is reviewed by hand. Please read
+        [CONTRIBUTING.md](../blob/main/CONTRIBUTING.md) first — it is short.
+
+        **A source must work without a key, a token, an account or a payment**, and
+        must be reachable over `https` at a real domain name. Anything on your own
+        machine or your home network is refused.
+
+  - type: input
+    id: name
+    attributes:
+      label: What is it called
+      placeholder: Stable Diffusion 3.5
+    validations:
+      required: true
+
+  - type: input
+    id: home
+    attributes:
+      label: A page about it
+      description: Where somebody can go and read for themselves. Must be https.
+      placeholder: https://example.com/about
+    validations:
+      required: true
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What does it actually do to a picture
+      description: >
+        Not what it advertises. What comes back. "It gets the composition right and
+        the anatomy wrong" is the register we are after. Plain sentences, no
+        superlatives.
+    validations:
+      required: true
+
+  - type: textarea
+    id: json
+    attributes:
+      label: The source, as JSON
+      description: >
+        Follow [sources/SCHEMA.md](../blob/main/sources/SCHEMA.md). Paste the whole
+        file.
+      render: json
+      placeholder: |
+        {
+          "spec": 1,
+          "id": "my-machine",
+          ...
+        }
+    validations:
+      required: true
+
+  - type: textarea
+    id: checker
+    attributes:
+      label: What the checker said
+      description: >
+        Run `python3 tools/check-source.py sources/your-file.json` and paste the
+        output. It needs nothing installed.
+      render: shell
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Please confirm
+      options:
+        - label: It works with no key, no token, no account and no payment.
+          required: true
+        - label: Its terms of service do not forbid being called from a web page, and I checked.
+          required: true
+        - label: It is reachable over https at a real domain name, not on my own machine.
+          required: true
+        - label: I actually tried it, and the description above is what I saw.
+          required: true
+        - label: I understand this is not live until the site is next deployed, and that nothing here gives me any rights over SIXFINGERS itself.
+          required: true
+
+  - type: textarea
+    id: anything
+    attributes:
+      label: Anything else worth knowing
+      description: How busy it gets, how long it takes, what it is bad at.
+    validations:
+      required: false

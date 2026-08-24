@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: The site itself
+    url: https://sixfingers.vercel.app
+    about: Type a phrase, get a pack of six. Free, no account, no key.
+  - name: How to write a source
+    url: https://github.com/TristanUlrich/sixfingers-sources/blob/main/sources/SCHEMA.md
+    about: Every field, in plain words, with an example.
+  - name: A security problem
+    url: https://github.com/TristanUlrich/sixfingers-sources/security/advisories/new
+    about: Report it privately. Never in a public issue.
