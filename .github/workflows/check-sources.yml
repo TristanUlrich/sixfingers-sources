@@ -1,0 +1,62 @@
+# Every proposal is checked before a human reads it.
+#
+# The point is not politeness: it means a source that breaks a rule is refused by
+# the machine, in public, with the reason written out, so nobody has to argue about
+# it and nothing gets waved through because it looked fine at a glance.
+#
+# Nothing is installed. The checker uses only the python3 that GitHub's runner
+# already has, which is the same reason it runs on Tristan's Mac.
+
+name: check sources
+
+on:
+  pull_request:
+    paths:
+      - 'sources/**'
+      - 'tools/check-source.py'
+      - '.github/workflows/check-sources.yml'
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Read-only, and no token handed to the checked-out tree. A workflow that runs on
+# a stranger's pull request should be able to do nothing but read.
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # GitHub's own action. `persist-credentials: false` keeps the runner's token
+      # out of the working copy, so a malicious file in a proposal has no
+      # credential sitting next to it.
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: every source must pass the same rules as the site
+        run: python3 tools/check-source.py sources/*.json
+
+      - name: a source file must be named after the id inside it
+        run: |
+          fail=0
+          for f in sources/*.json; do
+            id=$(python3 -c "import json,sys;print(json.load(open(sys.argv[1])).get('id',''))" "$f")
+            want="sources/$id.json"
+            if [ "$f" != "$want" ]; then
+              echo "$f declares id '$id', so it should be named $want"
+              fail=1
+            fi
+          done
+          exit $fail
+
+      - name: no source may ask for a key
+        run: |
+          if grep -ril --include='*.json' -e 'authorization' -e 'api[_-]\?key' \
+                 -e 'bearer' -e 'x-api' sources/; then
+            echo "A source on this shelf works without an identifier. See CONTRIBUTING.md."
+            exit 1
+          fi
+          echo "none of them do"
