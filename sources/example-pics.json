@@ -1,0 +1,24 @@
+{
+  "spec": 1,
+  "id": "example-pics",
+  "name": "Example Pictures",
+  "set": "Example",
+  "note": "Not a real machine. Copy this file and change it.",
+  "what": "An example, kept here so nobody has to invent the shape of a source from the schema alone. The address does not answer, so it is never shipped with the site.",
+  "home": "https://example.com/about",
+  "endpoint": "https://api.example.com/v1/txt2img",
+  "method": "POST",
+  "headers": { "Content-Type": "application/json" },
+  "body": {
+    "prompt": "{prompt}",
+    "width": "{width}",
+    "height": "{height}",
+    "seed": "{seed}",
+    "steps": 20
+  },
+  "response": { "kind": "json-base64", "path": "images.0" },
+  "size": { "width": 512, "height": 512 },
+  "count": "one-per-call",
+  "timeoutMs": 120000,
+  "colour": { "c1": "#ffd98a", "c2": "#e8913f", "c3": "#8a4a10" }
+}
