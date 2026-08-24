@@ -1,0 +1,74 @@
+SIXFINGERS — LICENCE
+Copyright (c) 2026 Tristan Ulrich. All rights reserved.
+
+This is not an open source licence. No permission is granted beyond what is
+written below, and nothing here may be read as an implied permission.
+
+
+1. THE SITE IS NOT LICENSED
+
+   SIXFINGERS — the website at sixfingers.vercel.app, its source code, its
+   layout, its artwork, its wallpaper, its pointer, its sounds, its texts, the
+   name SIXFINGERS and the six-fingered hand mark — is the exclusive property of
+   Tristan Ulrich.
+
+   You may not copy, reproduce, host, mirror, publish, sell, sublicense, adapt,
+   translate, decompile, rebuild, or create derivative works from it, in whole or
+   in part, by any means and in any medium.
+
+   The site's code is not contained in this repository. If you obtain it by any
+   route, this clause still applies to it.
+
+
+2. WHAT THIS REPOSITORY DOES ALLOW
+
+   This repository contains a catalogue: a set of small JSON records describing
+   publicly available picture-generating services, the schema those records
+   follow, and a checking tool.
+
+   You may read them, and you may use them to understand the format or to write a
+   record of your own, including for a proposal to this repository or for your own
+   use inside SIXFINGERS.
+
+   You may not present the catalogue, or a copy of it, as part of any other
+   product, nor use it to build a service that competes with or imitates
+   SIXFINGERS.
+
+
+3. CONTRIBUTIONS
+
+   If you propose a source record and it is accepted, you keep the credit for it
+   and you grant Tristan Ulrich a perpetual, worldwide, royalty-free,
+   irrevocable, sublicensable right to use, ship, modify and distribute that
+   record as part of SIXFINGERS.
+
+   You confirm that the record is yours to give, that it describes a service you
+   are permitted to describe, and that shipping it breaks nobody's rules.
+
+   Contributing gives you no rights over SIXFINGERS itself.
+
+
+4. NO WARRANTY
+
+   Everything here is provided as it is, with no warranty of any kind. The
+   services described in the catalogue are run by other people. Tristan Ulrich
+   does not operate them, cannot vouch for them, and is not responsible for what
+   they return, what they do with a prompt sent to them, or what they charge —
+   which, per the rules of this catalogue, is nothing.
+
+
+5. TRADE MARKS
+
+   The name SIXFINGERS, the six-fingered hand, and the pointer artwork are not
+   licensed under any clause of this document, including clause 2.
+
+
+6. GITHUB
+
+   This repository may be hosted on GitHub, whose terms of service grant other
+   users the technical ability to fork a public repository. That ability is not a
+   licence. Nothing in GitHub's terms grants any right over the material in
+   clause 1, and no fork, copy or archive of this repository conveys one.
+
+
+For any other use, ask: github.com/TristanUlrich
