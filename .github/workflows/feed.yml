@@ -102,12 +102,22 @@ jobs:
 
           # Les discussions, leurs réactions et leur nombre de commentaires.
           # Une seule requête pour cent : c'est tout l'intérêt de GraphQL ici.
+          # `bodyText` et pas `body` : le TEXTE, pas le Markdown. Le site ne rend
+          # jamais de balisage venu d'un inconnu, donc autant ne pas le transporter.
+          # Et un extrait, pas le message entier : le fichier doit rester petit,
+          # et on lit la suite chez GitHub.
           Q = """
           query($owner:String!, $name:String!) {
             repository(owner:$owner, name:$name) {
               discussions(first:100, orderBy:{field:UPDATED_AT, direction:DESC}) {
                 nodes {
-                  number title url comments { totalCount }
+                  number title url bodyText createdAt
+                  category { name emoji }
+                  author { login avatarUrl }
+                  comments(last:3) {
+                    totalCount
+                    nodes { bodyText createdAt author { login avatarUrl } }
+                  }
                   reactionGroups { content reactors { totalCount } }
                 }
               }
@@ -120,20 +130,55 @@ jobs:
               print('pas de discussions lisibles:', e)
               nodes = []
 
+          def clip(t, n):
+              t = ' '.join((t or '').split())
+              return t[:n]
+
           # Une discussion appartient à une fiche si son titre est « source: <id> ».
+          # Toutes les autres sont des PUBLICATIONS du fil.
           by_id = {}
+          posts = []
           for d in nodes:
               title = (d.get('title') or '').strip()
-              if not title.lower().startswith('source:'):
-                  continue
-              sid = title.split(':', 1)[1].strip()
               groups = {g['content']: g['reactors']['totalCount'] for g in d['reactionGroups']}
-              by_id[sid] = {
-                  'up': groups.get('THUMBS_UP', 0),
-                  'down': groups.get('THUMBS_DOWN', 0),
-                  'comments': d['comments']['totalCount'],
-                  'discuss': d['url'],
-              }
+              author = d.get('author') or {}
+              cm = d.get('comments') or {}
+
+              if title.lower().startswith('source:'):
+                  sid = title.split(':', 1)[1].strip()
+                  by_id[sid] = {
+                      'up': groups.get('THUMBS_UP', 0),
+                      'down': groups.get('THUMBS_DOWN', 0),
+                      'comments': cm.get('totalCount', 0),
+                      'discuss': d['url'],
+                  }
+                  # Une fiche a AUSSI sa place dans le fil : « quelqu'un a propose
+                  # une machine » est exactement le genre de nouvelle qu'on vient
+                  # lire. Elle y entre avec son type, pour que le site la dessine
+                  # autrement.
+                  kind = 'source'
+              else:
+                  kind = 'post'
+
+              posts.append({
+                  'kind': kind,
+                  'n': d['number'],
+                  'title': clip(title, 140),
+                  'url': d['url'],
+                  'text': clip(d.get('bodyText'), 700),
+                  'at': d.get('createdAt'),
+                  'category': ((d.get('category') or {}).get('name') or '')[:40],
+                  'by': (author.get('login') or '')[:40],
+                  'avatar': (author.get('avatarUrl') or '')[:300],
+                  'likes': groups.get('THUMBS_UP', 0) + groups.get('HEART', 0),
+                  'comments': cm.get('totalCount', 0),
+                  'last': [{
+                      'by': ((c.get('author') or {}).get('login') or '')[:40],
+                      'avatar': ((c.get('author') or {}).get('avatarUrl') or '')[:300],
+                      'text': clip(c.get('bodyText'), 300),
+                      'at': c.get('createdAt'),
+                  } for c in (cm.get('nodes') or [])],
+              })
 
           items = []
           # Le fichier d'exemple est une DOCUMENTATION, pas une machine : son
@@ -177,9 +222,10 @@ jobs:
               'generated': datetime.datetime.now(datetime.timezone.utc)
                               .isoformat(timespec='seconds').replace('+00:00', 'Z'),
               'items': items,
+              'posts': posts,
           }
           pathlib.Path('feed.json').write_text(json.dumps(out, indent=1) + '\n')
-          print('feed.json :', len(items), 'machines')
+          print('feed.json :', len(items), 'machines,', len(posts), 'publications')
           PY
 
       - name: Le publier, mais seulement s'il a changé
