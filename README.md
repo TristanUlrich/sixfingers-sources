@@ -4,117 +4,174 @@
 
 # SIXFINGERS
 
-**Type a phrase. Six pictures arrive in a pack.**
+### Type a phrase. Six pictures arrive in a folder you have to knock on to open.
 
-### [sixfingers.vercel.app](https://sixfingers.vercel.app)
+**[→ Open it. sixfingers.vercel.app](https://sixfingers.vercel.app)**
 
-Free. No account, no key, no payment, no advertising.
+No account. No key. No payment. No advertising. Nothing to install.
+
+<img src="art/screenshot.png" width="760" alt="A desktop that looks like Windows XP, with an open folder showing six pictures of hands reaching out of a lake">
 
 </div>
 
 ---
 
+## What it is
+
+A small website dressed as an operating system from 2001.
+
+You type something. One request goes out to the [AI Horde](https://aihorde.net) —
+a few hundred people who lend their graphics cards away for free — and six
+pictures come back as a **sealed folder on your desktop**. You knock on it three
+times. It gives.
+
+The pictures are made by Stable Diffusion 1.5, the model that got composition
+right and anatomy wrong. Hands come back with the wrong number of fingers more
+often than with anything since. **That is where the name comes from**, and it is
+the joke the whole site is built around.
+
+Everything you make stays in your browser. Nothing is uploaded, nothing is
+tracked, and there is no server that could hold your pictures even if it wanted
+to.
+
+---
+
 ## What this repository is
 
-This is **not** the site. It is the shelf the site keeps its picture machines on.
+**This is not the site.** The site is closed source and all rights reserved.
 
-SIXFINGERS is a small website dressed as an operating system from 2001. You type
-something, and six pictures come back in a folder you have to knock on to open.
-The pictures are made by strangers' graphics cards, lent for free through the
-[AI Horde](https://aihorde.net).
+This repository is the **open shelf**: the catalogue of picture machines the site
+knows how to ask, the rules a machine has to meet, a checker anybody can run, and
+the discussions where people talk about it.
 
-The site itself is closed. **This repository holds only the catalogue**: one small
-file per picture machine the site knows how to ask, and the rules a machine has to
-meet before it goes on the shelf. It exists so that somebody who knows about a
-free image generator can add it without needing to see, touch, or run any of the
-site's code.
+> **The code is closed and the shelf is open.** Those two turn out to be
+> separable, because *adding a model is not adding code* — a machine here is a
+> record, never a program. There is no field for code, and there never will be, so
+> there is nothing to escape from. That single decision is what makes it safe to
+> let strangers add things.
+
+---
+
+## The easiest way to contribute, and you do not need to write anything
+
+The AI Horde carries **163 image models**, and every one of them has at least one
+volunteer running it right now. They are free, they need no key, and the site
+already knows how to drive them.
+
+So the useful work here is not technical, it is **editorial**:
+
+> **Which of the 163 is worth having, and why?**
+
+Which one is fast. Which one draws instead of photographing. Which one is good at
+faces and hopeless at hands. Which one fails in the funniest way. Nobody has
+tried them all, and the answer changes as volunteers come and go.
+
+**To propose one**, all you need is its name on the Horde and a sentence about
+what it actually does — not what it advertises:
+
+```json
+{
+  "spec": 1,
+  "kind": "horde",
+  "id": "deliberate",
+  "name": "Deliberate",
+  "set": "Painterly",
+  "model": "Deliberate",
+  "note": "One sentence, on the object.",
+  "what": "What comes back. Not what it promises.",
+  "measured": { "on": "2026-08-26", "pack_seconds": 52.0 }
+}
+```
+
+That is the whole thing. No address, no headers, no request body — **a Horde entry
+is a name and an opinion**, which is also why it is the safest kind of
+contribution this project can accept.
+
+→ **[Propose one](../../issues/new?template=new-source.yml)** ·
+**[Or just say something](../../discussions)**
+
+### If you time it, say so
+
+`measured` is optional, and it is the most useful thing anybody can add. The rule
+of this project is that **a number shown to somebody is a number somebody
+measured** — so if you time a pack, write the number down, and the site will print
+it next to the machine with the date.
+
+*(For reference: Stable Diffusion 1.5 returns six pictures in about a minute.
+ICBINP did it in 46.6 seconds on 25 August. Dreamshaper was given up on after 600
+seconds without producing one.)*
+
+---
+
+## Machines outside the Horde
+
+If you know a **free, keyless image API**, it can go on the shelf too — with a
+full record: address, what to send, and where the picture sits in the answer.
+[`sources/SCHEMA.md`](sources/SCHEMA.md) explains every field in plain words, and
+[`sources/example-pics.json`](sources/example-pics.json) is a file to copy.
+
+Check it before you propose it — the same rules the site itself applies:
+
+```bash
+python3 tools/check-source.py sources/your-source.json
+```
+
+**Be warned that this is harder than it sounds.** A record that passes every
+check is not a machine that answers. Pollinations passes all sixty checks, returns
+a picture to `curl`, and returns **403 to a web browser** — a bot check that looks
+at *who is asking* rather than *what is asked*. Measured three times, most
+recently on 25 August 2026. No record can fix that.
+
+The site has a **Try it** button that calls a machine from your own browser and
+tells you plainly what happened. It is the only place the question can honestly be
+asked.
+
+### The rules, and they are refusals rather than preferences
 
 | | |
 |---|---|
-| **The site** | closed source, all rights reserved, not in this repository |
-| **This repository** | the catalogue of sources, and the rules for adding one |
-| **What you can contribute** | a source: a few lines of JSON describing a machine |
-| **What you cannot do** | copy, host, rebuild or adapt SIXFINGERS itself |
+| **No key, no account, no payment** | the `Authorization` header is refused by name |
+| **`https` only, at a real domain** | no `localhost`, no private ranges, no bare IPs |
+| **Data, never code** | no field holds a script, a function, or an address to load and run |
+| **No redirects** | a redirect is a refusal, not a hop |
+| **Pictures are repainted** | every image is redrawn in a canvas before it is kept, so nothing hidden in a file survives |
+
+Everything is reviewed by hand. A record here is not live until the site ships
+with it.
 
 ---
 
-## Add a picture machine
+## The wall
 
-You do not need to write code and you do not need to run anything.
+The **discussions in this repository are the site's social side.** Post a picture
+you made, propose a machine, or argue about which model has the worst hands — it
+appears inside SIXFINGERS itself, drawn in the shape of a website from 2007,
+within about a minute.
 
-1. Read [`sources/SCHEMA.md`](sources/SCHEMA.md) — it is short, and it explains
-   every field in plain words.
-2. Copy [`sources/example-pics.json`](sources/example-pics.json) and change it.
-3. Check it: `python3 tools/check-source.py sources/your-source.json`
-   — the same rules the site itself applies, so if this passes, the site will
-   accept it.
-4. Open [a New source issue](../../issues/new?template=new-source.yml) — the form
-   asks for exactly what is needed — or send a pull request adding your file.
+Reading it needs nothing at all. Writing needs a GitHub account, because writing
+in public needs an account somewhere — and this project would rather that
+somewhere was not a database it owns.
 
-Everything is reviewed by hand before it ships. A source in this repository is not
-live until the site is deployed with it.
-
-### What a source must be
-
-These are refusals, not preferences. A proposal that fails any of them is closed.
-
-- **Free, and working without an identifier.** No API key, no token, no account, no
-  `Authorization` header. The site refuses that header outright.
-- **Reachable over HTTPS at a real domain name.** Not a numbered address, not
-  `localhost`, not a machine on your home network. A page that can talk to
-  somebody's own machine can look around inside it, so the site will not.
-- **Honest about what it is.** The description says what the machine actually does
-  to a picture. Nothing invented, no marketing.
-- **Allowed to be used this way.** If its terms of service forbid being called from
-  a web page, it does not go on the shelf.
-- **Safe for a stranger to type at.** A machine that returns something illegal
-  whatever you ask it is not welcome here.
-
-### What happens to what you send
-
-The site only ever sends a source the words you typed and the size of the picture.
-Nothing else: no name, no account, no key, no cookie, and none of the pictures you
-already have. Whatever comes back is decoded and redrawn by your own browser
-before it is kept, so nothing hidden inside an image file survives the trip.
-
-The details, including everything the design defends against and why, are in
-[`SECURITY.md`](SECURITY.md).
+→ **[The wall](../../discussions)**
 
 ---
 
-## Anybody can add a source without asking
+## Licence, and what it actually means
 
-The catalogue here is the shelf that **ships with the site**. You do not have to
-wait for it.
+| | |
+|---|---|
+| **The site** | closed source, **all rights reserved**, not in this repository |
+| **This catalogue** | open — read it, run the checker, add to it |
+| **What you may not do** | copy, host, rebuild or adapt SIXFINGERS itself |
 
-Inside SIXFINGERS, **Community → Add a source** takes the same JSON and keeps it in
-your own browser. It works immediately, it is never uploaded, and it affects
-exactly one person: you. Sources are shared between people as text — a recipe you
-paste — not as code, and never automatically.
-
-Proposing one here is for when you think everybody should have it.
-
----
-
-## Licence, in plain words
-
-**Copyright © 2026 Tristan Ulrich. All rights reserved.**
-
-The site, its code, its artwork, its wallpaper, the pointer, the name SIXFINGERS
-and the six-fingered hand are his. No licence is granted to copy, host, publish,
-adapt, rebuild or redistribute any of it. Reading this repository is not
-permission to reuse it.
-
-The catalogue files and the schema in this repository may be read and used to
-understand or write a source. If you contribute one, you keep the credit and you
-grant Tristan the right to ship it with the site. See [`LICENSE`](LICENSE) and
-[`CONTRIBUTING.md`](CONTRIBUTING.md).
-
-`art/icon.png` is cut from the author's own pointer file. It is not stock, it is
-not licensed for reuse, and it is not a template.
+The V1 shipped AGPL-3.0 by mistake. That grant is withdrawn.
 
 ---
 
 <div align="center">
-<sub>Made by Tristan Ulrich · no monetisation, ever · no rarity, no scores, nothing invented</sub>
+
+**[sixfingers.vercel.app](https://sixfingers.vercel.app)**
+
+Made by [Tristan Ulrich](https://github.com/TristanUlrich), in Paris.
+
 </div>
