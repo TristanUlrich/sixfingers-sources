@@ -136,7 +136,15 @@ jobs:
               }
 
           items = []
+          # Le fichier d'exemple est une DOCUMENTATION, pas une machine : son
+          # adresse ne repond pas, et il est la pour montrer la forme d'une fiche.
+          # Le laisser entrer dans le feed le ferait apparaitre comme une vraie
+          # proposition, et la premiere personne qui appuierait sur « Try it »
+          # aurait raison de croire que le catalogue est cassé.
           for f in sorted(pathlib.Path('sources').glob('*.json')):
+              if f.name.startswith('example-'):
+                  print('exemple ignore:', f.name)
+                  continue
               try:
                   src = json.loads(f.read_text())
               except Exception as e:
