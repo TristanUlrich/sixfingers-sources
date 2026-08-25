@@ -1,0 +1,797 @@
+{
+ "spec": 1,
+ "what": "The one table both validators answer to. js/sources.js runs in the reader's browser; tools/check-source.py runs here on GitHub. Two rule sets that quietly disagree are worse than one, because the one people check is not the one that runs. Each case is a record and whether it must be let in. The field `kind` picks which rule set judges it, exactly as the site does.",
+ "read_by": [
+  "tools/check-cases.py, on every push to this repository",
+  "tools/agree-selftest.html, in the site, opened by hand"
+ ],
+ "cases": [
+  {
+   "want": "accept",
+   "why": "a well formed record with its own address",
+   "record": {
+    "spec": 1,
+    "id": "example-pics",
+    "name": "Example Pictures",
+    "set": "Example",
+    "note": "A machine that makes pictures.",
+    "what": "It draws whatever you type, badly.",
+    "home": "https://example.com/about",
+    "endpoint": "https://api.example.com/v1/txt2img",
+    "method": "POST",
+    "headers": {
+     "Content-Type": "application/json"
+    },
+    "body": {
+     "prompt": "{prompt}",
+     "width": "{width}",
+     "height": "{height}",
+     "steps": 20
+    },
+    "response": {
+     "kind": "json-base64",
+     "path": "images.0"
+    },
+    "size": {
+     "width": 512,
+     "height": 512
+    },
+    "count": "one-per-call",
+    "timeoutMs": 120000,
+    "colour": {
+     "c1": "#ffd98a",
+     "c2": "#e8913f",
+     "c3": "#8a4a10"
+    }
+   }
+  },
+  {
+   "want": "accept",
+   "why": "a GET, asked with a query instead of a body",
+   "record": {
+    "spec": 1,
+    "id": "example-pics",
+    "name": "Example Pictures",
+    "set": "Example",
+    "note": "A machine that makes pictures.",
+    "what": "It draws whatever you type, badly.",
+    "home": "https://example.com/about",
+    "endpoint": "https://api.example.com/v1/txt2img",
+    "method": "GET",
+    "headers": {
+     "Content-Type": "application/json"
+    },
+    "response": {
+     "kind": "json-url",
+     "path": "output.url"
+    },
+    "size": {
+     "width": 512,
+     "height": 512
+    },
+    "count": "one-per-call",
+    "timeoutMs": 120000,
+    "colour": {
+     "c1": "#ffd98a",
+     "c2": "#e8913f",
+     "c3": "#8a4a10"
+    },
+    "query": {
+     "p": "{prompt}",
+     "w": "{width}"
+    }
+   }
+  },
+  {
+   "want": "accept",
+   "why": "a machine that hands back the picture itself",
+   "record": {
+    "spec": 1,
+    "id": "example-pics",
+    "name": "Example Pictures",
+    "set": "Example",
+    "note": "A machine that makes pictures.",
+    "what": "It draws whatever you type, badly.",
+    "home": "https://example.com/about",
+    "endpoint": "https://api.example.com/v1/txt2img",
+    "method": "POST",
+    "headers": {
+     "Content-Type": "application/json"
+    },
+    "body": {
+     "prompt": "{prompt}",
+     "width": "{width}",
+     "height": "{height}",
+     "steps": 20
+    },
+    "response": {
+     "kind": "binary"
+    },
+    "size": {
+     "width": 512,
+     "height": 512
+    },
+    "count": "one-per-call",
+    "timeoutMs": 120000,
+    "colour": {
+     "c1": "#ffd98a",
+     "c2": "#e8913f",
+     "c3": "#8a4a10"
+    }
+   }
+  },
+  {
+   "want": "accept",
+   "why": "six pictures asked for in one go",
+   "record": {
+    "spec": 1,
+    "id": "example-pics",
+    "name": "Example Pictures",
+    "set": "Example",
+    "note": "A machine that makes pictures.",
+    "what": "It draws whatever you type, badly.",
+    "home": "https://example.com/about",
+    "endpoint": "https://api.example.com/v1/txt2img",
+    "method": "POST",
+    "headers": {
+     "Content-Type": "application/json"
+    },
+    "body": {
+     "prompt": "{prompt}",
+     "n": "{n}"
+    },
+    "response": {
+     "kind": "json-base64",
+     "path": "images.0"
+    },
+    "size": {
+     "width": 512,
+     "height": 512
+    },
+    "count": "n",
+    "timeoutMs": 120000,
+    "colour": {
+     "c1": "#ffd98a",
+     "c2": "#e8913f",
+     "c3": "#8a4a10"
+    }
+   }
+  },
+  {
+   "want": "refuse",
+   "why": "an address that is not https",
+   "record": {
+    "spec": 1,
+    "id": "example-pics",
+    "name": "Example Pictures",
+    "set": "Example",
+    "note": "A machine that makes pictures.",
+    "what": "It draws whatever you type, badly.",
+    "home": "https://example.com/about",
+    "endpoint": "http://api.example.com/v1/txt2img",
+    "method": "POST",
+    "headers": {
+     "Content-Type": "application/json"
+    },
+    "body": {
+     "prompt": "{prompt}",
+     "width": "{width}",
+     "height": "{height}",
+     "steps": 20
+    },
+    "response": {
+     "kind": "json-base64",
+     "path": "images.0"
+    },
+    "size": {
+     "width": 512,
+     "height": 512
+    },
+    "count": "one-per-call",
+    "timeoutMs": 120000,
+    "colour": {
+     "c1": "#ffd98a",
+     "c2": "#e8913f",
+     "c3": "#8a4a10"
+    }
+   }
+  },
+  {
+   "want": "refuse",
+   "why": "an address pointing back at the reader's own machine",
+   "record": {
+    "spec": 1,
+    "id": "example-pics",
+    "name": "Example Pictures",
+    "set": "Example",
+    "note": "A machine that makes pictures.",
+    "what": "It draws whatever you type, badly.",
+    "home": "https://example.com/about",
+    "endpoint": "https://127.0.0.1/v1/txt2img",
+    "method": "POST",
+    "headers": {
+     "Content-Type": "application/json"
+    },
+    "body": {
+     "prompt": "{prompt}",
+     "width": "{width}",
+     "height": "{height}",
+     "steps": 20
+    },
+    "response": {
+     "kind": "json-base64",
+     "path": "images.0"
+    },
+    "size": {
+     "width": 512,
+     "height": 512
+    },
+    "count": "one-per-call",
+    "timeoutMs": 120000,
+    "colour": {
+     "c1": "#ffd98a",
+     "c2": "#e8913f",
+     "c3": "#8a4a10"
+    }
+   }
+  },
+  {
+   "want": "refuse",
+   "why": "a machine that wants a key",
+   "record": {
+    "spec": 1,
+    "id": "example-pics",
+    "name": "Example Pictures",
+    "set": "Example",
+    "note": "A machine that makes pictures.",
+    "what": "It draws whatever you type, badly.",
+    "home": "https://example.com/about",
+    "endpoint": "https://api.example.com/v1/txt2img",
+    "method": "POST",
+    "headers": {
+     "Authorization": "Bearer abc"
+    },
+    "body": {
+     "prompt": "{prompt}",
+     "width": "{width}",
+     "height": "{height}",
+     "steps": 20
+    },
+    "response": {
+     "kind": "json-base64",
+     "path": "images.0"
+    },
+    "size": {
+     "width": 512,
+     "height": 512
+    },
+    "count": "one-per-call",
+    "timeoutMs": 120000,
+    "colour": {
+     "c1": "#ffd98a",
+     "c2": "#e8913f",
+     "c3": "#8a4a10"
+    }
+   }
+  },
+  {
+   "want": "refuse",
+   "why": "a POST with nothing to send",
+   "record": {
+    "spec": 1,
+    "id": "example-pics",
+    "name": "Example Pictures",
+    "set": "Example",
+    "note": "A machine that makes pictures.",
+    "what": "It draws whatever you type, badly.",
+    "home": "https://example.com/about",
+    "endpoint": "https://api.example.com/v1/txt2img",
+    "method": "POST",
+    "headers": {
+     "Content-Type": "application/json"
+    },
+    "response": {
+     "kind": "json-base64",
+     "path": "images.0"
+    },
+    "size": {
+     "width": 512,
+     "height": 512
+    },
+    "count": "one-per-call",
+    "timeoutMs": 120000,
+    "colour": {
+     "c1": "#ffd98a",
+     "c2": "#e8913f",
+     "c3": "#8a4a10"
+    }
+   }
+  },
+  {
+   "want": "refuse",
+   "why": "a request that never uses what the reader typed",
+   "record": {
+    "spec": 1,
+    "id": "example-pics",
+    "name": "Example Pictures",
+    "set": "Example",
+    "note": "A machine that makes pictures.",
+    "what": "It draws whatever you type, badly.",
+    "home": "https://example.com/about",
+    "endpoint": "https://api.example.com/v1/txt2img",
+    "method": "POST",
+    "headers": {
+     "Content-Type": "application/json"
+    },
+    "body": {
+     "prompt": "a cat",
+     "width": "{width}"
+    },
+    "response": {
+     "kind": "json-base64",
+     "path": "images.0"
+    },
+    "size": {
+     "width": 512,
+     "height": 512
+    },
+    "count": "one-per-call",
+    "timeoutMs": 120000,
+    "colour": {
+     "c1": "#ffd98a",
+     "c2": "#e8913f",
+     "c3": "#8a4a10"
+    }
+   }
+  },
+  {
+   "want": "refuse",
+   "why": "a picture size that is not a multiple of eight",
+   "record": {
+    "spec": 1,
+    "id": "example-pics",
+    "name": "Example Pictures",
+    "set": "Example",
+    "note": "A machine that makes pictures.",
+    "what": "It draws whatever you type, badly.",
+    "home": "https://example.com/about",
+    "endpoint": "https://api.example.com/v1/txt2img",
+    "method": "POST",
+    "headers": {
+     "Content-Type": "application/json"
+    },
+    "body": {
+     "prompt": "{prompt}",
+     "width": "{width}",
+     "height": "{height}",
+     "steps": 20
+    },
+    "response": {
+     "kind": "json-base64",
+     "path": "images.0"
+    },
+    "size": {
+     "width": 513,
+     "height": 512
+    },
+    "count": "one-per-call",
+    "timeoutMs": 120000,
+    "colour": {
+     "c1": "#ffd98a",
+     "c2": "#e8913f",
+     "c3": "#8a4a10"
+    }
+   }
+  },
+  {
+   "want": "refuse",
+   "why": "a field this site has never heard of",
+   "record": {
+    "spec": 1,
+    "id": "example-pics",
+    "name": "Example Pictures",
+    "set": "Example",
+    "note": "A machine that makes pictures.",
+    "what": "It draws whatever you type, badly.",
+    "home": "https://example.com/about",
+    "endpoint": "https://api.example.com/v1/txt2img",
+    "method": "POST",
+    "headers": {
+     "Content-Type": "application/json"
+    },
+    "body": {
+     "prompt": "{prompt}",
+     "width": "{width}",
+     "height": "{height}",
+     "steps": 20
+    },
+    "response": {
+     "kind": "json-base64",
+     "path": "images.0"
+    },
+    "size": {
+     "width": 512,
+     "height": 512
+    },
+    "count": "one-per-call",
+    "timeoutMs": 120000,
+    "colour": {
+     "c1": "#ffd98a",
+     "c2": "#e8913f",
+     "c3": "#8a4a10"
+    },
+    "install": "curl | sh"
+   }
+  },
+  {
+   "want": "accept",
+   "why": "a well formed Horde record",
+   "record": {
+    "spec": 1,
+    "kind": "horde",
+    "id": "example-model",
+    "name": "Example Model",
+    "set": "Example",
+    "model": "Deliberate",
+    "note": "A model somebody on the Horde is running.",
+    "what": "It draws whatever you type, and it is somebody else's electricity.",
+    "good": "faces, and the wrong number of fingers",
+    "home": "https://civitai.com/models/4823",
+    "colour": {
+     "c1": "#eceff2",
+     "c2": "#8b939c",
+     "c3": "#2a2d31"
+    },
+    "measured": {
+     "on": "2026-08-25",
+     "pack_seconds": 46.6
+    }
+   }
+  },
+  {
+   "want": "accept",
+   "why": "the smallest Horde record there is",
+   "record": {
+    "spec": 1,
+    "kind": "horde",
+    "id": "bare",
+    "name": "Bare",
+    "set": "Example",
+    "model": "Deliberate"
+   }
+  },
+  {
+   "want": "accept",
+   "why": "a measurement written as a sentence next to its numbers",
+   "record": {
+    "spec": 1,
+    "kind": "horde",
+    "id": "example-model",
+    "name": "Example Model",
+    "set": "Example",
+    "model": "Deliberate",
+    "note": "A model somebody on the Horde is running.",
+    "what": "It draws whatever you type, and it is somebody else's electricity.",
+    "good": "faces, and the wrong number of fingers",
+    "home": "https://civitai.com/models/4823",
+    "colour": {
+     "c1": "#eceff2",
+     "c2": "#8b939c",
+     "c3": "#2a2d31"
+    },
+    "measured": {
+     "on": "2026-08-25",
+     "pack_seconds": 46.6,
+     "note": "Six pictures, one job, measured against three others."
+    }
+   }
+  },
+  {
+   "want": "refuse",
+   "why": "a Horde record smuggling an address in",
+   "record": {
+    "spec": 1,
+    "kind": "horde",
+    "id": "example-model",
+    "name": "Example Model",
+    "set": "Example",
+    "model": "Deliberate",
+    "note": "A model somebody on the Horde is running.",
+    "what": "It draws whatever you type, and it is somebody else's electricity.",
+    "good": "faces, and the wrong number of fingers",
+    "home": "https://civitai.com/models/4823",
+    "colour": {
+     "c1": "#eceff2",
+     "c2": "#8b939c",
+     "c3": "#2a2d31"
+    },
+    "measured": {
+     "on": "2026-08-25",
+     "pack_seconds": 46.6
+    },
+    "endpoint": "https://api.example.com/v1/txt2img"
+   }
+  },
+  {
+   "want": "refuse",
+   "why": "a Horde record smuggling headers in",
+   "record": {
+    "spec": 1,
+    "kind": "horde",
+    "id": "example-model",
+    "name": "Example Model",
+    "set": "Example",
+    "model": "Deliberate",
+    "note": "A model somebody on the Horde is running.",
+    "what": "It draws whatever you type, and it is somebody else's electricity.",
+    "good": "faces, and the wrong number of fingers",
+    "home": "https://civitai.com/models/4823",
+    "colour": {
+     "c1": "#eceff2",
+     "c2": "#8b939c",
+     "c3": "#2a2d31"
+    },
+    "measured": {
+     "on": "2026-08-25",
+     "pack_seconds": 46.6
+    },
+    "headers": {
+     "Accept": "application/json"
+    }
+   }
+  },
+  {
+   "want": "refuse",
+   "why": "a Horde record smuggling a request body in",
+   "record": {
+    "spec": 1,
+    "kind": "horde",
+    "id": "example-model",
+    "name": "Example Model",
+    "set": "Example",
+    "model": "Deliberate",
+    "note": "A model somebody on the Horde is running.",
+    "what": "It draws whatever you type, and it is somebody else's electricity.",
+    "good": "faces, and the wrong number of fingers",
+    "home": "https://civitai.com/models/4823",
+    "colour": {
+     "c1": "#eceff2",
+     "c2": "#8b939c",
+     "c3": "#2a2d31"
+    },
+    "measured": {
+     "on": "2026-08-25",
+     "pack_seconds": 46.6
+    },
+    "body": {
+     "prompt": "{prompt}"
+    }
+   }
+  },
+  {
+   "want": "refuse",
+   "why": "a Horde record with no model named",
+   "record": {
+    "spec": 1,
+    "kind": "horde",
+    "id": "example-model",
+    "name": "Example Model",
+    "set": "Example",
+    "note": "A model somebody on the Horde is running.",
+    "what": "It draws whatever you type, and it is somebody else's electricity.",
+    "good": "faces, and the wrong number of fingers",
+    "home": "https://civitai.com/models/4823",
+    "colour": {
+     "c1": "#eceff2",
+     "c2": "#8b939c",
+     "c3": "#2a2d31"
+    },
+    "measured": {
+     "on": "2026-08-25",
+     "pack_seconds": 46.6
+    }
+   }
+  },
+  {
+   "want": "refuse",
+   "why": "a model name carrying an invisible control character",
+   "record": {
+    "spec": 1,
+    "kind": "horde",
+    "id": "example-model",
+    "name": "Example Model",
+    "set": "Example",
+    "model": "Delibe\u0007rate",
+    "note": "A model somebody on the Horde is running.",
+    "what": "It draws whatever you type, and it is somebody else's electricity.",
+    "good": "faces, and the wrong number of fingers",
+    "home": "https://civitai.com/models/4823",
+    "colour": {
+     "c1": "#eceff2",
+     "c2": "#8b939c",
+     "c3": "#2a2d31"
+    },
+    "measured": {
+     "on": "2026-08-25",
+     "pack_seconds": 46.6
+    }
+   }
+  },
+  {
+   "want": "refuse",
+   "why": "a short name with capitals in it",
+   "record": {
+    "spec": 1,
+    "kind": "horde",
+    "id": "Example-Model",
+    "name": "Example Model",
+    "set": "Example",
+    "model": "Deliberate",
+    "note": "A model somebody on the Horde is running.",
+    "what": "It draws whatever you type, and it is somebody else's electricity.",
+    "good": "faces, and the wrong number of fingers",
+    "home": "https://civitai.com/models/4823",
+    "colour": {
+     "c1": "#eceff2",
+     "c2": "#8b939c",
+     "c3": "#2a2d31"
+    },
+    "measured": {
+     "on": "2026-08-25",
+     "pack_seconds": 46.6
+    }
+   }
+  },
+  {
+   "want": "refuse",
+   "why": "a page about it that is not https",
+   "record": {
+    "spec": 1,
+    "kind": "horde",
+    "id": "example-model",
+    "name": "Example Model",
+    "set": "Example",
+    "model": "Deliberate",
+    "note": "A model somebody on the Horde is running.",
+    "what": "It draws whatever you type, and it is somebody else's electricity.",
+    "good": "faces, and the wrong number of fingers",
+    "home": "http://civitai.com/models/4823",
+    "colour": {
+     "c1": "#eceff2",
+     "c2": "#8b939c",
+     "c3": "#2a2d31"
+    },
+    "measured": {
+     "on": "2026-08-25",
+     "pack_seconds": 46.6
+    }
+   }
+  },
+  {
+   "want": "refuse",
+   "why": "a colour that is not a colour",
+   "record": {
+    "spec": 1,
+    "kind": "horde",
+    "id": "example-model",
+    "name": "Example Model",
+    "set": "Example",
+    "model": "Deliberate",
+    "note": "A model somebody on the Horde is running.",
+    "what": "It draws whatever you type, and it is somebody else's electricity.",
+    "good": "faces, and the wrong number of fingers",
+    "home": "https://civitai.com/models/4823",
+    "colour": {
+     "c1": "red",
+     "c2": "#8b939c",
+     "c3": "#2a2d31"
+    },
+    "measured": {
+     "on": "2026-08-25",
+     "pack_seconds": 46.6
+    }
+   }
+  },
+  {
+   "want": "refuse",
+   "why": "a measurement that is a whole object instead of a number",
+   "record": {
+    "spec": 1,
+    "kind": "horde",
+    "id": "example-model",
+    "name": "Example Model",
+    "set": "Example",
+    "model": "Deliberate",
+    "note": "A model somebody on the Horde is running.",
+    "what": "It draws whatever you type, and it is somebody else's electricity.",
+    "good": "faces, and the wrong number of fingers",
+    "home": "https://civitai.com/models/4823",
+    "colour": {
+     "c1": "#eceff2",
+     "c2": "#8b939c",
+     "c3": "#2a2d31"
+    },
+    "measured": {
+     "speed": {
+      "fast": true
+     }
+    }
+   }
+  },
+  {
+   "want": "refuse",
+   "why": "a measurement that is yes instead of a number",
+   "record": {
+    "spec": 1,
+    "kind": "horde",
+    "id": "example-model",
+    "name": "Example Model",
+    "set": "Example",
+    "model": "Deliberate",
+    "note": "A model somebody on the Horde is running.",
+    "what": "It draws whatever you type, and it is somebody else's electricity.",
+    "good": "faces, and the wrong number of fingers",
+    "home": "https://civitai.com/models/4823",
+    "colour": {
+     "c1": "#eceff2",
+     "c2": "#8b939c",
+     "c3": "#2a2d31"
+    },
+    "measured": {
+     "fast": true
+    }
+   }
+  },
+  {
+   "want": "refuse",
+   "why": "a field this site has never heard of, on a Horde record",
+   "record": {
+    "spec": 1,
+    "kind": "horde",
+    "id": "example-model",
+    "name": "Example Model",
+    "set": "Example",
+    "model": "Deliberate",
+    "note": "A model somebody on the Horde is running.",
+    "what": "It draws whatever you type, and it is somebody else's electricity.",
+    "good": "faces, and the wrong number of fingers",
+    "home": "https://civitai.com/models/4823",
+    "colour": {
+     "c1": "#eceff2",
+     "c2": "#8b939c",
+     "c3": "#2a2d31"
+    },
+    "measured": {
+     "on": "2026-08-25",
+     "pack_seconds": 46.6
+    },
+    "run": "https://example.com/x.js"
+   }
+  },
+  {
+   "want": "refuse",
+   "why": "a record whose kind is misspelt is not judged by the Horde rules",
+   "record": {
+    "spec": 1,
+    "kind": "hoard",
+    "id": "example-model",
+    "name": "Example Model",
+    "set": "Example",
+    "model": "Deliberate",
+    "note": "A model somebody on the Horde is running.",
+    "what": "It draws whatever you type, and it is somebody else's electricity.",
+    "good": "faces, and the wrong number of fingers",
+    "home": "https://civitai.com/models/4823",
+    "colour": {
+     "c1": "#eceff2",
+     "c2": "#8b939c",
+     "c3": "#2a2d31"
+    },
+    "measured": {
+     "on": "2026-08-25",
+     "pack_seconds": 46.6
+    }
+   }
+  }
+ ]
+}

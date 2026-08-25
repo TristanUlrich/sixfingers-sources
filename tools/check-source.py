@@ -9,6 +9,15 @@ Copyright (c) 2026 Tristan Ulrich. All rights reserved.
 Applies the same refusals as js/sources.js in the site. No dependencies: it runs
 on the python3 that comes with macOS and with every Linux.
 
+TWO SHAPES OF RECORD, AND THE FIELD `kind` DECIDES WHICH — never a guess from the
+fields that happen to be present, which would let the writer of a record choose
+which rule set judges it:
+
+  * a record with `"kind": "horde"` names a model on the AI Horde. It carries no
+    address, no headers and no request body, so there is nothing of that sort to
+    validate: the whole attack surface is one string.
+  * anything else is a record with its own address, and gets the full set.
+
 Exit code 0 means every file passed. Anything else means at least one did not, and
 every reason is printed in plain words.
 
@@ -131,6 +140,103 @@ def uses(node, name):
     if isinstance(node, dict):
         return any(uses(v, name) for v in node.values())
     return False
+
+
+HORDE_KEYS = {'spec', 'kind', 'id', 'name', 'set', 'model', 'note', 'what',
+               'good', 'home', 'colour', 'measured'}
+
+# Ce qui n'a aucun sens sur une fiche Horde, et dont la presence est le signe
+# qu'on essaie de faire passer une adresse pour un nom de modele.
+NOT_HORDE = ['endpoint', 'method', 'headers', 'body', 'query', 'response',
+             'size', 'count', 'timeoutMs']
+
+
+def validate_horde(raw):
+    """The mirror of validateHordeEntry() in js/sources.js, rule for rule.
+
+    A Horde record names a model and says what it is good for. There is no
+    address to read, so most of the refusals below are about one thing: making
+    sure nobody smuggles an address in under a name.
+    """
+    errors = []
+
+    def bad(m):
+        errors.append(m)
+
+    if not isinstance(raw, dict):
+        return ['a record is a JSON object']
+    if len(json.dumps(raw)) > LIMITS['manifestBytes']:
+        return ['too long']
+
+    unknown = [k for k in raw if k not in HORDE_KEYS]
+    if unknown:
+        bad('this site does not understand: ' + ', '.join(unknown))
+    for k in NOT_HORDE:
+        if k in raw:
+            bad('a Horde entry names a model, it does not carry %s' % k)
+
+    if raw.get('spec') != 1:
+        bad('spec must be 1')
+    if raw.get('kind') != 'horde':
+        bad('kind must be "horde"')
+
+    def text(key, lo, hi):
+        v = raw.get(key)
+        if not isinstance(v, str) or not lo <= len(v) <= hi:
+            bad('%s must be %d to %d characters' % (key, lo, hi))
+            return ''
+        return v
+
+    sid = text('id', 3, LIMITS['idLen'])
+    if sid and not re.match(r'^[a-z0-9-]+$', sid):
+        bad('the short name is lower case letters, digits and dashes')
+    text('name', 1, LIMITS['nameLen'])
+    text('set', 1, LIMITS['setLen'])
+
+    # Le nom du modele tel que la Horde l ecrit : sensible a la casse et aux
+    # apostrophes, donc on le prend ou on le refuse, on ne le nettoie jamais.
+    model = text('model', 1, 120)
+    if model and re.search(r'[\u0000-\u001f]', model):
+        bad('the model name carries control characters')
+
+    if 'note' in raw:
+        text('note', 0, LIMITS['noteLen'])
+    if 'what' in raw:
+        text('what', 0, LIMITS['whatLen'])
+    if 'good' in raw:
+        text('good', 0, LIMITS['whatLen'])
+    if 'home' in raw:
+        h = text('home', 1, 200)
+        if h and not h.startswith('https://'):
+            bad('the page about it must start with https')
+
+    if 'colour' in raw:
+        c = raw.get('colour')
+        hexish = lambda v: isinstance(v, str) and re.match(r'^#[0-9a-fA-F]{6}$', v)
+        if not isinstance(c, dict) or not all(hexish(c.get(k) or '') for k in ('c1', 'c2', 'c3')):
+            bad('the three colours must be written like #ff8800')
+
+    # `measured` : des chiffres, et seulement des chiffres. C est la regle
+    # « rien d invente » appliquee a ce que les autres ecrivent.
+    if 'measured' in raw:
+        m = raw.get('measured')
+        if not isinstance(m, dict):
+            bad('measured must be an object')
+        else:
+            for k, v in m.items():
+                if isinstance(v, bool) or not isinstance(v, (int, float, str)):
+                    bad('measured.%s must be a number or a short note' % k)
+                elif isinstance(v, str) and len(v) > 240:
+                    bad('measured.%s is too long' % k)
+
+    return errors
+
+
+def validate_any(raw, taken=()):
+    """The one door. `kind` picks the rule set, exactly as the site does."""
+    if isinstance(raw, dict) and raw.get('kind') == 'horde':
+        return validate_horde(raw)
+    return validate(raw, taken)
 
 
 def validate(raw, taken=()):
@@ -286,7 +392,7 @@ def main(argv):
             worst = 1
             continue
 
-        errors = validate(raw, taken=seen)
+        errors = validate_any(raw, taken=seen)
         name = raw.get('id') if isinstance(raw, dict) else None
         if isinstance(name, str):
             seen.append(name)
