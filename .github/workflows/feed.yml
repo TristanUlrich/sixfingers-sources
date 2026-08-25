@@ -1,0 +1,189 @@
+# LE ROBOT QUI FABRIQUE LE FEED
+#
+# À déposer dans le dépôt PUBLIC `TristanUlrich/sixfingers-sources`, à
+# `.github/workflows/feed.yml`. Il n'a rien à faire dans le dépôt du site.
+#
+# ------------------------------------------------------------------------------
+# CE QU'IL FAIT, ET POURQUOI IL EXISTE
+# ------------------------------------------------------------------------------
+#
+# Tristan veut que ce qui se passe sur GitHub apparaisse chez les gens : une
+# machine acceptée doit arriver sur l'écran des autres, avec ses votes et le
+# nombre de commentaires, sans redéployer le site.
+#
+# Le site ne peut pas interroger GitHub lui-même. Mesuré le 25 août 2026 :
+# l'API sans clé plafonne à **60 requêtes par heure et par adresse IP** — pas par
+# visiteur, par sortie réseau. Un lycée entier partage ce budget. Une page qui
+# demanderait à GitHub tomberait en panne aux heures de monde, par intermittence,
+# sans rien dire.
+#
+# Alors c'est CE robot qui interroge GitHub — il a un jeton, donc 5000 requêtes à
+# l'heure — et il écrit **un seul fichier**, `feed.json`, que le site lit sur
+# `raw.githubusercontent.com` : CORS ouvert, cache cinq minutes, aucun plafond qui
+# compte. Une requête par personne, quel que soit le nombre de machines.
+#
+# ------------------------------------------------------------------------------
+# QUAND IL SE RÉVEILLE
+# ------------------------------------------------------------------------------
+#
+# À chaque fois que quelque chose bouge — une fiche fusionnée, une réaction, un
+# commentaire — et une fois par heure en filet de sécurité. Ce qui est publié
+# apparaît donc chez tout le monde en une minute environ.
+#
+# ------------------------------------------------------------------------------
+# CE QU'IL NE FAIT PAS, ET C'EST LE PLUS IMPORTANT
+# ------------------------------------------------------------------------------
+#
+#   - il n'exécute JAMAIS ce qui est proposé. Il lit du JSON et compte des
+#     réactions. Rien de ce qui vient d'un inconnu n'est évalué, ni interprété ;
+#   - il n'utilise PAS `pull_request_target`, qui donnerait un jeton d'écriture à
+#     du code venu d'une branche étrangère. C'est la faute classique des actions,
+#     et elle donne le dépôt à qui la trouve ;
+#   - ses permissions sont **minimales** : lire le contenu, écrire le contenu (pour
+#     le seul `feed.json`), et rien d'autre ;
+#   - il ne décide de rien. Une fiche n'entre dans `sources/` que parce que
+#     Tristan a fusionné une proposition à la main. Le robot ne fait que compter.
+#
+# ------------------------------------------------------------------------------
+# ET CÔTÉ SITE
+# ------------------------------------------------------------------------------
+#
+# Tout ce que ce fichier écrit **repasse par les 60 vérifications** dans le
+# navigateur, exactement comme une fiche collée à la main (`sources.feed()`), et
+# **rien n'est utilisé sans que la personne ait vu l'écran de consentement**. Ce
+# fichier raccourcit le chemin ; il n'ouvre pas une deuxième porte.
+
+name: feed
+
+on:
+  push:
+    branches: [main]
+    paths: ['sources/**']
+  discussion:
+    types: [created, edited, deleted]
+  discussion_comment:
+    types: [created, deleted]
+  schedule:
+    - cron: '17 * * * *'      # une fois par heure, en filet
+  workflow_dispatch:
+
+# Le strict minimum. Pas `issues: write`, pas `pull-requests: write`.
+permissions:
+  contents: write
+
+concurrency:
+  group: feed
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compter les votes et rassembler les fiches
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          python3 - <<'PY'
+          import json, os, pathlib, subprocess, datetime
+
+          REPO = os.environ['REPO']
+
+          def gh(query, **vars):
+              """Une requête GraphQL, avec le jeton de l'action."""
+              args = ['gh', 'api', 'graphql', '-f', 'query=' + query]
+              for k, v in vars.items():
+                  args += ['-F', f'{k}={v}']
+              return json.loads(subprocess.check_output(args))
+
+          owner, name = REPO.split('/')
+
+          # Les discussions, leurs réactions et leur nombre de commentaires.
+          # Une seule requête pour cent : c'est tout l'intérêt de GraphQL ici.
+          Q = """
+          query($owner:String!, $name:String!) {
+            repository(owner:$owner, name:$name) {
+              discussions(first:100, orderBy:{field:UPDATED_AT, direction:DESC}) {
+                nodes {
+                  number title url comments { totalCount }
+                  reactionGroups { content reactors { totalCount } }
+                }
+              }
+            }
+          }"""
+          try:
+              data = gh(Q, owner=owner, name=name)
+              nodes = data['data']['repository']['discussions']['nodes']
+          except Exception as e:
+              print('pas de discussions lisibles:', e)
+              nodes = []
+
+          # Une discussion appartient à une fiche si son titre est « source: <id> ».
+          by_id = {}
+          for d in nodes:
+              title = (d.get('title') or '').strip()
+              if not title.lower().startswith('source:'):
+                  continue
+              sid = title.split(':', 1)[1].strip()
+              groups = {g['content']: g['reactors']['totalCount'] for g in d['reactionGroups']}
+              by_id[sid] = {
+                  'up': groups.get('THUMBS_UP', 0),
+                  'down': groups.get('THUMBS_DOWN', 0),
+                  'comments': d['comments']['totalCount'],
+                  'discuss': d['url'],
+              }
+
+          items = []
+          for f in sorted(pathlib.Path('sources').glob('*.json')):
+              try:
+                  src = json.loads(f.read_text())
+              except Exception as e:
+                  print('fiche illisible, ignorée:', f, e)
+                  continue
+              sid = src.get('id') or f.stem
+              v = by_id.get(sid, {})
+              # `by` : le dernier à avoir touché le fichier. Factuel, pas déclaratif.
+              try:
+                  who = subprocess.check_output(
+                      ['git', 'log', '-1', '--format=%an', '--', str(f)]).decode().strip()
+              except Exception:
+                  who = ''
+              try:
+                  when = subprocess.check_output(
+                      ['git', 'log', '-1', '--format=%aI', '--', str(f)]).decode().strip()
+              except Exception:
+                  when = ''
+              items.append({
+                  'source': src,
+                  'by': who[:40],
+                  'up': int(v.get('up', 0)),
+                  'down': int(v.get('down', 0)),
+                  'comments': int(v.get('comments', 0)),
+                  'discuss': v.get('discuss'),
+                  'at': when,
+              })
+
+          out = {
+              'generated': datetime.datetime.now(datetime.timezone.utc)
+                              .isoformat(timespec='seconds').replace('+00:00', 'Z'),
+              'items': items,
+          }
+          pathlib.Path('feed.json').write_text(json.dumps(out, indent=1) + '\n')
+          print('feed.json :', len(items), 'machines')
+          PY
+
+      - name: Le publier, mais seulement s'il a changé
+        run: |
+          git config user.name  "sixfingers-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add feed.json
+          # `--quiet --exit-code` : pas de commit vide toutes les heures, ce qui
+          # remplirait l'historique d'un bruit qui cacherait les vrais changements.
+          if git diff --cached --quiet; then
+            echo "rien n'a bougé"
+          else
+            git commit -m "feed: recompte"
+            git push
+          fi
