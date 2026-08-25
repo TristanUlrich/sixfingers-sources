@@ -67,9 +67,17 @@ on:
     - cron: '17 * * * *'      # une fois par heure, en filet
   workflow_dispatch:
 
-# Le strict minimum. Pas `issues: write`, pas `pull-requests: write`.
+# LE STRICT MINIMUM, ET PAS MOINS QUE LE MINIMUM.
+# Un bloc `permissions` REMPLACE les permissions par défaut : tout ce qui n'y est
+# pas écrit est retiré. La première version ne portait que `contents: write`, donc
+# le robot n'avait pas le droit de LIRE les discussions — la requête GraphQL
+# échouait en silence, le `except` la rattrapait, et le feed sortait parfaitement
+# valide avec zéro publication et zéro vote. Une panne muette, la pire espèce.
+# `discussions: read` est donc là, et c'est tout ce qui a été ajouté : toujours
+# pas d'`issues: write`, toujours pas de `pull-requests: write`.
 permissions:
   contents: write
+  discussions: read
 
 concurrency:
   group: feed
