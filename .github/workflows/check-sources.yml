@@ -14,6 +14,8 @@ on:
     paths:
       - 'sources/**'
       - 'tools/check-source.py'
+      - 'tools/check-cases.py'
+      - 'tools/cases.json'
       - '.github/workflows/check-sources.yml'
   push:
     branches: [main]
@@ -35,6 +37,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+
+      # LA PREMIERE CHOSE, ET PAS LA DEUXIEME. Le 25 aout 2026 les deux
+      # verificateurs ont diverge sans un bruit : le navigateur avait appris a
+      # lire une fiche Horde, celui-ci non, et la seule vraie fiche de l etagere
+      # etait refusee par la machine censee l accueillir. Trois poussees de
+      # suite, rien en rouge nulle part. Cette etape passe donc en premier :
+      # tant que les deux copies ne repondent pas la meme chose a la meme table,
+      # savoir que les fiches passent ne veut rien dire.
+      - name: the two validators must still agree on the same table
+        run: python3 tools/check-cases.py
 
       - name: every source must pass the same rules as the site
         run: python3 tools/check-source.py sources/*.json
