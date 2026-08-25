@@ -1,0 +1,22 @@
+{
+  "spec": 1,
+  "kind": "horde",
+  "id": "icbinp",
+  "name": "ICBINP",
+  "set": "Photographic",
+  "model": "ICBINP - I Can't Believe It's Not Photography",
+  "note": "Passes for a photograph until you look.",
+  "what": "Ten photorealistic models merged together, so it comes back looking like a real camera: grain, depth of field, ordinary light. It holds up until you look at the hands - which is the point of this site.",
+  "good": "ordinary moments, badly witnessed",
+  "home": "https://civitai.com/models/28059",
+  "colour": { "c1": "#eceff2", "c2": "#8b939c", "c3": "#2a2d31" },
+  "measured": {
+    "on": "2026-08-25",
+    "pack_seconds": 46.6,
+    "first_picture_seconds": 37.7,
+    "kudos": 4,
+    "size": 384,
+    "steps": 14,
+    "note": "Six pictures, one job, measured against three other candidates given the same work at the same moment. Dreamshaper was given up on after 600 seconds without a single picture."
+  }
+}
