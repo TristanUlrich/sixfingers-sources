@@ -143,7 +143,25 @@ def uses(node, name):
 
 
 HORDE_KEYS = {'spec', 'kind', 'id', 'name', 'set', 'model', 'note', 'what',
-               'good', 'home', 'colour', 'measured'}
+               'good', 'home', 'colour', 'finish', 'measured'}
+
+# LA MATIERE DU DOSSIER, ET C'EST ELLE QUI DIT LE METIER.
+#
+# Pas une icone, pas un mot : la surface entiere. Une machine qui dessine rend un
+# dossier qui a l'air dessine ; une machine qui photographie rend un dossier qui a
+# le grain d'un tirage.
+#
+# Sept traitements, pas un de plus. Liste fermee : on ne reconnait rien dans un
+# vocabulaire que chacun invente. Le miroir de FOLDER_GRAIN dans js/icons.js.
+#
+#   sunburst   l'ordinaire, aucune matiere
+#   film       le grain d'un tirage        (photographie)
+#   ink        le grain d'un papier        (dessin, peinture)
+#   mirror     un eclat, aucune trame      (net, moderne)
+#   frost      une trame cristalline       (froid, precis)
+#   overprint  une surimpression decalee   (imprevisible)
+#   strata     des couches empilees        (fusion)
+FINISHES = ['sunburst', 'film', 'ink', 'mirror', 'frost', 'overprint', 'strata']
 
 # Ce qui n'a aucun sens sur une fiche Horde, et dont la presence est le signe
 # qu'on essaie de faire passer une adresse pour un nom de modele.
@@ -215,6 +233,9 @@ def validate_horde(raw):
         hexish = lambda v: isinstance(v, str) and re.match(r'^#[0-9a-fA-F]{6}$', v)
         if not isinstance(c, dict) or not all(hexish(c.get(k) or '') for k in ('c1', 'c2', 'c3')):
             bad('the three colours must be written like #ff8800')
+
+    if 'finish' in raw and raw.get('finish') not in FINISHES:
+        bad('the finish must be one of: ' + ', '.join(FINISHES))
 
     # `measured` : des chiffres, et seulement des chiffres. C est la regle
     # « rien d invente » appliquee a ce que les autres ecrivent.

@@ -792,6 +792,110 @@
      "pack_seconds": 46.6
     }
    }
+  },
+  {
+   "want": "accept",
+   "why": "a Horde record naming a folder finish",
+   "record": {
+    "spec": 1,
+    "kind": "horde",
+    "id": "example-model",
+    "name": "Example Model",
+    "set": "Example",
+    "model": "Deliberate",
+    "note": "A model somebody on the Horde is running.",
+    "what": "It draws whatever you type, and it is somebody else's electricity.",
+    "good": "faces, and the wrong number of fingers",
+    "home": "https://civitai.com/models/4823",
+    "colour": {
+     "c1": "#eceff2",
+     "c2": "#8b939c",
+     "c3": "#2a2d31"
+    },
+    "measured": {
+     "on": "2026-08-25",
+     "pack_seconds": 46.6
+    },
+    "finish": "ink"
+   }
+  },
+  {
+   "want": "accept",
+   "why": "every one of the seven finishes",
+   "record": {
+    "spec": 1,
+    "kind": "horde",
+    "id": "example-model",
+    "name": "Example Model",
+    "set": "Example",
+    "model": "Deliberate",
+    "note": "A model somebody on the Horde is running.",
+    "what": "It draws whatever you type, and it is somebody else's electricity.",
+    "good": "faces, and the wrong number of fingers",
+    "home": "https://civitai.com/models/4823",
+    "colour": {
+     "c1": "#eceff2",
+     "c2": "#8b939c",
+     "c3": "#2a2d31"
+    },
+    "measured": {
+     "on": "2026-08-25",
+     "pack_seconds": 46.6
+    },
+    "finish": "overprint"
+   }
+  },
+  {
+   "want": "refuse",
+   "why": "a finish this site cannot draw",
+   "record": {
+    "spec": 1,
+    "kind": "horde",
+    "id": "example-model",
+    "name": "Example Model",
+    "set": "Example",
+    "model": "Deliberate",
+    "note": "A model somebody on the Horde is running.",
+    "what": "It draws whatever you type, and it is somebody else's electricity.",
+    "good": "faces, and the wrong number of fingers",
+    "home": "https://civitai.com/models/4823",
+    "colour": {
+     "c1": "#eceff2",
+     "c2": "#8b939c",
+     "c3": "#2a2d31"
+    },
+    "measured": {
+     "on": "2026-08-25",
+     "pack_seconds": 46.6
+    },
+    "finish": "glitter"
+   }
+  },
+  {
+   "want": "refuse",
+   "why": "a finish that is not even a word",
+   "record": {
+    "spec": 1,
+    "kind": "horde",
+    "id": "example-model",
+    "name": "Example Model",
+    "set": "Example",
+    "model": "Deliberate",
+    "note": "A model somebody on the Horde is running.",
+    "what": "It draws whatever you type, and it is somebody else's electricity.",
+    "good": "faces, and the wrong number of fingers",
+    "home": "https://civitai.com/models/4823",
+    "colour": {
+     "c1": "#eceff2",
+     "c2": "#8b939c",
+     "c3": "#2a2d31"
+    },
+    "measured": {
+     "on": "2026-08-25",
+     "pack_seconds": 46.6
+    },
+    "finish": 7
+   }
   }
  ]
 }
