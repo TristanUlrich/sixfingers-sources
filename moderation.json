@@ -1,0 +1,15 @@
+{
+  "what": "The kill switch for the wall. Put a discussion number or a login in here, commit, and it is gone from sixfingers.vercel.app within the minute. No deploy, no password, nobody else needed.",
+  "it_can_only_hide": "Nothing in this file can make text appear on anybody's screen. It only ever removes. That is deliberate: a file that could add would have to be guarded like a secret, and the worst a mistake in this one can do is empty the wall.",
+  "you_usually_do_not_need_it": "GitHub's own moderation is faster and better: Hide as spam on a comment, or Delete on a discussion. The robot honours both. This file is for when you want something gone and you want it gone now, or when the same person keeps coming back.",
+
+  "hidden_discussions": [],
+  "hidden_logins": [],
+
+  "how_to_use_it": [
+    "hidden_discussions: the NUMBER at the end of the discussion URL. .../discussions/42 is 42.",
+    "hidden_logins: a GitHub username, without the @. Everything they wrote goes, posts and comments both.",
+    "Both lists may be empty. An empty file hides nothing, which is the normal state.",
+    "If this file is unreadable, the robot hides nothing and says so in its log. It never fails closed."
+  ]
+}
