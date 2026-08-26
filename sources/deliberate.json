@@ -10,10 +10,11 @@
   "good": "faces, weather, and anything you would rather see drawn",
   "home": "https://civitai.com/models/4823",
   "colour": {
-    "c1": "#f3e6d2",
-    "c2": "#c08a52",
-    "c3": "#4a3524"
+    "c1": "#e2ecd9",
+    "c2": "#6f9b62",
+    "c3": "#22381c"
   },
+  "finish": "ink",
   "measured": {
     "on": "2026-08-26",
     "pack_seconds": 24,
