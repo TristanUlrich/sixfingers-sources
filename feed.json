@@ -1,5 +1,5 @@
 {
- "generated": "2026-08-26T14:53:40Z",
+ "generated": "2026-08-26T15:35:05Z",
  "items": [
   {
    "source": {
@@ -27,12 +27,12 @@
      "note": "Six pictures, one job, from the button to the folder landing, with four volunteers. In a four-way race from the same address it took 75.8s, Rev Animated 526.1s, and two models listed with volunteers were never picked up at all."
     }
    },
-   "by": "sixfingers-bot",
+   "by": "Tristan Ulrich",
    "up": 0,
    "down": 0,
    "comments": 0,
    "discuss": "https://github.com/TristanUlrich/sixfingers-sources/discussions/3",
-   "at": "2026-08-26T14:50:07Z"
+   "at": "2026-08-26T17:17:49+02:00"
   },
   {
    "source": {
@@ -61,12 +61,12 @@
      "note": "Six pictures, one job, measured against three other candidates given the same work at the same moment. Dreamshaper was given up on after 600 seconds without a single picture."
     }
    },
-   "by": "sixfingers-bot",
+   "by": "Tristan Ulrich",
    "up": 0,
    "down": 0,
    "comments": 0,
    "discuss": "https://github.com/TristanUlrich/sixfingers-sources/discussions/2",
-   "at": "2026-08-26T14:50:07Z"
+   "at": "2026-08-26T17:17:49+02:00"
   }
  ],
  "posts": [
@@ -79,7 +79,6 @@
    "at": "2026-08-26T14:52:38Z",
    "category": "Show and tell",
    "by": "TristanUlrich",
-   "avatar": "https://avatars.githubusercontent.com/u/317414286?u=70e288d61f603ed81083ac9d40345efc0b81d879&v=4",
    "likes": 0,
    "comments": 0,
    "last": []
@@ -93,7 +92,6 @@
    "at": "2026-08-26T00:16:11Z",
    "category": "Show and tell",
    "by": "TristanUlrich",
-   "avatar": "https://avatars.githubusercontent.com/u/317414286?u=70e288d61f603ed81083ac9d40345efc0b81d879&v=4",
    "likes": 0,
    "comments": 0,
    "last": []
@@ -107,7 +105,6 @@
    "at": "2026-08-26T00:14:27Z",
    "category": "Announcements",
    "by": "TristanUlrich",
-   "avatar": "https://avatars.githubusercontent.com/u/317414286?u=70e288d61f603ed81083ac9d40345efc0b81d879&v=4",
    "likes": 0,
    "comments": 0,
    "last": []
