@@ -114,17 +114,33 @@ jobs:
           # jamais de balisage venu d'un inconnu, donc autant ne pas le transporter.
           # Et un extrait, pas le message entier : le fichier doit rester petit,
           # et on lit la suite chez GitHub.
+          # `isMinimized` EST LE CHAMP QUI MANQUAIT, ET C'ETAIT LE TROU.
+          # Masquer un commentaire sur GitHub — « Hide as spam », « Hide as abusive » —
+          # met `isMinimized` a vrai et ne supprime rien. Le robot ne le lisait pas :
+          # Tristan pouvait donc moderer sur GitHub, voir le commentaire disparaitre
+          # de la page GitHub, et le site continuait de l'afficher a tout le monde.
+          # Une moderation qui a l'air d'avoir marche et qui n'a rien fait, c'est la
+          # panne la plus chere de ce projet, et celle-la aurait porte sur des mots
+          # ecrits par des inconnus.
+          #
+          # On demande cinq de plus que les trois qu'on garde, parce que les
+          # masques se retirent APRES coup : sans marge, cacher un commentaire
+          # ferait disparaitre une ligne au lieu de la remplacer par la suivante.
+          #
+          # `avatarUrl` est parti : le site dessine le visage a partir du pseudo.
+          # Il etait charge depuis avatars.githubusercontent.com, ce que le CSP
+          # interdit, et le garder aurait dit a GitHub qui lit le mur.
           Q = """
           query($owner:String!, $name:String!) {
             repository(owner:$owner, name:$name) {
               discussions(first:100, orderBy:{field:UPDATED_AT, direction:DESC}) {
                 nodes {
-                  number title url bodyText createdAt
+                  number title url bodyText createdAt locked
                   category { name emoji }
-                  author { login avatarUrl }
-                  comments(last:3) {
+                  author { login }
+                  comments(last:8) {
                     totalCount
-                    nodes { bodyText createdAt author { login avatarUrl } }
+                    nodes { bodyText createdAt isMinimized author { login } }
                   }
                   reactionGroups { content reactors { totalCount } }
                 }
@@ -142,15 +158,76 @@ jobs:
               t = ' '.join((t or '').split())
               return t[:n]
 
+          # ------------------------------------------------------------------
+          # L'INTERRUPTEUR, ET IL NE SAIT QUE CACHER
+          # ------------------------------------------------------------------
+          #
+          # `moderation.json` a la racine du depot. Tristan y met un numero de
+          # discussion ou un pseudo, il committe, et c'est parti du site a la
+          # minute suivante. Pas de deploiement, pas de mot de passe, pas moi.
+          #
+          # Il ne peut RIEN AJOUTER. C'est la borne posee dans DECISIONS.md : un
+          # fichier qui peut faire apparaitre du texte sur l'ecran des gens est un
+          # fichier qu'il faut garder comme un secret. Celui-ci ne peut que
+          # retrancher, donc le pire qu'une erreur puisse faire est un mur vide.
+          #
+          # Il est FACULTATIF : s'il n'existe pas, on ne cache rien et on le dit.
+          hidden_n, hidden_who = set(), set()
+          try:
+              mod = json.loads(pathlib.Path('moderation.json').read_text())
+              hidden_n = {int(x) for x in (mod.get('hidden_discussions') or [])
+                          if isinstance(x, (int, str)) and str(x).isdigit()}
+              hidden_who = {str(x).lower() for x in (mod.get('hidden_logins') or [])
+                            if isinstance(x, str) and x.strip()}
+              print('moderation :', len(hidden_n), 'discussion(s),',
+                    len(hidden_who), 'pseudo(s) caches')
+          except FileNotFoundError:
+              print('moderation : pas de fichier, rien de cache')
+          except Exception as e:
+              # Un fichier illisible ne doit pas cacher tout le mur par accident,
+              # mais il ne doit pas non plus passer inapercu.
+              print('moderation : FICHIER ILLISIBLE, rien de cache :', e)
+
           # Une discussion appartient à une fiche si son titre est « source: <id> ».
           # Toutes les autres sont des PUBLICATIONS du fil.
+          def keep_last(nodes_):
+              """Les trois derniers commentaires AFFICHABLES, pas les trois derniers.
+
+              Un commentaire masque sur GitHub ne doit pas voyager, et un pseudo
+              coupe non plus. On en demande huit et on en garde trois : sans cette
+              marge, cacher un commentaire ferait un trou au lieu d'une ligne de
+              moins."""
+              global cache_c
+              out = []
+              for c in nodes_:
+                  if c.get('isMinimized'):
+                      cache_c += 1
+                      continue
+                  w = ((c.get('author') or {}).get('login') or '')
+                  if w.lower() in hidden_who:
+                      cache_c += 1
+                      continue
+                  t = clip(c.get('bodyText'), 300)
+                  if not w or not t:
+                      continue
+                  out.append({'by': w[:40], 'text': t, 'at': c.get('createdAt')})
+              return out[-3:]
+
           by_id = {}
           posts = []
+          cache_d, cache_c = 0, 0
           for d in nodes:
               title = (d.get('title') or '').strip()
               groups = {g['content']: g['reactors']['totalCount'] for g in d['reactionGroups']}
               author = d.get('author') or {}
               cm = d.get('comments') or {}
+
+              # L'interrupteur, d'abord : une discussion cachee ne laisse rien
+              # derriere elle, pas meme son compte de votes.
+              who = (author.get('login') or '').lower()
+              if d.get('number') in hidden_n or (who and who in hidden_who):
+                  cache_d += 1
+                  continue
 
               if title.lower().startswith('source:'):
                   sid = title.split(':', 1)[1].strip()
@@ -177,15 +254,9 @@ jobs:
                   'at': d.get('createdAt'),
                   'category': ((d.get('category') or {}).get('name') or '')[:40],
                   'by': (author.get('login') or '')[:40],
-                  'avatar': (author.get('avatarUrl') or '')[:300],
                   'likes': groups.get('THUMBS_UP', 0) + groups.get('HEART', 0),
                   'comments': cm.get('totalCount', 0),
-                  'last': [{
-                      'by': ((c.get('author') or {}).get('login') or '')[:40],
-                      'avatar': ((c.get('author') or {}).get('avatarUrl') or '')[:300],
-                      'text': clip(c.get('bodyText'), 300),
-                      'at': c.get('createdAt'),
-                  } for c in (cm.get('nodes') or [])],
+                  'last': keep_last(cm.get('nodes') or []),
               })
 
           items = []
@@ -234,6 +305,7 @@ jobs:
           }
           pathlib.Path('feed.json').write_text(json.dumps(out, indent=1) + '\n')
           print('feed.json :', len(items), 'machines,', len(posts), 'publications')
+          print('cache :', cache_d, 'discussion(s),', cache_c, 'commentaire(s)')
           PY
 
       - name: Le publier, mais seulement s'il a changé
