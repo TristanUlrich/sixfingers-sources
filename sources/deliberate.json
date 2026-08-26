@@ -1,0 +1,25 @@
+{
+  "spec": 1,
+  "kind": "horde",
+  "id": "deliberate",
+  "name": "Deliberate",
+  "set": "Illustrated",
+  "model": "Deliberate",
+  "note": "Draws it rather than photographs it.",
+  "what": "Built on the same Stable Diffusion 1.5 as the first machine here, then merged and sanded until it stopped looking like a photograph. Everything comes back as a painting: soft edges, warm light, a picture-book calm. It is just as wrong about hands, and the mistakes are easier to see because the rest is so tidy.",
+  "good": "faces, weather, and anything you would rather see drawn",
+  "home": "https://civitai.com/models/4823",
+  "colour": {
+    "c1": "#f3e6d2",
+    "c2": "#c08a52",
+    "c3": "#4a3524"
+  },
+  "measured": {
+    "on": "2026-08-26",
+    "pack_seconds": 24,
+    "kudos": 4,
+    "size": 384,
+    "steps": 14,
+    "note": "Six pictures, one job, from the button to the folder landing, with four volunteers. In a four-way race from the same address it took 75.8s, Rev Animated 526.1s, and two models listed with volunteers were never picked up at all."
+  }
+}
