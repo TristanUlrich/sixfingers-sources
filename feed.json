@@ -1,5 +1,5 @@
 {
- "generated": "2026-08-26T00:14:35Z",
+ "generated": "2026-08-26T00:16:18Z",
  "items": [
   {
    "source": {
@@ -32,11 +32,25 @@
    "up": 0,
    "down": 0,
    "comments": 0,
-   "discuss": null,
-   "at": "2026-08-25T23:58:53Z"
+   "discuss": "https://github.com/TristanUlrich/sixfingers-sources/discussions/2",
+   "at": "2026-08-26T00:14:35Z"
   }
  ],
  "posts": [
+  {
+   "kind": "source",
+   "n": 2,
+   "title": "source: icbinp",
+   "url": "https://github.com/TristanUlrich/sixfingers-sources/discussions/2",
+   "text": "This thread is the machine's page. The site counts the thumbs on it and prints the number beside ICBINP inside the Community window, so a vote here is a vote there. What it is ICBINP, for I Can't Believe It's Not Photography, is ten photorealistic models merged into one. It comes back looking like a real camera: grain, shallow focus, ordinary light falling on ordinary things. It holds up right until you look at the hands, which is the point of this site. Good at: ordinary moments, badly witnessed. What was measured, and when 25 August 2026. Six pictures in 46.6 seconds, first picture at 37.7 seconds, 384 px, 14 steps, 4 kudos. Measured against three other candidates given the same work at th",
+   "at": "2026-08-26T00:16:11Z",
+   "category": "Show and tell",
+   "by": "TristanUlrich",
+   "avatar": "https://avatars.githubusercontent.com/u/317414286?u=70e288d61f603ed81083ac9d40345efc0b81d879&v=4",
+   "likes": 0,
+   "comments": 0,
+   "last": []
+  },
   {
    "kind": "post",
    "n": 1,
