@@ -1,5 +1,5 @@
 {
- "generated": "2026-08-26T15:35:05Z",
+ "generated": "2026-08-26T16:37:17Z",
  "items": [
   {
    "source": {
@@ -14,10 +14,11 @@
     "good": "faces, weather, and anything you would rather see drawn",
     "home": "https://civitai.com/models/4823",
     "colour": {
-     "c1": "#f3e6d2",
-     "c2": "#c08a52",
-     "c3": "#4a3524"
+     "c1": "#e2ecd9",
+     "c2": "#6f9b62",
+     "c3": "#22381c"
     },
+    "finish": "ink",
     "measured": {
      "on": "2026-08-26",
      "pack_seconds": 24,
@@ -32,7 +33,7 @@
    "down": 0,
    "comments": 0,
    "discuss": "https://github.com/TristanUlrich/sixfingers-sources/discussions/3",
-   "at": "2026-08-26T17:17:49+02:00"
+   "at": "2026-08-26T18:16:36+02:00"
   },
   {
    "source": {
@@ -66,7 +67,7 @@
    "down": 0,
    "comments": 0,
    "discuss": "https://github.com/TristanUlrich/sixfingers-sources/discussions/2",
-   "at": "2026-08-26T17:17:49+02:00"
+   "at": "2026-08-26T18:16:36+02:00"
   }
  ],
  "posts": [
