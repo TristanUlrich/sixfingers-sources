@@ -59,7 +59,8 @@ That is a judgement, and it is the contribution this shelf actually wants.
 | `what` | no | Up to 400 characters. What it actually does to a picture, not what it advertises. |
 | `good` | no | Up to 400 characters. What it is worth using *for*. |
 | `home` | no | An `https` page about it. |
-| `colour` | no | Three colours as `#rrggbb`, for the folder's theme. |
+| `colour` | no | Three colours as `#rrggbb`. They are the folder's colour, and the folder is how people will recognise this machine. |
+| `finish` | no | What the folder is **made of**. One word from the list below. |
 | `measured` | no | Numbers you took yourself. See below. |
 
 **Nothing else.** `endpoint`, `method`, `headers`, `body`, `query`, `response`,
@@ -67,6 +68,39 @@ That is a judgement, and it is the contribution this shelf actually wants.
 record like this names a model; the moment it carries an address it is not one of
 these any more, and the whole reason this shape is safe is that there is nothing in
 it to point anywhere.
+
+### The folder, and why it is the whole point of `colour` and `finish`
+
+Every machine on this site gets a folder, and that folder follows it everywhere:
+the row where you pick a machine, the Community window, the icon on the desktop,
+and the folder standing alone in the black room while you knock on it.
+
+So the folder has to say **which machine made this**, at a glance, before a word
+is read. Two things do that, and nothing else does:
+
+**`colour`** is what carries at every size. Pick something that is not already
+taken: the shelf has amber, grey and sage on it today. A colour close to one of
+those reads as a duller version of it rather than as its own thing, which is a
+mistake that has already been made here once.
+
+**`finish`** is what the folder is made of. Not a logo, not a letter, not a badge:
+the surface of the whole thing. A machine that draws should hand you a folder that
+looks drawn.
+
+| | |
+|---|---|
+| `sunburst` | nothing at all. Plain manila, the ordinary folder. **This is the default** |
+| `film` | the grain of a print, and a little gloss. For machines that make photographs |
+| `ink` | the tooth of drawing paper. For machines that draw or paint |
+| `mirror` | one clean sweep of light and no texture at all. For machines whose strength is sharpness |
+| `frost` | a fine crystalline weave. For cold, precise machines |
+| `overprint` | a press that is a hair out of register. For machines that surprise you |
+| `strata` | faint stacked layers. For merges of merges |
+
+Seven, and no more. A closed list, because the point is that somebody recognises
+the kind of work at a glance, and nobody recognises anything in a vocabulary
+everyone invents for themselves. Below 40 pixels the finish is not drawn at all:
+at that size it would be dirt, and the colour does the work alone.
 
 ### `measured`, and the rule behind it
 

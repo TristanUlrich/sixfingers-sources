@@ -9,7 +9,12 @@
   "what": "Ten photorealistic models merged together, so it comes back looking like a real camera: grain, depth of field, ordinary light. It holds up until you look at the hands - which is the point of this site.",
   "good": "ordinary moments, badly witnessed",
   "home": "https://civitai.com/models/28059",
-  "colour": { "c1": "#eceff2", "c2": "#8b939c", "c3": "#2a2d31" },
+  "colour": {
+    "c1": "#eceff2",
+    "c2": "#8b939c",
+    "c3": "#2a2d31"
+  },
+  "finish": "film",
   "measured": {
     "on": "2026-08-25",
     "pack_seconds": 46.6,
