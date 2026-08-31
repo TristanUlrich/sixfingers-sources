@@ -1,0 +1,40 @@
+{
+  "spec": 1,
+  "leet": {
+    "0": "o",
+    "1": "i",
+    "3": "e",
+    "4": "a",
+    "5": "s",
+    "6": "g",
+    "7": "t",
+    "8": "b",
+    "9": "g",
+    "@": "a",
+    "$": "s",
+    "€": "e",
+    "!": "i",
+    "|": "i"
+  },
+  "banned": [
+    "bougnoule",
+    "nigger",
+    "niglet",
+    "youpin",
+    "gazthejews",
+    "gazezles",
+    "heilhitler",
+    "siegheil",
+    "whitepower",
+    "racewar",
+    "guerredesraces"
+  ],
+  "allowed": [
+    "niger",
+    "nigeria",
+    "nigerian",
+    "nigerien",
+    "nigel",
+    "nigella"
+  ]
+}
