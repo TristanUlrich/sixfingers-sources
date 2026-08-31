@@ -34,7 +34,11 @@ from urllib.parse import urlsplit
 
 LIMITS = {
     'manifestBytes': 8 * 1024,
-    'idLen': 32, 'nameLen': 40, 'setLen': 24, 'noteLen': 120, 'whatLen': 400,
+    'idLen': 32, 'nameLen': 40, 'setLen': 24, 'noteLen': 120,
+    # 400 until 31 August 2026. The description was clamped to three lines with no
+    # way to read the rest, so people were asked what makes their machine
+    # different and then had half the answer hidden. The site unfolds it now.
+    'whatLen': 700,
     'templateNodes': 64, 'pathDepth': 6,
     'minTimeout': 5000, 'maxTimeout': 180000,
     'minSide': 128, 'maxSide': 1024,
@@ -228,11 +232,19 @@ def validate_horde(raw):
         if h and not h.startswith('https://'):
             bad('the page about it must start with https')
 
-    if 'colour' in raw:
+    # ONE COLOUR IS ENOUGH, AND THAT IS THE FREEDOM ON OFFER.
+    # Decided 31 August 2026. Picking three shades that work together is a
+    # designer's job; picking YOUR colour is a pleasure. A record may therefore
+    # write "colour": "#6f9b62" and the site builds the three it needs. The
+    # three-shade form is still accepted, because the shipped records use it.
+    if isinstance(raw.get('colour'), str):
+        if not re.match(r'^#[0-9a-fA-F]{6}$', raw['colour']):
+            bad('the colour must be written like #ff8800')
+    elif 'colour' in raw:
         c = raw.get('colour')
         hexish = lambda v: isinstance(v, str) and re.match(r'^#[0-9a-fA-F]{6}$', v)
-        if not isinstance(c, dict) or not all(hexish(c.get(k) or '') for k in ('c1', 'c2', 'c3')):
-            bad('the three colours must be written like #ff8800')
+        if not isinstance(c, dict) or not all(hexish(c.get(k)) for k in ('c1', 'c2', 'c3')):
+            bad('the colour must be one value like #ff8800, or the three named c1, c2 and c3')
 
     if 'finish' in raw and raw.get('finish') not in FINISHES:
         bad('the finish must be one of: ' + ', '.join(FINISHES))

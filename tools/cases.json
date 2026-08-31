@@ -896,6 +896,88 @@
     },
     "finish": 7
    }
+  },
+  {
+   "want": "accept",
+   "why": "a Horde record that picks ONE colour, the freedom given to the community on 31 August 2026",
+   "record": {
+    "spec": 1,
+    "kind": "horde",
+    "id": "example-horde",
+    "name": "Example",
+    "set": "Example",
+    "model": "Some Model",
+    "note": "A machine.",
+    "what": "It draws things.",
+    "colour": "#6f9b62"
+   }
+  },
+  {
+   "want": "refuse",
+   "why": "a colour missing its hash",
+   "record": {
+    "spec": 1,
+    "kind": "horde",
+    "id": "example-horde",
+    "name": "Example",
+    "set": "Example",
+    "model": "Some Model",
+    "note": "A machine.",
+    "what": "It draws things.",
+    "colour": "6f9b62"
+   }
+  },
+  {
+   "want": "refuse",
+   "why": "a colour that is not six hex digits",
+   "record": {
+    "spec": 1,
+    "kind": "horde",
+    "id": "example-horde",
+    "name": "Example",
+    "set": "Example",
+    "model": "Some Model",
+    "note": "A machine.",
+    "what": "It draws things.",
+    "colour": "#6f9b6"
+   }
+  },
+  {
+   "want": "accept",
+   "why": "the older three-shade form still works, because the shipped records use it",
+   "record": {
+    "spec": 1,
+    "kind": "horde",
+    "id": "example-horde",
+    "name": "Example",
+    "set": "Example",
+    "model": "Some Model",
+    "note": "A machine.",
+    "what": "It draws things.",
+    "colour": {
+     "c1": "#dcefd8",
+     "c2": "#6f9b62",
+     "c3": "#1f3a1c"
+    }
+   }
+  },
+  {
+   "want": "refuse",
+   "why": "three shades with one missing",
+   "record": {
+    "spec": 1,
+    "kind": "horde",
+    "id": "example-horde",
+    "name": "Example",
+    "set": "Example",
+    "model": "Some Model",
+    "note": "A machine.",
+    "what": "It draws things.",
+    "colour": {
+     "c1": "#dcefd8",
+     "c2": "#6f9b62"
+    }
+   }
   }
  ]
 }

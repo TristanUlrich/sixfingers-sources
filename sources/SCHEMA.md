@@ -56,11 +56,11 @@ That is a judgement, and it is the contribution this shelf actually wants.
 | `set` | yes | The short title printed on the folder, up to 24 characters. |
 | `model` | yes | **The model name exactly as the Horde writes it**, up to 120 characters. Capitals and apostrophes matter; it is not cleaned up, it is taken or refused. Get it from the Horde's own model list. |
 | `note` | no | One line, up to 120 characters. |
-| `what` | no | Up to 400 characters. What it actually does to a picture, not what it advertises. |
-| `good` | no | Up to 400 characters. What it is worth using *for*. |
+| `what` | no | Up to **700** characters. What it actually does to a picture, not what it advertises. The site folds it to three lines and puts a **Read the rest** link under it, so write the whole thing. |
+| `good` | no | Up to **700** characters. What it is worth using *for*. |
 | `home` | no | An `https` page about it. |
-| `colour` | no | Three colours as `#rrggbb`. They are the folder's colour, and the folder is how people will recognise this machine. |
-| `finish` | no | What the folder is **made of**. One word from the list below. |
+| `colour` | no | **One** colour as `#rrggbb`, and the site builds the shades. The folder is how people will recognise this machine, so this is the field to care about. |
+| `finish` | no | **Reserved.** See below: the finishes belong to the machines this project publishes itself. A proposal that carries one is not refused, but the finish is dropped and the colour does the work. |
 | `measured` | no | Numbers you took yourself. See below. |
 
 **Nothing else.** `endpoint`, `method`, `headers`, `body`, `query`, `response`,
@@ -78,14 +78,35 @@ and the folder standing alone in the black room while you knock on it.
 So the folder has to say **which machine made this**, at a glance, before a word
 is read. Two things do that, and nothing else does:
 
-**`colour`** is what carries at every size. Pick something that is not already
-taken: the shelf has amber, grey and sage on it today. A colour close to one of
-those reads as a duller version of it rather than as its own thing, which is a
-mistake that has already been made here once.
+**`colour`** is what carries at every size, and **it is yours to choose**. Write
+one colour and the site works out the rest of the folder from it:
 
-**`finish`** is what the folder is made of. Not a logo, not a letter, not a badge:
-the surface of the whole thing. A machine that draws should hand you a folder that
-looks drawn.
+```json
+"colour": "#6f9b62"
+```
+
+That is the whole field. Light for the flap, mid for the body, dark for the
+outline, and a readable ink for the label are all derived from it, so the folder
+comes out looking like it belongs on this desktop whatever you pick. If you would
+rather set all three shades yourself, `{ "c1": ..., "c2": ..., "c3": ... }` still
+works, and nothing in the site prefers one form over the other.
+
+Pick something that is not already taken: the shelf has amber, grey and sage on it
+today. A colour close to one of those reads as a duller version of it rather than
+as its own thing, which is a mistake that has already been made here once.
+
+**`finish`** is what the folder is *made of* — the surface of the whole thing,
+not a logo or a badge. **It is reserved for the machines this project publishes
+itself**, and that is a deliberate line rather than a technical one: the shelf
+should say at a glance which machines are the house's and which came from
+somebody else, and it says it with the material rather than with a label or a
+rank. Everyone gets the same folder and the same freedom of colour; the finishes
+are the one thing that is not on offer.
+
+A proposal carrying `finish` is **not refused** for it. The robot says so in its
+answer, the field is dropped, and your colour carries the record.
+
+For the record, the seven that exist:
 
 | | |
 |---|---|
@@ -97,10 +118,9 @@ looks drawn.
 | `overprint` | a press that is a hair out of register. For machines that surprise you |
 | `strata` | faint stacked layers. For merges of merges |
 
-Seven, and no more. A closed list, because the point is that somebody recognises
-the kind of work at a glance, and nobody recognises anything in a vocabulary
-everyone invents for themselves. Below 40 pixels the finish is not drawn at all:
-at that size it would be dirt, and the colour does the work alone.
+Seven, and no more. Below 40 pixels a finish is not drawn at all: at that size it
+would be dirt, and the colour does the work alone — which is the other half of why
+the colour is the field worth thinking about.
 
 ### `measured`, and the rule behind it
 
@@ -156,7 +176,7 @@ its answer.
 | `name` | yes | What the machine is called. Up to 40 characters. |
 | `set` | yes | The short title printed on the folder, up to 24 characters. Think of it as the name of an expansion: *First Light*, *Cold Snap*. |
 | `note` | no | One line, up to 120 characters. The thing you would say about it in passing. |
-| `what` | no | Up to 400 characters, and the important one: **what it actually does to a picture.** Not what it advertises. |
+| `what` | no | Up to **700** characters, and the important one: **what it actually does to a picture.** Not what it advertises. |
 | `home` | no | An `https` page about it, so somebody can go and read for themselves. |
 | `endpoint` | yes | The `https` address that is asked. No question mark, no `#`, no name or password in it. |
 | `method` | yes | `POST` or `GET`. |
@@ -167,7 +187,7 @@ its answer.
 | `size` | yes | `width` and `height`, **whole numbers**, multiples of 8, from 128 to 1024. |
 | `count` | no | `one-per-call` (default) or `n` — use `n` only if one call really returns several pictures, and then `{n}` must appear in the request. |
 | `timeoutMs` | no | A whole number of milliseconds, 5000 to 180000. Defaults to 120000. |
-| `colour` | no | Three colours as `#rrggbb`, used for the folder's theme. |
+| `colour` | no | **One** colour as `#rrggbb` and the site builds the shades, or the three named `c1`, `c2` and `c3` if you would rather set them yourself. |
 
 Any field not on this list is an **error**, not something ignored. A field the site
 does not understand might be the whole point of your record, and using it anyway

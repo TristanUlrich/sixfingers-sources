@@ -54,8 +54,15 @@ MARKER = '<!-- sixfingers: proposal checker -->'
 # not written anywhere in it.
 FIELD = {
     'name': 'What is it called',
-    'home': 'A page about it',
+    'model': 'The model name, exactly as the Horde writes it',
+    'set': 'The short title printed on the folder',
     'what': 'What does it actually do to a picture',
+    'good': 'What is it worth using for',
+    'note': 'One line, in passing',
+    'home': 'A page about it',
+    'colour': 'The colour of your folder',
+    'secs': 'How long six pictures took, in seconds',
+    'on': 'The day you measured that',
     'json': 'The source, as JSON',
     'checker': 'What the checker said',
     'rules': 'Please confirm',
@@ -135,6 +142,74 @@ def known_ids(folder):
     return out
 
 
+def slug(name):
+    """An id built from a name: lower case, dashes, nothing exotic.
+
+    Nobody should have to invent an identifier to say that a model is good. If two
+    people land on the same one, the duplicate check further down says so by name,
+    which is a far better conversation than asking a stranger to guess a free slot.
+    """
+    out = []
+    for ch in (name or '').lower():
+        out.append(ch if ch.isascii() and ch.isalnum() else '-')
+    s = re.sub(r'-+', '-', ''.join(out)).strip('-')[:32].strip('-')
+    return s if len(s) >= 3 else None
+
+
+def from_fields(got):
+    """A record built from the form's own boxes, for people who never write JSON.
+
+    THE POINT: asking a stranger to hand-write a JSON file, get the commas right,
+    and invent an id, in order to say "this model is worth your time", is asking
+    for the wrong thing. The judgement is the contribution; the file is clerical
+    work, and clerical work is what a machine is for.
+
+    NOTHING IS INVENTED HERE. Every value comes from a box the person filled in.
+    An empty box means the field is left out, never guessed, and the measurement
+    is only carried when BOTH the number and the day it was taken are given —
+    a duration with no date is exactly the kind of number this project refuses to
+    print.
+
+    Returns None when there is not enough to build anything, so the caller can say
+    so plainly instead of judging a half-record.
+    """
+    name = (got.get(FIELD['name']) or '').strip()
+    model = (got.get(FIELD['model']) or '').strip()
+    if not name or not model:
+        return None
+    sid = slug(name)
+    if not sid:
+        return None
+
+    rec = {'spec': 1, 'kind': 'horde', 'id': sid, 'name': name,
+           'set': (got.get(FIELD['set']) or '').strip() or name,
+           'model': model}
+
+    for key, field in (('note', 'note'), ('what', 'what'), ('good', 'good'),
+                       ('home', 'home')):
+        v = (got.get(FIELD[field]) or '').strip()
+        if v:
+            rec[key] = v
+
+    colour = (got.get(FIELD['colour']) or '').strip()
+    if colour:
+        # Written as it was written. A colour that is not a colour is refused by
+        # the rules, with the reason, rather than quietly dropped here.
+        rec['colour'] = colour
+
+    secs = (got.get(FIELD['secs']) or '').strip().replace(',', '.')
+    on = (got.get(FIELD['on']) or '').strip()
+    if secs and on:
+        try:
+            rec['measured'] = {'on': on, 'pack_seconds': float(secs)}
+        except ValueError:
+            rec['measured'] = {'on': on, 'pack_seconds': secs}
+    elif secs or on:
+        rec['_half_measure'] = True
+
+    return rec
+
+
 def guard(fields):
     """The word guard, over every piece of text a human wrote.
 
@@ -186,17 +261,29 @@ def answer(body, title='', author='', folder='sources'):
             'something else, ignore this: Tristan reads every issue himself.')
         return '\n'.join(lines), 2
 
+    built = None
+    half_measure = False
     if not raw_json.strip():
-        say('The checker found no JSON in this proposal, so it has nothing to '
-            'judge yet.')
-        say('')
-        say('Paste the whole record into **The source, as JSON**, following '
-            '[`sources/SCHEMA.md`](../blob/main/sources/SCHEMA.md). Editing this '
-            'issue makes the checker look again.')
-        return '\n'.join(lines), 2
+        built = from_fields(got)
+        if built is None:
+            say('There is not enough here to build a record yet.')
+            say('')
+            say('The two boxes it cannot do without are **What is it called** and '
+                '**The model name, exactly as the Horde writes it**. Fill those in '
+                'and the rest is built for you.')
+            say('')
+            say('If the machine is not on the AI Horde at all, then it needs its '
+                'own address, and that shape has to be written by hand: see '
+                '[`sources/SCHEMA.md`](../blob/main/sources/SCHEMA.md) and paste it '
+                'into **The source, as JSON**.')
+            say('')
+            say('**Editing this issue makes the checker look again**, straight '
+                'away.')
+            return '\n'.join(lines), 2
+        half_measure = bool(built.pop('_half_measure', False))
 
     try:
-        record = json.loads(raw_json)
+        record = built if built is not None else json.loads(raw_json)
     except ValueError as e:
         say('That is not valid JSON yet, so the checker stopped before the rules.')
         say('')
@@ -208,6 +295,14 @@ def answer(body, title='', author='', folder='sources'):
             '`python3 tools/check-source.py` on the file before pasting it, and '
             'edit this issue when it is fixed.')
         return '\n'.join(lines), 1
+
+    # `finish` EST RETIRÉ ICI, ET PAS SEULEMENT SIGNALÉ. Le dire sans le faire
+    # serait une promesse tenue par une intervention à la main, c'est à dire pas
+    # tenue du tout. Le robot enlève donc le champ lui-même, et ce qu'il réimprime
+    # plus bas est exactement ce qui a été jugé.
+    had_finish = isinstance(record, dict) and 'finish' in record
+    if had_finish:
+        record.pop('finish', None)
 
     taken = known_ids(folder)
     errors = list(check_source.validate_any(record, taken=taken))
@@ -250,6 +345,28 @@ def answer(body, title='', author='', folder='sources'):
     say('The checker read this record and it passes%s.'
         % (' (`%s`)' % sid if sid else ''))
     say('')
+    say(('Nothing here was written by hand: this is the record built from your '
+         'answers, and it is exactly what was judged.') if built is not None else
+        'This is the record as it was judged, and as it would go on the shelf.')
+    say('')
+    say('```json')
+    say(safe(json.dumps(record, indent=2, ensure_ascii=False), 1800))
+    say('```')
+    say('')
+    if had_finish:
+        say('One difference from what was sent, and it is not a refusal: '
+            '**`finish` is reserved** for the machines this project publishes '
+            'itself, so it has been taken out of the record above. It is the one '
+            'thing the shelf keeps for the house, and it is how anybody can tell '
+            'at a glance which machines are ours. Your `colour` is untouched, and '
+            'the colour is what carries at every size.')
+        say('')
+    if half_measure:
+        say('One box is half filled: a duration needs the day it was taken, and a '
+            'day needs the duration. **The site never prints a number nobody '
+            'took**, so with only one of the two the measurement is left out '
+            'altogether. Fill in both, or neither.')
+        say('')
     say('That means it breaks none of the rules a machine has to meet. It does '
         'not mean it is on the shelf: Tristan reads every proposal himself, and '
         'a record that passes every check is still not a machine that answers. '
@@ -267,9 +384,10 @@ def answer(body, title='', author='', folder='sources'):
             'picture: what comes back, not what it advertises.')
 
     say('')
-    say('And you do not have to wait for any of this to use it: the same JSON '
-        'works right now in your own browser, in **Community, Add a machine**. It '
-        'stays in that browser and affects nobody but you.')
+    say('And you do not have to wait for any of this to use it: **the record '
+        'above** works right now in your own browser, in **Community, Add a '
+        'machine**. Copy it, paste it there, and the machine is on your own shelf '
+        'straight away. It stays in that browser and affects nobody but you.')
     return '\n'.join(lines), 0
 
 

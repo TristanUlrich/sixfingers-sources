@@ -1,32 +1,63 @@
-name: New picture machine
-description: Propose a free image generator for the SIXFINGERS shelf
+name: Propose a picture machine
+description: Put a free image generator on the SIXFINGERS shelf. No JSON needed.
 title: "source: "
 labels: ["new source"]
 body:
   - type: markdown
     attributes:
       value: |
-        Everything here is reviewed by hand. Please read
-        [CONTRIBUTING.md](../blob/main/CONTRIBUTING.md) first — it is short.
+        ### What happens when you press submit
 
-        **A source must work without a key, a token, an account or a payment**, and
-        must be reachable over `https` at a real domain name. Anything on your own
-        machine or your home network is refused.
+        A robot reads this and answers **in about a minute**, in a comment below,
+        with everything that passed and everything that did not. Nothing is
+        silently ignored, and nothing is decided in private. If it refuses
+        something, **edit this issue** and it reads it again straight away.
+
+        ### What you are actually giving us
+
+        The hard part here is not technical, it is **editorial**. The
+        [AI Horde](https://aihorde.net) runs **163 image models** right now, and
+        almost nobody has an opinion about which ones are worth a minute of your
+        life. That opinion is the contribution.
+
+        **You do not need to write any JSON.** Fill in the boxes and the robot
+        builds the record for you. If you would rather write the file yourself,
+        there is a box for that near the bottom, and it wins over everything else.
+
+        One rule, and it is the reason this can be open to strangers at all: a
+        machine here must work **with no key, no token, no account and no
+        payment**.
 
   - type: input
     id: name
     attributes:
       label: What is it called
-      placeholder: Stable Diffusion 3.5
+      description: The name people will see on the folder. Up to 40 characters.
+      placeholder: ICBINP
     validations:
       required: true
 
   - type: input
-    id: home
+    id: model
     attributes:
-      label: A page about it
-      description: Where somebody can go and read for themselves. Must be https.
-      placeholder: https://example.com/about
+      label: The model name, exactly as the Horde writes it
+      description: >
+        Copy it from the Horde's own model list, character for character. Capitals,
+        spaces and apostrophes all matter: it is taken as written or refused, never
+        cleaned up. Leave this empty only if the machine is not on the Horde, in
+        which case you will have to write the JSON yourself further down.
+      placeholder: ICBINP - I Can't Believe It's Not Photography
+    validations:
+      required: false
+
+  - type: input
+    id: set
+    attributes:
+      label: The short title printed on the folder
+      description: >
+        Think of it as the name of an expansion, not a category. Up to 24
+        characters. *Photographic*, *Cold Snap*, *First Light*.
+      placeholder: Photographic
     validations:
       required: true
 
@@ -35,39 +66,125 @@ body:
     attributes:
       label: What does it actually do to a picture
       description: >
-        Not what it advertises. What comes back. "It gets the composition right and
-        the anatomy wrong" is the register we are after. Plain sentences, no
-        superlatives.
+        **This is the field that matters, and it is the one people read.** Not what
+        it advertises: what comes back. Up to 700 characters, and the site now folds
+        it to three lines with a *Read the rest* link, so write the whole thing
+        rather than a slogan.
+
+
+        Good: *"Ten photorealistic models merged together, so it comes back looking
+        like a real camera: grain, depth of field, ordinary light. It holds up until
+        you look at the hands."*
+
+
+        Not this: *"The best and most powerful model, incredible quality!"* — that
+        tells nobody anything, and it will be sent back.
+      placeholder: What comes back, in plain sentences. What it gets right, and how it gets things wrong.
     validations:
       required: true
+
+  - type: input
+    id: good
+    attributes:
+      label: What is it worth using for
+      description: A few words. The thing you would actually reach for it to do.
+      placeholder: ordinary moments, badly witnessed
+    validations:
+      required: false
+
+  - type: input
+    id: note
+    attributes:
+      label: One line, in passing
+      description: The sentence you would say about it to a friend. Up to 120 characters.
+      placeholder: Passes for a photograph until you look.
+    validations:
+      required: false
+
+  - type: input
+    id: home
+    attributes:
+      label: A page about it
+      description: Somewhere anybody can go and read for themselves. Must be https.
+      placeholder: https://civitai.com/models/28059
+    validations:
+      required: false
+
+  - type: input
+    id: colour
+    attributes:
+      label: The colour of your folder
+      description: >
+        **This is yours, and it is the only thing that will make your machine
+        recognisable at a glance.** One colour, written like `#6f9b62`, and the site
+        works out the whole folder from it: the flap, the body, the outline and a
+        readable label. Pick anything you like, as long as it is not already on the
+        shelf — amber, grey and sage are taken.
+
+
+        The *finishes* (the material of the folder) are reserved for the machines
+        this project publishes itself. That is how the shelf shows at a glance which
+        ones are the house's. Everyone gets the same folder and the same freedom of
+        colour.
+      placeholder: "#6f9b62"
+    validations:
+      required: false
+
+  - type: input
+    id: secs
+    attributes:
+      label: How long six pictures took, in seconds
+      description: >
+        Only if you watched a clock. **The site never prints a number nobody took.**
+        If you did not measure it, leave this empty: a record with no numbers is
+        perfectly fine, a record with invented ones is the one thing this project
+        will not carry.
+      placeholder: "46.6"
+    validations:
+      required: false
+
+  - type: input
+    id: on
+    attributes:
+      label: The day you measured that
+      description: Written as YYYY-MM-DD. Needed only if you filled in the line above.
+      placeholder: "2026-08-25"
+    validations:
+      required: false
 
   - type: textarea
     id: json
     attributes:
       label: The source, as JSON
       description: >
-        Follow [sources/SCHEMA.md](../blob/main/sources/SCHEMA.md). Paste the whole
-        file.
+        **Optional, and only for people who want it.** Leave it empty and the robot
+        builds the record from your answers above. Fill it in and it is used instead
+        of them, word for word. This is the route for a machine that is *not* on the
+        Horde and has its own address: see
+        [sources/SCHEMA.md](../blob/main/sources/SCHEMA.md).
       render: json
       placeholder: |
         {
           "spec": 1,
+          "kind": "horde",
           "id": "my-machine",
-          ...
+          "...": "see sources/SCHEMA.md"
         }
     validations:
-      required: true
+      required: false
 
   - type: textarea
     id: checker
     attributes:
       label: What the checker said
       description: >
-        Run `python3 tools/check-source.py sources/your-file.json` and paste the
-        output. It needs nothing installed.
+        Optional. If you wrote the JSON yourself, you can run
+        `python3 tools/check-source.py sources/your-file.json` and paste what it
+        said. It needs nothing installed. The robot runs the same checks anyway, so
+        this is only here if you want to save a round trip.
       render: shell
     validations:
-      required: true
+      required: false
 
   - type: checkboxes
     id: rules
@@ -80,7 +197,9 @@ body:
           required: true
         - label: It is reachable over https at a real domain name, not on my own machine.
           required: true
-        - label: I actually tried it, and the description above is what I saw.
+        - label: I actually tried it, and what I wrote above is what I saw.
+          required: true
+        - label: Any number I gave, I measured myself.
           required: true
         - label: I understand this is not live until the site is next deployed, and that nothing here gives me any rights over SIXFINGERS itself.
           required: true
@@ -89,6 +208,6 @@ body:
     id: anything
     attributes:
       label: Anything else worth knowing
-      description: How busy it gets, how long it takes, what it is bad at.
+      description: How busy it gets, how long it makes you wait, what it is bad at.
     validations:
       required: false

@@ -4,9 +4,15 @@ Thank you for wanting to. Two minutes of reading saves a rejected proposal.
 
 ## What is welcome
 
-**One thing only: a source.** A few lines of JSON describing a free picture
-generator the site does not know about yet. That is the whole surface area of this
-repository, and it is deliberate.
+**One thing only: a source.** A description of a free picture generator the site
+does not know about yet. That is the whole surface area of this repository, and it
+is deliberate.
+
+**You do not need to write any JSON to give us one.** The form asks the questions,
+a robot builds the record and shows it to you, and if you never open a text editor
+that is fine. The hard part here was never the file: it is saying which of the AI
+Horde's 163 models is worth a minute of somebody's life, and what it gets wrong.
+That judgement is the contribution.
 
 Also welcome: a correction to a source already here (an address that moved, a
 description that is wrong), a fix to the schema documentation, and a bug in
@@ -31,6 +37,25 @@ description that is wrong), a fix to the schema documentation, and a bug in
 
 ## How
 
+### The short way, and the one most people should take
+
+Open [a New source issue](../../issues/new?template=new-source.yml) and fill in the
+boxes: what it is called, the model name exactly as the AI Horde writes it, what it
+actually does to a picture, and the colour you want your folder to be. Leave the
+JSON box empty. About a minute later the robot answers with the finished record and
+everything that passed or failed.
+
+**The colour is yours.** Write one value like `#6f9b62` and the site builds the
+whole folder from it. The *finishes* — the material the folder is made of — are
+reserved for the machines this project publishes itself; that is how the shelf
+shows at a glance which ones are the house's, and it is the only thing not on
+offer. Everyone gets the same folder and the same freedom of colour.
+
+### The long way, if you would rather write the file
+
+This is the route for a machine that is **not** on the Horde and has its own
+address.
+
 ```bash
 git clone https://github.com/TristanUlrich/sixfingers-sources
 cd sixfingers-sources
@@ -42,8 +67,8 @@ python3 tools/check-source.py sources/my-machine.json
 The checker applies the same refusals as the site itself, so a source that passes
 locally will be accepted by the site. Name the file after the `id` inside it.
 
-Then either open [a New source issue](../../issues/new?template=new-source.yml), or
-send a pull request with **one source per pull request**.
+Then either paste it into the JSON box of the same issue form, or send a pull
+request with **one source per pull request**.
 
 ## What happens next
 
@@ -62,10 +87,11 @@ send a pull request with **one source per pull request**.
 
 ## You do not have to wait for anybody
 
-The same JSON works immediately in your own browser: in SIXFINGERS, open
+The record works immediately in your own browser: in SIXFINGERS, open
 **Community → Add a machine** and paste it. It stays in that browser, it is never
-uploaded, and it affects nobody but you. Propose it here when you think everybody
-should have it.
+uploaded, and it affects nobody but you. If you used the form, the robot's answer
+contains the finished record ready to copy. Propose it here when you think
+everybody should have it.
 
 ## Two things about rights
 
