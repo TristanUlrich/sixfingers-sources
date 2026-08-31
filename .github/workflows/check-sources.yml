@@ -36,32 +36,31 @@ jobs:
         with:
           persist-credentials: false
 
-      # LA PREMIERE CHOSE, ET PAS LA DEUXIEME. Le 25 aout 2026 les deux
-      # verificateurs ont diverge sans un bruit : le navigateur avait appris a
-      # lire une fiche Horde, celui-ci non, et la seule vraie fiche de l etagere
-      # etait refusee par la machine censee l accueillir. Trois poussees de
-      # suite, rien en rouge nulle part. Cette etape passe donc en premier :
-      # tant que les deux copies ne repondent pas la meme chose a la meme table,
-      # savoir que les fiches passent ne veut rien dire.
+      # FIRST, AND NOT SECOND. On 25 August 2026 the two validators drifted apart
+      # without a sound: the browser had learnt to read a record naming a model on
+      # the AI Horde, this one had not, and the only real record on the shelf was
+      # being refused by the machine that is supposed to welcome it. Three pushes
+      # in a row, nothing red anywhere. So this step runs first: until both copies
+      # answer the same table the same way, knowing that the records pass means
+      # nothing.
       - name: the two validators must still agree on the same table
         run: python3 tools/check-cases.py
 
-      # MEME DOCTRINE, DEUXIEME LISTE. Le garde-fou des mots est lui aussi ecrit
-      # deux fois : `js/words.js` dans le site, `tools/words.py` ici. La liste
-      # elle-meme n existe qu une fois, dans `tools/words.json`, et les deux
-      # lecteurs repondent a la meme table. La moitie la plus importante de cette
-      # table n est pas la liste d insultes : ce sont les vrais noms qui doivent
-      # PASSER, Scunthorpe, Niger, Negre, Kike. Un garde-fou qui refuse le nom de
-      # quelqu un fait bien plus de degats qu un mot qui passe.
+      # SAME DOCTRINE, SECOND LIST. The word guard is written twice as well:
+      # `js/words.js` in the site, `tools/words.py` here. The list itself exists
+      # only once, in `tools/words.json`, and both readers answer the same table.
+      # The most important half of that table is not the list of insults: it is the
+      # real names that must PASS, Scunthorpe, Niger, Negre, Kike. A guard that
+      # refuses somebody's name does far more harm than a word that gets through.
       - name: the word guard must judge the same on both sides
         run: python3 tools/check-words.py
 
-      # Le robot qui repond aux inconnus est la premiere chose qu ils rencontrent,
-      # et il ecrit en public sous le nom du projet. Il est donc tenu a une table
-      # ecrite, comme les validateurs : ce qu il repond a quinze propositions, et
-      # deux regles sur toutes — il ne reimprime jamais un mot de la liste, et il
-      # ne laisse jamais une cloture de bloc ouverte par laquelle une proposition
-      # ecrirait du Markdown a sa place.
+      # The robot that answers strangers is the first thing they meet, and it
+      # writes in public under the project's name. It is therefore held to a
+      # written table, like the validators: what it replies to fifteen proposals,
+      # plus two rules that hold on every case. It never reprints a word from the
+      # list, and it never leaves a fence open through which a proposal could write
+      # Markdown in its place.
       - name: the robot must answer proposals the way the table says
         run: python3 tools/check-proposals.py
 

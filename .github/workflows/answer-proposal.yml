@@ -1,50 +1,47 @@
-# LE ROBOT QUI RÉPOND AUX INCONNUS
+# THE ROBOT THAT ANSWERS STRANGERS
 #
 # ------------------------------------------------------------------------------
-# POURQUOI IL EXISTE
+# WHY IT EXISTS
 # ------------------------------------------------------------------------------
 #
-# `check-sources.yml` tourne sur des FICHIERS. Quelqu'un qui remplit le formulaire
-# « New picture machine » n'a envoyé aucun fichier : jusqu'ici, personne ne lui
-# répondait. Il écrivait dans le vide et attendait que Tristan passe.
+# `check-sources.yml` runs on FILES. Somebody who fills in the "New picture
+# machine" form has sent no file, so until 31 August 2026 nobody answered them at
+# all: they wrote into the void and waited for a human to walk past.
 #
-# C'était le trou le plus large qui restait dans la porte d'entrée, et c'est
-# d'autant plus bête que la réponse est déjà écrite : les règles existent, elles
-# sont publiques, et elles tiennent en une minute de machine. Ce robot lit la
-# fiche collée dans le formulaire, la passe au même vérificateur que tout le
-# reste, et répond en commentaire avec le détail de ce qui va et de ce qui ne va
-# pas. En public, donc sans que personne ait à discuter du verdict.
-#
-# ------------------------------------------------------------------------------
-# CE QU'IL NE FAIT PAS, ET C'EST LE PLUS IMPORTANT
-# ------------------------------------------------------------------------------
-#
-#   - il n'exécute JAMAIS ce qui est proposé. `json.loads` lit du texte, et les
-#     règles jugent l'objet obtenu. Rien n'est évalué, rien n'est importé, et
-#     aucune adresse portée par la fiche n'est appelée ;
-#   - il n'utilise PAS `pull_request_target`, qui donnerait un jeton d'écriture à
-#     du code venu d'une branche étrangère. C'est la faute classique des actions,
-#     et elle donne le dépôt à qui la trouve ;
-#   - il ne met JAMAIS le texte de l'inconnu dans une commande. Le titre, le corps
-#     et le pseudo passent par des variables d'environnement, jamais par
-#     `${{ ... }}` au milieu d'un `run:` — c'est là que se glisse une injection de
-#     script, et c'est exactement la faute que ce projet ne peut pas se permettre ;
-#   - il ne DÉCIDE de rien. Il dit si les règles passent. Tristan lit tout, et rien
-#     n'entre dans `sources/` sans qu'il fusionne à la main.
+# That was the widest hole left in the front door, and a silly one, because the
+# answer was already written. The rules exist, they are public, and they take a
+# machine one minute. This robot reads the record pasted into the form, puts it
+# through the same checker as everything else, and replies in a comment with what
+# passes and what does not. In public, so nobody has to argue about the verdict.
 #
 # ------------------------------------------------------------------------------
-# UN SEUL COMMENTAIRE, RÉÉCRIT
+# WHAT IT DOES NOT DO, AND THAT IS THE IMPORTANT HALF
 # ------------------------------------------------------------------------------
 #
-# Il se réveille aussi quand l'issue est MODIFIÉE, pour qu'on puisse corriger sa
-# fiche et être relu tout de suite. Mais il réécrit alors son propre commentaire au
-# lieu d'en ajouter un : une conversation avec quinze verdicts empilés est illisible,
-# et le dernier est le seul qui compte.
+#   - it NEVER runs what was proposed. `json.loads` reads text and the rules judge
+#     the object that comes out. Nothing is evaluated, nothing is imported, and no
+#     address carried by the record is ever called;
+#   - it does NOT use `pull_request_target`, which would hand a write token to code
+#     coming from a stranger's branch. That is the classic Actions mistake, and it
+#     gives the repository away to whoever finds it;
+#   - it NEVER puts a stranger's text inside a command. The title, the body and the
+#     account name travel as environment variables, never as `${{ ... }}` in the
+#     middle of a `run:` block. That is exactly where a script injection gets in;
+#   - it DECIDES nothing. It says whether the rules pass. Tristan reads everything,
+#     and nothing enters `sources/` unless he merges it by hand.
 #
-# Il ne reconnaît son commentaire qu'à DEUX conditions : la marque invisible, et
-# l'avoir écrit lui-même (`user.type == "Bot"`). Sans la seconde, n'importe qui
-# pourrait coller la marque dans un commentaire et faire réécrire le verdict par
-# le robot.
+# ------------------------------------------------------------------------------
+# ONE COMMENT, REWRITTEN
+# ------------------------------------------------------------------------------
+#
+# It also wakes up when the issue is EDITED, so a corrected record is read again
+# straight away. It then rewrites its own comment instead of adding another: a
+# conversation with fifteen stacked verdicts is unreadable, and only the last one
+# counts.
+#
+# It recognises its own comment by TWO things: an invisible marker, and having
+# written it itself (`user.type == "Bot"`). Without the second, anybody could paste
+# the marker into a comment and have the robot rewrite the verdict for them.
 
 name: answer proposals
 
@@ -52,55 +49,52 @@ on:
   issues:
     types: [opened, edited]
 
-# LE STRICT MINIMUM, ET UN BLOC `permissions` REMPLACE TOUT : ce qui n'est pas
-# écrit ici est retiré. Écrire des commentaires, lire le dépôt, et rien d'autre.
-# Pas de `contents: write`, donc ce robot ne peut rien pousser, jamais.
+# THE BARE MINIMUM, AND A `permissions:` BLOCK REPLACES EVERYTHING: whatever is not
+# written here is taken away. Write comments, read the repository, nothing else.
+# No `contents: write`, so this robot can never push anything, ever.
 permissions:
   issues: write
   contents: read
 
-# Une modification rapide de l'issue ne doit pas faire courir deux robots sur la
-# même conversation : le dernier a raison, les précédents sont annulés.
+# A quick succession of edits must not put two robots on the same conversation:
+# the last one is right, the earlier ones are cancelled.
 concurrency:
   group: answer-proposal-${{ github.event.issue.number }}
   cancel-in-progress: true
 
 jobs:
   answer:
-    # Seulement les propositions de machine : un rapport de bug ne se juge pas au
-    # vérificateur de fiches.
+    # Only machine proposals: a bug report is not judged by the record checker.
     #
-    # DEUX CONDITIONS, ET LA SECONDE EST LÀ PARCE QUE LA PREMIÈRE A DÉJÀ MENTI.
-    # Le formulaire déclare `labels: ["new source"]`, mais GitHub ne pose que les
-    # étiquettes QUI EXISTENT DÉJÀ dans le dépôt, sans rien dire quand elle manque.
-    # Elle manquait. La toute première proposition de l'histoire du dépôt est donc
-    # sortie sans étiquette, le robot a été « skipped », et rien n'était rouge nulle
-    # part. Les étiquettes ont été créées le 31 août 2026 — et on ne dépend plus
-    # d'elles seules : le titre « The source, as JSON » ne peut venir que de ce
-    # formulaire-là, et personne ne peut le supprimer par mégarde dans un réglage.
+    # TWO CONDITIONS, AND THE SECOND IS HERE BECAUSE THE FIRST ALREADY LIED ONCE.
+    # The form declares `labels: ["new source"]`, but GitHub only applies labels
+    # THAT ALREADY EXIST in the repository, and says nothing when one is missing.
+    # It was missing. The very first proposal in this repository's history therefore
+    # arrived with no label, the robot was skipped, and nothing was red anywhere.
+    # The labels were created on 31 August 2026, and the robot no longer depends on
+    # them alone: the heading "The source, as JSON" can only come from that form,
+    # and nobody can delete it by accident in a settings page.
     if: >-
       contains(github.event.issue.labels.*.name, 'new source') ||
       contains(github.event.issue.body, '### The source, as JSON')
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      # `persist-credentials: false` laisse le jeton du runner hors de la copie de
-      # travail : rien de ce qui est proposé ne se retrouve à côté d'un
-      # identifiant.
+      # `persist-credentials: false` keeps the runner's token out of the working
+      # copy, so nothing that was proposed ends up sitting next to a credential.
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
 
-      - name: Lire la proposition, et écrire la réponse
+      - name: Read the proposal, and write the answer
         env:
           ISSUE_BODY: ${{ github.event.issue.body }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
           ISSUE_AUTHOR: ${{ github.event.issue.user.login }}
         run: |
-          # Le corps de l'issue est écrit sur disque par python en lisant
-          # l'environnement, et jamais par `echo` : un corps qui contient des
-          # apostrophes, des retours à la ligne ou une fin de heredoc ne doit pas
-          # pouvoir toucher au shell.
+          # The issue body is written to disk by python reading the environment,
+          # never by `echo`: a body carrying quotes, newlines or a heredoc
+          # terminator must not be able to touch the shell.
           python3 - <<'PY'
           import os
           with open('proposal-body.md', 'w', encoding='utf-8') as f:
@@ -115,16 +109,16 @@ jobs:
           code=$?
           set -e
 
-          # 0 la fiche passe, 1 elle est refusée, 2 il n'y avait rien à juger.
-          # Tout le reste est une panne du vérificateur lui-même, et elle doit se
-          # voir en rouge plutôt que de sortir un verdict au hasard.
+          # 0 the record passes, 1 it is refused, 2 there was nothing to judge.
+          # Anything else is the checker itself falling over, and that must show up
+          # red rather than produce a verdict at random.
           if [ "$code" -gt 2 ]; then
             echo "the checker itself failed with code $code"
             exit 1
           fi
           echo "verdict: $code"
 
-      - name: Le dire, une fois
+      - name: Say it, once
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -146,8 +140,8 @@ jobs:
 
           if [ -n "$mine" ]; then
             gh api -X PATCH "repos/$REPO/issues/comments/$mine" --input payload.json > /dev/null
-            echo "commentaire $mine réécrit"
+            echo "rewrote comment $mine"
           else
             gh api -X POST "repos/$REPO/issues/$NUMBER/comments" --input payload.json > /dev/null
-            echo "commentaire écrit"
+            echo "wrote a comment"
           fi

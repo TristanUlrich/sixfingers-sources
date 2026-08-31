@@ -1,57 +1,56 @@
-# LE ROBOT QUI FABRIQUE LE FEED
+# THE ROBOT THAT BUILDS THE WALL
 #
-# À déposer dans le dépôt PUBLIC `TristanUlrich/sixfingers-sources`, à
-# `.github/workflows/feed.yml`. Il n'a rien à faire dans le dépôt du site.
-#
-# ------------------------------------------------------------------------------
-# CE QU'IL FAIT, ET POURQUOI IL EXISTE
-# ------------------------------------------------------------------------------
-#
-# Tristan veut que ce qui se passe sur GitHub apparaisse chez les gens : une
-# machine acceptée doit arriver sur l'écran des autres, avec ses votes et le
-# nombre de commentaires, sans redéployer le site.
-#
-# Le site ne peut pas interroger GitHub lui-même. Mesuré le 25 août 2026 :
-# l'API sans clé plafonne à **60 requêtes par heure et par adresse IP** — pas par
-# visiteur, par sortie réseau. Un lycée entier partage ce budget. Une page qui
-# demanderait à GitHub tomberait en panne aux heures de monde, par intermittence,
-# sans rien dire.
-#
-# Alors c'est CE robot qui interroge GitHub — il a un jeton, donc 5000 requêtes à
-# l'heure — et il écrit **un seul fichier**, `feed.json`, que le site lit sur
-# `raw.githubusercontent.com` : CORS ouvert, cache cinq minutes, aucun plafond qui
-# compte. Une requête par personne, quel que soit le nombre de machines.
+# It lives in the PUBLIC repository, at `.github/workflows/feed.yml`. It has no
+# business being in the site's repository.
 #
 # ------------------------------------------------------------------------------
-# QUAND IL SE RÉVEILLE
+# WHAT IT DOES, AND WHY IT EXISTS
 # ------------------------------------------------------------------------------
 #
-# À chaque fois que quelque chose bouge — une fiche fusionnée, une réaction, un
-# commentaire — et une fois par heure en filet de sécurité. Ce qui est publié
-# apparaît donc chez tout le monde en une minute environ.
+# What happens on GitHub has to show up on people's screens: an accepted machine
+# should appear for everybody, with its votes and its comment count, without
+# redeploying the site.
+#
+# The site cannot ask GitHub itself. Measured on 25 August 2026: the API without a
+# key is capped at **60 requests an hour PER IP ADDRESS**, which is not per visitor
+# but per exit point. A whole school shares that budget. A page that asked GitHub
+# at load time would fail at busy hours, intermittently, and silently.
+#
+# So THIS robot asks GitHub, with a token and therefore 5000 requests an hour, and
+# writes **one file**, `feed.json`, which the site reads from
+# `raw.githubusercontent.com`: CORS open, a five minute cache, no ceiling that
+# matters. One request per reader, however many machines there are.
 #
 # ------------------------------------------------------------------------------
-# CE QU'IL NE FAIT PAS, ET C'EST LE PLUS IMPORTANT
+# WHEN IT WAKES UP
 # ------------------------------------------------------------------------------
 #
-#   - il n'exécute JAMAIS ce qui est proposé. Il lit du JSON et compte des
-#     réactions. Rien de ce qui vient d'un inconnu n'est évalué, ni interprété ;
-#   - il n'utilise PAS `pull_request_target`, qui donnerait un jeton d'écriture à
-#     du code venu d'une branche étrangère. C'est la faute classique des actions,
-#     et elle donne le dépôt à qui la trouve ;
-#   - ses permissions sont **minimales** : lire le contenu, écrire le contenu (pour
-#     le seul `feed.json`), et rien d'autre ;
-#   - il ne décide de rien. Une fiche n'entre dans `sources/` que parce que
-#     Tristan a fusionné une proposition à la main. Le robot ne fait que compter.
+# Every time something moves: a record merged, a reaction, a comment. Plus once an
+# hour as a safety net. What gets published therefore appears for everybody in
+# about a minute.
 #
 # ------------------------------------------------------------------------------
-# ET CÔTÉ SITE
+# WHAT IT DOES NOT DO, AND THAT IS THE IMPORTANT HALF
 # ------------------------------------------------------------------------------
 #
-# Tout ce que ce fichier écrit **repasse par les 60 vérifications** dans le
-# navigateur, exactement comme une fiche collée à la main (`sources.feed()`), et
-# **rien n'est utilisé sans que la personne ait vu l'écran de consentement**. Ce
-# fichier raccourcit le chemin ; il n'ouvre pas une deuxième porte.
+#   - it NEVER runs what was proposed. It reads JSON and counts reactions. Nothing
+#     coming from a stranger is evaluated or interpreted;
+#   - it does NOT use `pull_request_target`, which would hand a write token to code
+#     from a stranger's branch. That is the classic Actions mistake, and it gives
+#     the repository away to whoever finds it;
+#   - its permissions are **minimal**: read contents, write contents (for
+#     `feed.json` alone), and nothing else;
+#   - it decides nothing. A record enters `sources/` only because a human merged a
+#     proposal by hand. The robot only counts.
+#
+# ------------------------------------------------------------------------------
+# AND ON THE SITE'S SIDE
+# ------------------------------------------------------------------------------
+#
+# Everything this file writes **goes back through the 60 checks** in the browser,
+# exactly like a record pasted by hand (`sources.feed()`), and **nothing is used
+# before the person has seen the consent screen**. This file shortens the road; it
+# does not open a second door.
 
 name: feed
 
@@ -64,17 +63,17 @@ on:
   discussion_comment:
     types: [created, deleted]
   schedule:
-    - cron: '17 * * * *'      # une fois par heure, en filet
+    - cron: '17 * * * *'      # once an hour, as a safety net
   workflow_dispatch:
 
-# LE STRICT MINIMUM, ET PAS MOINS QUE LE MINIMUM.
-# Un bloc `permissions` REMPLACE les permissions par défaut : tout ce qui n'y est
-# pas écrit est retiré. La première version ne portait que `contents: write`, donc
-# le robot n'avait pas le droit de LIRE les discussions — la requête GraphQL
-# échouait en silence, le `except` la rattrapait, et le feed sortait parfaitement
-# valide avec zéro publication et zéro vote. Une panne muette, la pire espèce.
-# `discussions: read` est donc là, et c'est tout ce qui a été ajouté : toujours
-# pas d'`issues: write`, toujours pas de `pull-requests: write`.
+# THE BARE MINIMUM, AND NOT ONE PERMISSION LESS.
+# A `permissions:` block REPLACES the defaults: whatever is not written here is
+# taken away. The first version carried only `contents: write`, so the robot was
+# not allowed to READ the discussions. The GraphQL request failed silently, the
+# `except` caught it, and the feed came out perfectly valid with zero posts and
+# zero votes. A silent failure, the worst kind. `discussions: read` is therefore
+# here, and it is all that was added: still no `issues: write`, still no
+# `pull-requests: write`.
 permissions:
   contents: write
   discussions: read
@@ -89,7 +88,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Compter les votes et rassembler les fiches
+      - name: Count the votes and gather the records
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -108,28 +107,29 @@ jobs:
 
           owner, name = REPO.split('/')
 
-          # Les discussions, leurs réactions et leur nombre de commentaires.
-          # Une seule requête pour cent : c'est tout l'intérêt de GraphQL ici.
-          # `bodyText` et pas `body` : le TEXTE, pas le Markdown. Le site ne rend
-          # jamais de balisage venu d'un inconnu, donc autant ne pas le transporter.
-          # Et un extrait, pas le message entier : le fichier doit rester petit,
-          # et on lit la suite chez GitHub.
-          # `isMinimized` EST LE CHAMP QUI MANQUAIT, ET C'ETAIT LE TROU.
-          # Masquer un commentaire sur GitHub — « Hide as spam », « Hide as abusive » —
-          # met `isMinimized` a vrai et ne supprime rien. Le robot ne le lisait pas :
-          # Tristan pouvait donc moderer sur GitHub, voir le commentaire disparaitre
-          # de la page GitHub, et le site continuait de l'afficher a tout le monde.
-          # Une moderation qui a l'air d'avoir marche et qui n'a rien fait, c'est la
-          # panne la plus chere de ce projet, et celle-la aurait porte sur des mots
-          # ecrits par des inconnus.
+          # The discussions, their reactions and their comment counts.
+          # One request instead of a hundred: that is the whole point of GraphQL here.
+          # `bodyText` and not `body`: the TEXT, not the Markdown. The site never
+          # renders markup written by a stranger, so there is no reason to carry it.
+          # And an extract, not the whole message: this file has to stay small, and
+          # the rest is read on GitHub.
           #
-          # On demande cinq de plus que les trois qu'on garde, parce que les
-          # masques se retirent APRES coup : sans marge, cacher un commentaire
-          # ferait disparaitre une ligne au lieu de la remplacer par la suivante.
+          # `isMinimized` IS THE FIELD THAT WAS MISSING, AND IT WAS THE HOLE.
+          # Hiding a comment on GitHub, with "Hide as spam" or "Hide as abusive",
+          # sets `isMinimized` to true and deletes nothing. The robot did not read
+          # it, so a comment could be moderated on GitHub, vanish from the GitHub
+          # page, and still be shown to everybody by the site. Moderation that looks
+          # like it worked and did nothing is the most expensive failure in this
+          # project, and this one would have applied to words written by strangers.
           #
-          # `avatarUrl` est parti : le site dessine le visage a partir du pseudo.
-          # Il etait charge depuis avatars.githubusercontent.com, ce que le CSP
-          # interdit, et le garder aurait dit a GitHub qui lit le mur.
+          # Five more comments are asked for than the three that are kept, because
+          # hiding happens AFTER the fact: without that margin, hiding one comment
+          # would leave a gap instead of promoting the next one.
+          #
+          # `avatarUrl` is gone: the site draws the face from the account name. It
+          # used to be loaded from avatars.githubusercontent.com, which the site's
+          # Content Security Policy forbids, and keeping it would have told GitHub
+          # who reads the wall.
           Q = """
           query($owner:String!, $name:String!) {
             repository(owner:$owner, name:$name) {
@@ -151,7 +151,7 @@ jobs:
               data = gh(Q, owner=owner, name=name)
               nodes = data['data']['repository']['discussions']['nodes']
           except Exception as e:
-              print('pas de discussions lisibles:', e)
+              print('no readable discussions:', e)
               nodes = []
 
           def clip(t, n):
@@ -159,19 +159,19 @@ jobs:
               return t[:n]
 
           # ------------------------------------------------------------------
-          # L'INTERRUPTEUR, ET IL NE SAIT QUE CACHER
+          # THE OFF SWITCH, AND IT ONLY KNOWS HOW TO HIDE
           # ------------------------------------------------------------------
           #
-          # `moderation.json` a la racine du depot. Tristan y met un numero de
-          # discussion ou un pseudo, il committe, et c'est parti du site a la
-          # minute suivante. Pas de deploiement, pas de mot de passe, pas moi.
+          # `moderation.json`, at the root of this repository. Put a discussion
+          # number or an account name in it, commit, and it is gone from the site
+          # within the minute. No deployment, no password, nobody else involved.
           #
-          # Il ne peut RIEN AJOUTER. C'est la borne posee dans DECISIONS.md : un
-          # fichier qui peut faire apparaitre du texte sur l'ecran des gens est un
-          # fichier qu'il faut garder comme un secret. Celui-ci ne peut que
-          # retrancher, donc le pire qu'une erreur puisse faire est un mur vide.
+          # It can ADD NOTHING. That is the boundary set in the project's decisions:
+          # a file that can make text appear on somebody's screen is a file that has
+          # to be guarded like a secret. This one can only take away, so the worst a
+          # mistake can do is an empty wall.
           #
-          # Il est FACULTATIF : s'il n'existe pas, on ne cache rien et on le dit.
+          # It is OPTIONAL: with no file, nothing is hidden, and the log says so.
           hidden_n, hidden_who = set(), set()
           try:
               mod = json.loads(pathlib.Path('moderation.json').read_text())
@@ -179,24 +179,24 @@ jobs:
                           if isinstance(x, (int, str)) and str(x).isdigit()}
               hidden_who = {str(x).lower() for x in (mod.get('hidden_logins') or [])
                             if isinstance(x, str) and x.strip()}
-              print('moderation :', len(hidden_n), 'discussion(s),',
-                    len(hidden_who), 'pseudo(s) caches')
+              print('moderation:', len(hidden_n), 'discussion(s),',
+                    len(hidden_who), 'account name(s) hidden')
           except FileNotFoundError:
-              print('moderation : pas de fichier, rien de cache')
+              print('moderation: no file, nothing hidden')
           except Exception as e:
-              # Un fichier illisible ne doit pas cacher tout le mur par accident,
-              # mais il ne doit pas non plus passer inapercu.
-              print('moderation : FICHIER ILLISIBLE, rien de cache :', e)
+              # An unreadable file must not hide the whole wall by accident, and
+              # it must not go unnoticed either.
+              print('moderation: FILE UNREADABLE, nothing hidden:', e)
 
-          # Une discussion appartient à une fiche si son titre est « source: <id> ».
-          # Toutes les autres sont des PUBLICATIONS du fil.
+          # A discussion belongs to a record when its title reads "source: <id>".
+          # Every other discussion is a POST on the wall.
           def keep_last(nodes_):
-              """Les trois derniers commentaires AFFICHABLES, pas les trois derniers.
+              """The last three SHOWABLE comments, not the last three.
 
-              Un commentaire masque sur GitHub ne doit pas voyager, et un pseudo
-              coupe non plus. On en demande huit et on en garde trois : sans cette
-              marge, cacher un commentaire ferait un trou au lieu d'une ligne de
-              moins."""
+              A comment hidden on GitHub must not travel, and neither must anything
+              written by a hidden account. Eight are asked for and three are kept:
+              without that margin, hiding one comment would leave a gap instead of
+              one line fewer."""
               global cache_c
               out = []
               for c in nodes_:
@@ -222,8 +222,8 @@ jobs:
               author = d.get('author') or {}
               cm = d.get('comments') or {}
 
-              # L'interrupteur, d'abord : une discussion cachee ne laisse rien
-              # derriere elle, pas meme son compte de votes.
+              # The off switch first: a hidden discussion leaves nothing behind,
+              # not even its vote count.
               who = (author.get('login') or '').lower()
               if d.get('number') in hidden_n or (who and who in hidden_who):
                   cache_d += 1
@@ -237,10 +237,9 @@ jobs:
                       'comments': cm.get('totalCount', 0),
                       'discuss': d['url'],
                   }
-                  # Une fiche a AUSSI sa place dans le fil : « quelqu'un a propose
-                  # une machine » est exactement le genre de nouvelle qu'on vient
-                  # lire. Elle y entre avec son type, pour que le site la dessine
-                  # autrement.
+                  # A record belongs on the wall TOO: "somebody proposed a machine" is
+                  # exactly the kind of news people come for. It enters with its type, so
+                  # that the site can draw it differently.
                   kind = 'source'
               else:
                   kind = 'post'
@@ -260,11 +259,10 @@ jobs:
               })
 
           items = []
-          # Le fichier d'exemple est une DOCUMENTATION, pas une machine : son
-          # adresse ne repond pas, et il est la pour montrer la forme d'une fiche.
-          # Le laisser entrer dans le feed le ferait apparaitre comme une vraie
-          # proposition, et la premiere personne qui appuierait sur « Try it »
-          # aurait raison de croire que le catalogue est cassé.
+          # The example file is DOCUMENTATION, not a machine: its address does not
+          # answer, and it exists to show the shape of a record. Letting it into the
+          # feed would make it look like a real proposal, and the first person to
+          # press "Try it" would be right to think the catalogue was broken.
           for f in sorted(pathlib.Path('sources').glob('*.json')):
               if f.name.startswith('example-'):
                   print('exemple ignore:', f.name)
@@ -276,7 +274,7 @@ jobs:
                   continue
               sid = src.get('id') or f.stem
               v = by_id.get(sid, {})
-              # `by` : le dernier à avoir touché le fichier. Factuel, pas déclaratif.
+              # `by`: whoever last touched the file. A fact, not a claim.
               try:
                   who = subprocess.check_output(
                       ['git', 'log', '-1', '--format=%an', '--', str(f)]).decode().strip()
@@ -313,8 +311,8 @@ jobs:
           git config user.name  "sixfingers-bot"
           git config user.email "bot@users.noreply.github.com"
           git add feed.json
-          # `--quiet --exit-code` : pas de commit vide toutes les heures, ce qui
-          # remplirait l'historique d'un bruit qui cacherait les vrais changements.
+          # `--quiet --exit-code`: no empty commit every hour, which
+          # would fill the history with noise and bury the real changes.
           if git diff --cached --quiet; then
             echo "rien n'a bougé"
           else
