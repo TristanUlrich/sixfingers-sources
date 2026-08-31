@@ -47,7 +47,12 @@ send a pull request with **one source per pull request**.
 
 ## What happens next
 
-1. The checker runs.
+1. **The checker runs, and it answers you.** About a minute after you open the
+   issue, a comment says whether the record passes and, if it does not, every rule
+   it breaks in plain words. Fix it and edit the issue: the checker looks again and
+   rewrites its own comment, so nobody has to reopen anything and the thread does
+   not fill up with verdicts. It judges the record and never the person, and it
+   decides nothing.
 2. Tristan reads it. He does not write code, so a proposal that cannot be understood
    from its own description will be asked about rather than guessed at.
 3. If it is accepted, it is merged — and it goes live **only when the site is next
@@ -58,7 +63,7 @@ send a pull request with **one source per pull request**.
 ## You do not have to wait for anybody
 
 The same JSON works immediately in your own browser: in SIXFINGERS, open
-**Community → Add a source** and paste it. It stays in that browser, it is never
+**Community → Add a machine** and paste it. It stays in that browser, it is never
 uploaded, and it affects nobody but you. Propose it here when you think everybody
 should have it.
 
