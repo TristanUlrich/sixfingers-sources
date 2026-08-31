@@ -145,26 +145,26 @@ def uses(node, name):
 HORDE_KEYS = {'spec', 'kind', 'id', 'name', 'set', 'model', 'note', 'what',
                'good', 'home', 'colour', 'finish', 'measured'}
 
-# LA MATIERE DU DOSSIER, ET C'EST ELLE QUI DIT LE METIER.
+# THE SURFACE OF THE FOLDER, AND IT IS WHAT SAYS WHAT THE MACHINE DOES.
 #
-# Pas une icone, pas un mot : la surface entiere. Une machine qui dessine rend un
-# dossier qui a l'air dessine ; une machine qui photographie rend un dossier qui a
-# le grain d'un tirage.
+# Not an icon, not a word: the whole face. A machine that draws gives you a folder
+# that looks drawn; a machine that photographs gives you a folder with the grain of
+# a print.
 #
-# Sept traitements, pas un de plus. Liste fermee : on ne reconnait rien dans un
-# vocabulaire que chacun invente. Le miroir de FOLDER_GRAIN dans js/icons.js.
+# Seven finishes, not one more. A closed list, because nobody recognises a
+# vocabulary everyone invents. It mirrors FOLDER_GRAIN in the site's js/icons.js.
 #
-#   sunburst   l'ordinaire, aucune matiere
-#   film       le grain d'un tirage        (photographie)
-#   ink        le grain d'un papier        (dessin, peinture)
-#   mirror     un eclat, aucune trame      (net, moderne)
-#   frost      une trame cristalline       (froid, precis)
-#   overprint  une surimpression decalee   (imprevisible)
-#   strata     des couches empilees        (fusion)
+#   sunburst   the ordinary one, no surface at all
+#   film       the grain of a print         (photographic)
+#   ink        the grain of drawing paper   (drawing, painting)
+#   mirror     one clean highlight, no mesh (sharp, modern)
+#   frost      a crystalline mesh           (cold, precise)
+#   overprint  the same surface a hair off  (unpredictable)
+#   strata     pale layers, stacked         (a merge of models)
 FINISHES = ['sunburst', 'film', 'ink', 'mirror', 'frost', 'overprint', 'strata']
 
-# Ce qui n'a aucun sens sur une fiche Horde, et dont la presence est le signe
-# qu'on essaie de faire passer une adresse pour un nom de modele.
+# What makes no sense on a Horde record, and whose presence is the sign that
+# somebody is trying to pass an address off as a model name.
 NOT_HORDE = ['endpoint', 'method', 'headers', 'body', 'query', 'response',
              'size', 'count', 'timeoutMs']
 
@@ -211,8 +211,8 @@ def validate_horde(raw):
     text('name', 1, LIMITS['nameLen'])
     text('set', 1, LIMITS['setLen'])
 
-    # Le nom du modele tel que la Horde l ecrit : sensible a la casse et aux
-    # apostrophes, donc on le prend ou on le refuse, on ne le nettoie jamais.
+    # The model name exactly as the Horde writes it: case and apostrophes matter,
+    # so it is taken as it is or refused, and never cleaned up.
     model = text('model', 1, 120)
     if model and re.search(r'[\u0000-\u001f]', model):
         bad('the model name carries control characters')
@@ -237,8 +237,8 @@ def validate_horde(raw):
     if 'finish' in raw and raw.get('finish') not in FINISHES:
         bad('the finish must be one of: ' + ', '.join(FINISHES))
 
-    # `measured` : des chiffres, et seulement des chiffres. C est la regle
-    # « rien d invente » appliquee a ce que les autres ecrivent.
+    # `measured`: numbers, and only numbers. It is the "nothing invented" rule
+    # applied to what other people write.
     if 'measured' in raw:
         m = raw.get('measured')
         if not isinstance(m, dict):

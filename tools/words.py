@@ -65,7 +65,7 @@ _LIST = os.path.join(_HERE, 'words.json')
 
 _cache = {}
 
-_MIN_FOLD = 5          # en dessous, la forme repliee attrape trop de mots ordinaires
+_MIN_FOLD = 5          # below this, the folded pass catches too many ordinary words
 
 
 def load(path=_LIST):
@@ -75,25 +75,34 @@ def load(path=_LIST):
             raw = json.load(f)
         entries = []
         for item in raw.get('banned') or []:
-            if isinstance(item, str):           # spec 1, gardee pour ne rien casser
+            if isinstance(item, str):           # spec 1, kept so nothing breaks
                 item = {'w': item, 'match': 'anywhere'}
             entries.append({
                 'w': str(item.get('w') or ''),
                 'match': 'word' if item.get('match') == 'word' else 'anywhere',
                 'kind': str(item.get('kind') or 'hate'),
                 'lang': str(item.get('lang') or ''),
+                'level': 'review' if item.get('level') == 'review' else 'refuse',
+                'id': str(item.get('id') or ''),
             })
         _cache[path] = {
             'leet': dict(raw.get('leet') or {}),
             'confusables': dict(raw.get('confusables') or {}),
             'banned': entries,
-            # LES ENTREES SONT NORMALISEES COMME LE TEXTE, SINON ELLES NE SE
-            # TROUVENT PAS. Mesure le 31 aout : chernojopyi porte un i bref, que la
-            # decomposition ramene a un i simple dans le texte mais pas dans la liste,
-            # et l entree ne servait a rien sans que rien ne le dise.
-            'script': [{'w': script(s.get('w') or ''), 'kind': str(s.get('kind') or 'hate')}
+            # THE ENTRIES ARE NORMALISED LIKE THE TEXT, OR THEY ARE NEVER FOUND.
+            # Measured on 31 August 2026: one Cyrillic entry carries a breve, which
+            # decomposition strips from the text but not from the list, so the entry
+            # was doing nothing and nothing said so.
+            'script': [{'w': script(s.get('w') or ''), 'kind': str(s.get('kind') or 'hate'),
+                        'level': 'review' if s.get('level') == 'review' else 'refuse',
+                        'id': str(s.get('id') or '')}
                        for s in (raw.get('script') or [])],
-            'codes': [str(c).lower() for c in (raw.get('codes') or [])],
+            'codes': [{'w': str(c.get('w') if isinstance(c, dict) else c).lower(),
+                       'kind': str(c.get('kind') if isinstance(c, dict) else 'nazi'),
+                       'level': ('review' if isinstance(c, dict) and c.get('level') == 'review'
+                                 else 'refuse'),
+                       'id': str(c.get('id') if isinstance(c, dict) else '')}
+                      for c in (raw.get('codes') or [])],
             'allowed': [str(w) for w in (raw.get('allowed') or [])],
         }
     return _cache[path]
@@ -179,6 +188,20 @@ def _slogan_hit(text, seams, needle):
     return False
 
 
+def _verdict(which, entry):
+    """The verdict, and NEVER the word that was found.
+
+    `level` is 'refuse' when the entry is unambiguous, and 'review' when it collides
+    with something ordinary and a person has to decide. `id` names the entry without
+    reprinting it, for a log or a label.
+    """
+    return {'pass': which, 'kind': entry['kind'], 'level': entry['level'],
+            'id': entry.get('id', '')}
+
+
+MAX_TEXT = 4096          # past this only the beginning is looked at: see check()
+
+
 def check(name, data=None):
     """None when there is nothing to refuse, which is almost always.
 
@@ -187,6 +210,10 @@ def check(name, data=None):
     the project's own voice is the thing being avoided.
     """
     data = data or load()
+    # A CEILING BEFORE ANY WORK. Normalising a megabyte of text is expensive, and
+    # a name field or a record has no reason to be that long. What is past the
+    # ceiling is not judged: the length limits elsewhere are what refuse it.
+    name = str(name or '')[:MAX_TEXT]
     raw = bare(name, data)
     fold = folded(name, data)
     excused = any(ok in raw for ok in data['allowed'])
@@ -199,15 +226,15 @@ def check(name, data=None):
         if not bw:
             continue
         if ' ' in b['w']:
-            # un slogan : des mots entiers a la suite, jamais un morceau de mot
+            # a slogan: whole words in a row, never a piece of a word
             if _slogan_hit(glued, seams, bw):
-                return {'pass': 'slogan', 'kind': b['kind']}
+                return _verdict('slogan', b)
             continue
         if bw in raw:
-            return {'pass': 'bare', 'kind': b['kind']}
+            return _verdict('bare', b)
         fw = folded(b['w'], data)
         if len(fw) >= _MIN_FOLD and not excused and fw in fold:
-            return {'pass': 'folded', 'kind': b['kind']}
+            return _verdict('folded', b)
 
     toks = tokens(name)
     if toks:
@@ -222,15 +249,15 @@ def check(name, data=None):
                 continue
             for i, tb in enumerate(bares):
                 if tb == bw:
-                    return {'pass': 'word', 'kind': b['kind']}
+                    return _verdict('word', b)
                 if len(bw) >= _MIN_FOLD and folds[i] == fw and not any(
                         ok in tb for ok in data['allowed']):
-                    return {'pass': 'word', 'kind': b['kind']}
+                    return _verdict('word', b)
 
-        # LES CODES SE CHERCHENT COMME LES SLOGANS. 14/88 et 14 88 sont deux mots,
-        # 1488 en est un seul, et les trois doivent se valoir. On recolle donc les
-        # chiffres en gardant les coutures : le code doit commencer et finir sur une,
-        # ce qui laisse 14880 et 31488 tranquilles.
+        # CODES ARE MATCHED LIKE SLOGANS. 14/88 and 14 88 are two words, 1488 is
+        # one, and all three must count the same. The digits are therefore glued
+        # back together with the seams kept: the code has to start and end on one,
+        # which leaves 14880 and 31488 alone.
         digits, seams, at = [], {0}, 0
         for tk in toks:
             if tk.isdigit():
@@ -238,23 +265,23 @@ def check(name, data=None):
                 at += len(tk)
                 seams.add(at)
             else:
-                # un mot qui n est pas un nombre coupe la suite de chiffres, et la
-                # couture doit etre posee la aussi, sinon gamer 1488 passe tout droit
+                # a word that is not a number breaks the run of digits, and a seam
+                # has to be laid there too, or "gamer 1488" walks straight past
                 digits.append('\x00')
                 at += 1
                 seams.add(at)
         glued_digits = ''.join(digits)
         for code in data['codes']:
-            flat = ''.join(c for c in code if c.isdigit())
+            flat = ''.join(c for c in code['w'] if c.isdigit())
             if flat and _slogan_hit(glued_digits, seams, flat):
-                return {'pass': 'code', 'kind': 'nazi'}
+                return _verdict('code', code)
 
     if data['script']:
         sc = script(name)
         if sc:
             for s in data['script']:
                 if s['w'] and s['w'] in sc:
-                    return {'pass': 'script', 'kind': s['kind']}
+                    return _verdict('script', s)
 
     return None
 
@@ -273,8 +300,9 @@ def main(argv):
     worst = 0
     for name in argv[1:]:
         hit = check(name)
-        print('%s %s%s' % ('refused' if hit else 'fine   ', name,
-                           ' (%s pass, %s)' % (hit['pass'], hit['kind']) if hit else ''))
+        print('%-8s %s%s' % (hit['level'] if hit else 'fine', name,
+                             '  (%s pass, %s, %s)' % (hit['pass'], hit['kind'], hit['id'])
+                             if hit else ''))
         if hit:
             worst = 1
     return worst

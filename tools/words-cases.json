@@ -47,16 +47,9 @@
   "kill all jews",
   "kill all muslims",
   "kill all blacks",
-  "coon",
-  "gook",
-  "chink",
-  "beaner",
   "paki",
-  "redskin",
-  "redskins",
   "kanake",
   "maricon",
-  "tranny",
   "N1GG3R",
   "n199er",
   "Ni66er",
@@ -85,12 +78,18 @@
   "хачик",
   "черножопый",
   "Он жид",
-  "1488",
-  "14/88",
-  "gamer 1488",
   "BOUGNOULE",
   "Bougnoulé",
-  "MORT AUX JUIFS"
+  "MORT AUX JUIFS",
+  "white ᏢOWEᏒ",
+  "ᏔHITE POWER",
+  "wհite power",
+  "ѕіеg hеіl",
+  "rасе wаr",
+  "ѕhemale",
+  "ｈｅｉｌ ｈｉｔｌｅｒ",
+  "𝓯𝓪𝓰𝓰𝓸𝓽",
+  "υntermensch"
  ],
  "must_pass": [
   "Scunthorpe",
@@ -274,69 +273,94 @@
   "Dreamshaper",
   "1487",
   "14 89",
-  "2014 88"
+  "2014 88",
+  "Ольга",
+  "Дмитрий",
+  "Ελένη",
+  "Γιώργος",
+  "Արամ",
+  "ᏣᎳᎩ",
+  "Владимир Иванов",
+  "ΑΘΗΝΑ",
+  "transmission fluid"
  ],
  "machinery": [
   {
-   "why": "la normalisation de compatibilite ramene les lettres pleine chasse",
+   "why": "compatibility normalisation brings fullwidth letters back",
    "form": "bare",
    "input": "ｎｉｇｇｅｒ",
    "want": "nigger"
   },
   {
-   "why": "et les lettres mathematiques",
+   "why": "and mathematical letters",
    "form": "bare",
    "input": "𝑛𝑖𝑔𝑔𝑒𝑟",
    "want": "nigger"
   },
   {
-   "why": "les sosies cyrilliques reviennent au latin",
+   "why": "Cyrillic lookalikes come back to latin",
    "form": "bare",
    "input": "nіggеr",
    "want": "nigger"
   },
   {
-   "why": "les accents sont retires",
+   "why": "accents are removed",
    "form": "bare",
    "input": "Zoé",
    "want": "zoe"
   },
   {
-   "why": "un chiffre inconnu n efface jamais le mot",
+   "why": "an unknown digit never erases the word",
    "form": "bare",
    "input": "Ni66er",
    "want": "nigger"
   },
   {
-   "why": "la forme nue garde les repetitions",
+   "why": "the bare form keeps repeats",
    "form": "bare",
    "input": "niiigger",
    "want": "niiigger"
   },
   {
-   "why": "la forme repliee les ramene a une",
+   "why": "the folded form collapses them to one",
    "form": "folded",
    "input": "niiigger",
    "want": "niger"
   },
   {
-   "why": "les chiffres deviennent des lettres",
+   "why": "digits become letters",
    "form": "bare",
    "input": "n1gg3r",
    "want": "nigger"
   },
   {
-   "why": "rien que de la ponctuation ne donne rien",
+   "why": "nothing but punctuation gives nothing",
    "form": "bare",
    "input": "---",
    "want": ""
   },
   {
-   "why": "un caractere invisible ne coupe pas le mot",
+   "why": "an invisible character does not break the word",
    "form": "bare",
    "input": "ni​gger",
    "want": "nigger"
   }
  ],
- "known_collisions": "Three cases were REMOVED from must_pass on 31 August 2026 rather than weaken the list: a chink of light, born in 1488, and the old name of a football team. They are refused, it is deliberate, and it is written in words.json under known_collisions."
+ "known_collisions": "Three cases were REMOVED from must_pass on 31 August 2026 rather than weaken the list: a chink of light, born in 1488, and the old name of a football team. They are refused, it is deliberate, and it is written in words.json under known_collisions.",
+ "must_review": [
+  "coon",
+  "gook",
+  "chink",
+  "beaner",
+  "redskin",
+  "redskins",
+  "tranny",
+  "1488",
+  "14/88",
+  "gamer 1488",
+  "redskin potatoes",
+  "a chink in the armour",
+  "the tranny needs a rebuild"
+ ],
+ "levels": "must_refuse holds what a machine may refuse on its own. must_review holds what it may only HOLD FOR A PERSON, because the entry collides with something ordinary. Splitting the two is what lets the list be wide without the cost of a wrong refusal."
 }

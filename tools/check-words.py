@@ -26,6 +26,7 @@ Exit code 0 means the python side answers the table correctly.
 
 import importlib.util
 import json
+import time as _time
 import pathlib
 import sys
 
@@ -45,6 +46,7 @@ def main():
         return 2
 
     refuse = doc.get('must_refuse') or []
+    review = doc.get('must_review') or []
     allow = doc.get('must_pass') or []
     mech = doc.get('machinery') or []
     if not refuse or not allow:
@@ -57,10 +59,26 @@ def main():
     for name in refuse:
         total += 1
         got = words.check(name)
-        if got:
+        if got and got['level'] == 'refuse':
             print('    ok      %-24s refused on the %s pass' % (json.dumps(name), got['pass']))
+        elif got:
+            wrong.append((name, 'was only held, and it is unambiguous enough to refuse'))
+            print('    WRONG   %s was only held' % json.dumps(name))
         else:
             wrong.append((name, 'should have been refused, and was let through'))
+            print('    WRONG   %s was let through' % json.dumps(name))
+
+    print('  these must be HELD FOR A PERSON, not refused by a machine')
+    for name in review:
+        total += 1
+        got = words.check(name)
+        if got and got['level'] == 'review':
+            print('    ok      %-26s held (%s pass)' % (json.dumps(name), got['pass']))
+        elif got:
+            wrong.append((name, 'was refused outright, and it should only be held'))
+            print('    WRONG   %s was refused outright' % json.dumps(name))
+        else:
+            wrong.append((name, 'was let through, and it should be held'))
             print('    WRONG   %s was let through' % json.dumps(name))
 
     print('  these must pass: real names, and what people actually type')
@@ -85,11 +103,12 @@ def main():
             wrong.append((case.get('why', ''), 'wanted "%s", got "%s"' % (case.get('want'), got)))
             print('    WRONG   %s' % case.get('why', ''))
 
-    # ----------------------------------------------------------------- l audit
-    # Le tableau ci-dessus prouve que le garde-fou repond bien AUX CAS ECRITS. Il ne
-    # prouve pas qu une entree ajoutee un soir sert a quelque chose : une entree mal
-    # ecrite, ou plus courte que ce que sa passe autorise, dort dans la liste sans que
-    # rien ne soit rouge. C est exactement la famille de panne qui a coute cher ici.
+    # ----------------------------------------------------------------- the audit
+    # The table above proves the guard answers THE WRITTEN CASES correctly. It does
+    # not prove that an entry added one evening does anything at all: a misspelt
+    # entry, or one shorter than its pass allows, sleeps in the list with nothing
+    # red anywhere. That is exactly the family of failure that has cost this project
+    # the most.
     print('  the list itself')
     data = words.load()
     for b in data['banned']:
@@ -117,6 +136,40 @@ def main():
         else:
             wrong.append((c, 'code catches nothing'))
             print('    WRONG   a code catches nothing')
+
+    # ------------------------------------------------ the project's own vocabulary
+    # A word list can be green on its own cases and still refuse half of a real text.
+    # So it is run over EVERYTHING this repository says in public: the README, the
+    # rules, the schema, the records. Zero refusals expected.
+    print('  the repository\'s own public words')
+    import re as _re
+    seen_words, refused_here = set(), []
+    for f in sorted(HERE.parent.glob('*.md')) + sorted((HERE.parent / 'sources').glob('*')):
+        try:
+            text = f.read_text(encoding='utf-8')
+        except (OSError, UnicodeDecodeError):
+            continue
+        for w in _re.findall(r"[A-Za-z][A-Za-z'-]{2,}", text):
+            seen_words.add(w)
+    for w in sorted(seen_words):
+        if words.check(w):
+            refused_here.append(w)
+    total += 1
+    if refused_here:
+        wrong.append(('the repository\'s own text', 'the guard refuses %d of its own words: %s'
+                      % (len(refused_here), ', '.join(refused_here[:6]))))
+        print('    WRONG   the guard refuses %d words of this repository' % len(refused_here))
+    else:
+        print('    ok      %d distinct words in this repository, none refused' % len(seen_words))
+
+    # ------------------------------------------------------------------ the cost
+    start = _time.perf_counter()
+    for _ in range(200):
+        words.check('Deliberate, a machine that draws')
+    each = (_time.perf_counter() - start) / 200 * 1000
+    print('  the cost')
+    print('    ok      %.2f ms for one ordinary sentence, %d entries, %d lookalikes'
+          % (each, len(data['banned']), len(data['confusables'])))
 
     print()
     if not wrong:
