@@ -13,9 +13,7 @@ on:
   pull_request:
     paths:
       - 'sources/**'
-      - 'tools/check-source.py'
-      - 'tools/check-cases.py'
-      - 'tools/cases.json'
+      - 'tools/**'
       - '.github/workflows/check-sources.yml'
   push:
     branches: [main]
@@ -47,6 +45,25 @@ jobs:
       # savoir que les fiches passent ne veut rien dire.
       - name: the two validators must still agree on the same table
         run: python3 tools/check-cases.py
+
+      # MEME DOCTRINE, DEUXIEME LISTE. Le garde-fou des mots est lui aussi ecrit
+      # deux fois : `js/words.js` dans le site, `tools/words.py` ici. La liste
+      # elle-meme n existe qu une fois, dans `tools/words.json`, et les deux
+      # lecteurs repondent a la meme table. La moitie la plus importante de cette
+      # table n est pas la liste d insultes : ce sont les vrais noms qui doivent
+      # PASSER, Scunthorpe, Niger, Negre, Kike. Un garde-fou qui refuse le nom de
+      # quelqu un fait bien plus de degats qu un mot qui passe.
+      - name: the word guard must judge the same on both sides
+        run: python3 tools/check-words.py
+
+      # Le robot qui repond aux inconnus est la premiere chose qu ils rencontrent,
+      # et il ecrit en public sous le nom du projet. Il est donc tenu a une table
+      # ecrite, comme les validateurs : ce qu il repond a quinze propositions, et
+      # deux regles sur toutes — il ne reimprime jamais un mot de la liste, et il
+      # ne laisse jamais une cloture de bloc ouverte par laquelle une proposition
+      # ecrirait du Markdown a sa place.
+      - name: the robot must answer proposals the way the table says
+        run: python3 tools/check-proposals.py
 
       - name: every source must pass the same rules as the site
         run: python3 tools/check-source.py sources/*.json

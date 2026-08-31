@@ -1,0 +1,142 @@
+# LE ROBOT QUI RÉPOND AUX INCONNUS
+#
+# ------------------------------------------------------------------------------
+# POURQUOI IL EXISTE
+# ------------------------------------------------------------------------------
+#
+# `check-sources.yml` tourne sur des FICHIERS. Quelqu'un qui remplit le formulaire
+# « New picture machine » n'a envoyé aucun fichier : jusqu'ici, personne ne lui
+# répondait. Il écrivait dans le vide et attendait que Tristan passe.
+#
+# C'était le trou le plus large qui restait dans la porte d'entrée, et c'est
+# d'autant plus bête que la réponse est déjà écrite : les règles existent, elles
+# sont publiques, et elles tiennent en une minute de machine. Ce robot lit la
+# fiche collée dans le formulaire, la passe au même vérificateur que tout le
+# reste, et répond en commentaire avec le détail de ce qui va et de ce qui ne va
+# pas. En public, donc sans que personne ait à discuter du verdict.
+#
+# ------------------------------------------------------------------------------
+# CE QU'IL NE FAIT PAS, ET C'EST LE PLUS IMPORTANT
+# ------------------------------------------------------------------------------
+#
+#   - il n'exécute JAMAIS ce qui est proposé. `json.loads` lit du texte, et les
+#     règles jugent l'objet obtenu. Rien n'est évalué, rien n'est importé, et
+#     aucune adresse portée par la fiche n'est appelée ;
+#   - il n'utilise PAS `pull_request_target`, qui donnerait un jeton d'écriture à
+#     du code venu d'une branche étrangère. C'est la faute classique des actions,
+#     et elle donne le dépôt à qui la trouve ;
+#   - il ne met JAMAIS le texte de l'inconnu dans une commande. Le titre, le corps
+#     et le pseudo passent par des variables d'environnement, jamais par
+#     `${{ ... }}` au milieu d'un `run:` — c'est là que se glisse une injection de
+#     script, et c'est exactement la faute que ce projet ne peut pas se permettre ;
+#   - il ne DÉCIDE de rien. Il dit si les règles passent. Tristan lit tout, et rien
+#     n'entre dans `sources/` sans qu'il fusionne à la main.
+#
+# ------------------------------------------------------------------------------
+# UN SEUL COMMENTAIRE, RÉÉCRIT
+# ------------------------------------------------------------------------------
+#
+# Il se réveille aussi quand l'issue est MODIFIÉE, pour qu'on puisse corriger sa
+# fiche et être relu tout de suite. Mais il réécrit alors son propre commentaire au
+# lieu d'en ajouter un : une conversation avec quinze verdicts empilés est illisible,
+# et le dernier est le seul qui compte.
+#
+# Il ne reconnaît son commentaire qu'à DEUX conditions : la marque invisible, et
+# l'avoir écrit lui-même (`user.type == "Bot"`). Sans la seconde, n'importe qui
+# pourrait coller la marque dans un commentaire et faire réécrire le verdict par
+# le robot.
+
+name: answer proposals
+
+on:
+  issues:
+    types: [opened, edited]
+
+# LE STRICT MINIMUM, ET UN BLOC `permissions` REMPLACE TOUT : ce qui n'est pas
+# écrit ici est retiré. Écrire des commentaires, lire le dépôt, et rien d'autre.
+# Pas de `contents: write`, donc ce robot ne peut rien pousser, jamais.
+permissions:
+  issues: write
+  contents: read
+
+# Une modification rapide de l'issue ne doit pas faire courir deux robots sur la
+# même conversation : le dernier a raison, les précédents sont annulés.
+concurrency:
+  group: answer-proposal-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  answer:
+    # Seulement les propositions de machine. Le formulaire « Something is wrong »
+    # porte une autre étiquette, et un bug ne se juge pas au vérificateur de fiches.
+    if: contains(github.event.issue.labels.*.name, 'new source')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # `persist-credentials: false` laisse le jeton du runner hors de la copie de
+      # travail : rien de ce qui est proposé ne se retrouve à côté d'un
+      # identifiant.
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Lire la proposition, et écrire la réponse
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_AUTHOR: ${{ github.event.issue.user.login }}
+        run: |
+          # Le corps de l'issue est écrit sur disque par python en lisant
+          # l'environnement, et jamais par `echo` : un corps qui contient des
+          # apostrophes, des retours à la ligne ou une fin de heredoc ne doit pas
+          # pouvoir toucher au shell.
+          python3 - <<'PY'
+          import os
+          with open('proposal-body.md', 'w', encoding='utf-8') as f:
+              f.write(os.environ.get('ISSUE_BODY') or '')
+          PY
+
+          set +e
+          python3 tools/read-proposal.py \
+            --body-file proposal-body.md \
+            --title "$ISSUE_TITLE" \
+            --author "$ISSUE_AUTHOR" > proposal-reply.md
+          code=$?
+          set -e
+
+          # 0 la fiche passe, 1 elle est refusée, 2 il n'y avait rien à juger.
+          # Tout le reste est une panne du vérificateur lui-même, et elle doit se
+          # voir en rouge plutôt que de sortir un verdict au hasard.
+          if [ "$code" -gt 2 ]; then
+            echo "the checker itself failed with code $code"
+            exit 1
+          fi
+          echo "verdict: $code"
+
+      - name: Le dire, une fois
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.issue.number }}
+        run: |
+          python3 - <<'PY'
+          import json
+          with open('proposal-reply.md', encoding='utf-8') as f:
+              body = f.read()
+          with open('payload.json', 'w', encoding='utf-8') as f:
+              json.dump({'body': body}, f)
+          PY
+
+          mine=$(gh api "repos/$REPO/issues/$NUMBER/comments" --paginate --jq '
+            [ .[]
+              | select(.user.type == "Bot")
+              | select(.body | contains("<!-- sixfingers: proposal checker -->"))
+              | .id ] | first // empty')
+
+          if [ -n "$mine" ]; then
+            gh api -X PATCH "repos/$REPO/issues/comments/$mine" --input payload.json > /dev/null
+            echo "commentaire $mine réécrit"
+          else
+            gh api -X POST "repos/$REPO/issues/$NUMBER/comments" --input payload.json > /dev/null
+            echo "commentaire écrit"
+          fi
