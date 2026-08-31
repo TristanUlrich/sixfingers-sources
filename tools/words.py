@@ -14,30 +14,45 @@ WHAT IT IS FOR, AND WHAT IT IS NOT
 
 It is not moderation and it does not judge anybody. It stops the project from
 printing, in its own chrome or under its own robot's name, a racist word or a call
-to hatred. A word gets on the list only if it is all three of:
+to hatred. It is NOT a profanity filter: ordinary swearing is deliberately let
+through. The admission rules for the list are written in `tools/words.json`
+itself, next to the list they govern, along with the words that were considered
+and kept out, and why.
 
-  1. unambiguously a racist insult, a call to hatred, or a nazi slogan. Not
-     "rude", not "coarse", nothing merely sexual;
-  2. NOT a surname, a first name, a place, a demonym, or an ordinary French or
-     English word;
-  3. at least five letters once folded.
+THE SIX PASSES, AND WHY THERE ARE SIX
 
-The rule that matters most is the second one. A badly made list blocks real
-people's names and lets everything else through: the textbook case is the town of
-Scunthorpe. Missing things is the intended setting, not an oversight.
+Everything starts from three views of the same text.
 
-THE TWO PASSES, AND WHY THERE ARE TWO
+  * the BARE form: compatibility-normalised (so fancy unicode letters become
+    ordinary ones), lower case, without accents, with lookalike letters from other
+    alphabets mapped back to latin, with digits put back as letters, and then
+    everything that is not a letter removed. Repeats are KEPT.
+  * the FOLDED form: the bare form with runs of one letter collapsed, to catch
+    "niiiggger".
+  * the SCRIPT form: the same text with its own alphabet left alone, for words
+    that are not written in latin at all.
 
-The bare form is lower case, without accents, with digits put back as letters
-(0 to o, 1 to i, 3 to e ...) and everything that is not a letter removed, so
-spaces, dots, dashes and underscores hide nothing. Repeats are KEPT.
+  1. bare, anywhere      a single word appears anywhere in the bare form
+  2. folded, anywhere    same on the folded form, and only for entries of five
+                         letters or more, and only when no rendered word explains
+                         the collision. Folding makes the English insult and the
+                         country Niger land on the same string; that is what the
+                         `allowed` list is for.
+  3. word                the entry must be a WHOLE word. Reserved for short
+                         entries and for words that are also ordinary English, so
+                         that raccoon, Pakistan and a gearbox are left alone.
+  4. slogan              an entry written with spaces is matched against whole
+                         words in a row, so race war is caught and race warmup is
+                         not.
+  5. script              a substring of the non-latin form, for Cyrillic and the
+                         like.
+  6. code                a numeric hate code, matched as a whole token and never
+                         as a substring, because 88 sits inside a great many
+                         perfectly ordinary numbers.
 
-The folded form collapses repeated letters, to catch "niiiggger". And that is
-where the trap is: folding makes the English insult and the country Niger land on
-exactly the same string. So the folded pass only refuses when the bare form does
-not contain one of the rendered words (niger, nigeria, nigel ...). The bare pass
-takes no notice of them: the word spelled out in full is refused, country or no
-country.
+WHAT IS DELIBERATELY NOT DONE: fuzzy matching. Edit distance one from the English
+insult includes bigger, digger and trigger. Every pass here is aimed at DELIBERATE
+disguise, never at a typo, and that is why none of them guesses.
 """
 
 import json
@@ -48,34 +63,56 @@ import unicodedata
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _LIST = os.path.join(_HERE, 'words.json')
 
-_cache = None
+_cache = {}
+
+_MIN_FOLD = 5          # en dessous, la forme repliee attrape trop de mots ordinaires
 
 
 def load(path=_LIST):
     """The list, read from disk once. Nothing here is written in this file."""
-    global _cache
-    if _cache is None or path != _LIST:
+    if path not in _cache:
         with open(path, encoding='utf-8') as f:
             raw = json.load(f)
-        data = {
+        entries = []
+        for item in raw.get('banned') or []:
+            if isinstance(item, str):           # spec 1, gardee pour ne rien casser
+                item = {'w': item, 'match': 'anywhere'}
+            entries.append({
+                'w': str(item.get('w') or ''),
+                'match': 'word' if item.get('match') == 'word' else 'anywhere',
+                'kind': str(item.get('kind') or 'hate'),
+                'lang': str(item.get('lang') or ''),
+            })
+        _cache[path] = {
             'leet': dict(raw.get('leet') or {}),
-            'banned': [str(w) for w in (raw.get('banned') or [])],
+            'confusables': dict(raw.get('confusables') or {}),
+            'banned': entries,
+            # LES ENTREES SONT NORMALISEES COMME LE TEXTE, SINON ELLES NE SE
+            # TROUVENT PAS. Mesure le 31 aout : chernojopyi porte un i bref, que la
+            # decomposition ramene a un i simple dans le texte mais pas dans la liste,
+            # et l entree ne servait a rien sans que rien ne le dise.
+            'script': [{'w': script(s.get('w') or ''), 'kind': str(s.get('kind') or 'hate')}
+                       for s in (raw.get('script') or [])],
+            'codes': [str(c).lower() for c in (raw.get('codes') or [])],
             'allowed': [str(w) for w in (raw.get('allowed') or [])],
         }
-        if path != _LIST:
-            return data
-        _cache = data
-    return _cache
+    return _cache[path]
+
+
+def _plain(text):
+    """Compatibility-normalised, lower case, accents removed. Common to every view."""
+    s = unicodedata.normalize('NFKC', str(text or '')).lower()
+    s = ''.join(c for c in unicodedata.normalize('NFD', s)
+                if unicodedata.category(c) != 'Mn')
+    return s
 
 
 def bare(name, data=None):
-    """Lower case, no accents, digits back to letters, letters only. Repeats kept."""
+    """Letters only, lookalikes mapped back, digits put back as letters. Repeats kept."""
     data = data or load()
-    s = str(name or '').lower()
-    s = ''.join(c for c in unicodedata.normalize('NFD', s)
-                if unicodedata.category(c) != 'Mn')
-    for ch, rep in data['leet'].items():
-        s = s.replace(ch, rep)
+    s = _plain(name)
+    s = ''.join(data['confusables'].get(c, c) for c in s)
+    s = ''.join(data['leet'].get(c, c) for c in s)
     return ''.join(c for c in s if 'a' <= c <= 'z')
 
 
@@ -88,24 +125,137 @@ def folded(name, data=None):
     return ''.join(out)
 
 
+def script(name):
+    """The text with its own alphabet left alone: letters of any script, nothing else."""
+    return ''.join(c for c in _plain(name) if unicodedata.category(c).startswith('L'))
+
+
+def tokens(name):
+    """The whole words of the text, as typed, before any substitution.
+
+    A word is a run of letters or digits IN ANY SCRIPT, so a regular expression
+    written for latin would cut Cyrillic into pieces. Everything else is a
+    separator, which is why b.e.a.n.e.r is six words here and one in the bare form.
+    """
+    out, buf = [], []
+    for c in _plain(name):
+        if unicodedata.category(c)[0] in 'LN':
+            buf.append(c)
+        elif buf:
+            out.append(''.join(buf))
+            buf = []
+    if buf:
+        out.append(''.join(buf))
+    return out
+
+
+def joined(name, data=None):
+    """The words of the text, normalised and glued together, with the seams kept.
+
+    Returns (text, seams). `seams` holds every offset in `text` where a word starts
+    or ends, which is how a SLOGAN is matched: it must begin at a seam and end at a
+    seam. Without that, race war would be found inside race warmup, and sale negre
+    inside wholesale negrete.
+    """
+    data = data or load()
+    out, seams, at = [], {0}, 0
+    for t in tokens(name):
+        b = bare(t, data)
+        if not b:
+            continue
+        out.append(b)
+        at += len(b)
+        seams.add(at)
+    return ''.join(out), seams
+
+
+def _slogan_hit(text, seams, needle):
+    """Is `needle` in `text`, starting and ending on a seam?"""
+    at = text.find(needle)
+    while at != -1:
+        if at in seams and (at + len(needle)) in seams:
+            return True
+        at = text.find(needle, at + 1)
+    return False
+
+
 def check(name, data=None):
     """None when there is nothing to refuse, which is almost always.
 
-    Otherwise {'pass': 'bare'} or {'pass': 'folded'} — which pass caught it, never
-    which word. The word is not repeated back: printing it in the project's own
-    voice is the thing being avoided.
+    Otherwise {'pass': ..., 'kind': ...} — which pass caught it and what family of
+    thing it was, never which word. The word is not repeated back: printing it in
+    the project's own voice is the thing being avoided.
     """
     data = data or load()
     raw = bare(name, data)
-    if not raw:
-        return None
-    if any(w in raw for w in data['banned']):
-        return {'pass': 'bare'}
-    if any(ok in raw for ok in data['allowed']):
-        return None
     fold = folded(name, data)
-    if any(folded(w, data) in fold for w in data['banned']):
-        return {'pass': 'folded'}
+    excused = any(ok in raw for ok in data['allowed'])
+    glued, seams = joined(name, data)
+
+    for b in data['banned']:
+        if b['match'] != 'anywhere':
+            continue
+        bw = bare(b['w'], data)
+        if not bw:
+            continue
+        if ' ' in b['w']:
+            # un slogan : des mots entiers a la suite, jamais un morceau de mot
+            if _slogan_hit(glued, seams, bw):
+                return {'pass': 'slogan', 'kind': b['kind']}
+            continue
+        if bw in raw:
+            return {'pass': 'bare', 'kind': b['kind']}
+        fw = folded(b['w'], data)
+        if len(fw) >= _MIN_FOLD and not excused and fw in fold:
+            return {'pass': 'folded', 'kind': b['kind']}
+
+    toks = tokens(name)
+    if toks:
+        bares = [bare(t, data) for t in toks]
+        folds = [folded(t, data) for t in toks]
+        for b in data['banned']:
+            if b['match'] != 'word':
+                continue
+            bw = bare(b['w'], data)
+            fw = folded(b['w'], data)
+            if not bw:
+                continue
+            for i, tb in enumerate(bares):
+                if tb == bw:
+                    return {'pass': 'word', 'kind': b['kind']}
+                if len(bw) >= _MIN_FOLD and folds[i] == fw and not any(
+                        ok in tb for ok in data['allowed']):
+                    return {'pass': 'word', 'kind': b['kind']}
+
+        # LES CODES SE CHERCHENT COMME LES SLOGANS. 14/88 et 14 88 sont deux mots,
+        # 1488 en est un seul, et les trois doivent se valoir. On recolle donc les
+        # chiffres en gardant les coutures : le code doit commencer et finir sur une,
+        # ce qui laisse 14880 et 31488 tranquilles.
+        digits, seams, at = [], {0}, 0
+        for tk in toks:
+            if tk.isdigit():
+                digits.append(tk)
+                at += len(tk)
+                seams.add(at)
+            else:
+                # un mot qui n est pas un nombre coupe la suite de chiffres, et la
+                # couture doit etre posee la aussi, sinon gamer 1488 passe tout droit
+                digits.append('\x00')
+                at += 1
+                seams.add(at)
+        glued_digits = ''.join(digits)
+        for code in data['codes']:
+            flat = ''.join(c for c in code if c.isdigit())
+            if flat and _slogan_hit(glued_digits, seams, flat):
+                return {'pass': 'code', 'kind': 'nazi'}
+
+    if data['script']:
+        sc = script(name)
+        if sc:
+            for s in data['script']:
+                if s['w'] and s['w'] in sc:
+                    return {'pass': 'script', 'kind': s['kind']}
+
     return None
 
 
@@ -123,7 +273,8 @@ def main(argv):
     worst = 0
     for name in argv[1:]:
         hit = check(name)
-        print('%s %s' % ('refused' if hit else 'fine   ', name))
+        print('%s %s%s' % ('refused' if hit else 'fine   ', name,
+                           ' (%s pass, %s)' % (hit['pass'], hit['kind']) if hit else ''))
         if hit:
             worst = 1
     return worst

@@ -1,40 +1,465 @@
 {
-  "spec": 1,
-  "leet": {
-    "0": "o",
-    "1": "i",
-    "3": "e",
-    "4": "a",
-    "5": "s",
-    "6": "g",
-    "7": "t",
-    "8": "b",
-    "9": "g",
-    "@": "a",
-    "$": "s",
-    "€": "e",
-    "!": "i",
-    "|": "i"
+ "spec": 2,
+ "what": "The one list, read by the site (js/words.js) and by the robot (tools/words.py). It is a guard, not moderation: it stops SIXFINGERS printing a racist word or a call to hatred in its own chrome or under its own robot's name. It is not a profanity filter, and ordinary swearing is deliberately let through.",
+ "rule": [
+  "A word enters only if it is unambiguously a racist insult, a call to hatred, or a nazi slogan. Not rude, not coarse, nothing merely sexual.",
+  "It must not be a surname, a first name, a place or a demonym. If it is also an ordinary word it may still enter, but only with match: word, and the known collision is written in its note.",
+  "match: anywhere needs at least five letters. Below that a run of letters turns up inside too many ordinary words.",
+  "Missing things is the intended setting. A guard that refuses somebody's real name does far more harm than a word that gets through on a page nobody else reads.",
+  "An entry written with spaces is a SLOGAN, and it is matched against whole words in a row. That is what keeps race warmup and wholesale racing out of it, while race war and r a c e w a r are still caught.",
+  "When an entry is kept although it collides with something ordinary, the collision is written down in known_collisions. A trade that is written down can be reversed by deleting one line; a trade that is silent cannot."
+ ],
+ "kept_out": {
+  "nigga": "widely reclaimed, and refusing it would refuse ordinary speech (rule 1)",
+  "kike": "four letters, and Kike is a common Spanish diminutive carried by living people (rules 2 and 3)",
+  "negre": "an insult, and a real French surname (rule 2)",
+  "negro": "the ordinary word for the colour black in Spanish and Portuguese (rule 2)",
+  "bamboula": "used as a racist insult in France, and also a Caribbean drum and dance (rule 2)",
+  "retard": "the ordinary French word for lateness (rule 2)",
+  "dyke": "a wall against the sea, and the surname Van Dyke (rule 2)",
+  "yid": "reclaimed by a football crowd, and three letters (rules 1 and 3)",
+  "zyd": "the ordinary Polish word for a Jewish person. Only the Cyrillic form is refused",
+  "macaco": "the ordinary Portuguese word for monkey (rule 2)",
+  "fag": "British slang for a cigarette (rule 2)",
+  "sale race": "the French phrase is a real insult, but as a run of letters it also sits inside wholesale racecar. Dropped rather than accepted, because a false refusal is the expensive kind of mistake"
+ },
+ "leet": {
+  "0": "o",
+  "1": "i",
+  "3": "e",
+  "4": "a",
+  "5": "s",
+  "6": "g",
+  "7": "t",
+  "8": "b",
+  "9": "g",
+  "@": "a",
+  "$": "s",
+  "€": "e",
+  "!": "i",
+  "|": "i",
+  "+": "t",
+  "(": "c",
+  "<": "c"
+ },
+ "confusables": {
+  "а": "a",
+  "в": "b",
+  "с": "c",
+  "ԁ": "d",
+  "е": "e",
+  "ѕ": "s",
+  "і": "i",
+  "ї": "i",
+  "ј": "j",
+  "к": "k",
+  "м": "m",
+  "н": "h",
+  "о": "o",
+  "р": "p",
+  "т": "t",
+  "у": "y",
+  "х": "x",
+  "ѵ": "v",
+  "ԝ": "w",
+  "ё": "e",
+  "һ": "h",
+  "ǝ": "e",
+  "ʏ": "y",
+  "ᴏ": "o",
+  "ɡ": "g",
+  "ɪ": "i",
+  "ʟ": "l",
+  "α": "a",
+  "β": "b",
+  "ε": "e",
+  "ι": "i",
+  "κ": "k",
+  "ν": "v",
+  "ο": "o",
+  "ρ": "p",
+  "τ": "t",
+  "υ": "u",
+  "χ": "x",
+  "ω": "w",
+  "γ": "y",
+  "η": "n",
+  "μ": "m",
+  "θ": "o",
+  "σ": "o",
+  "օ": "o",
+  "ո": "n",
+  "ս": "u",
+  "գ": "q",
+  "զ": "q",
+  "Ꭺ": "a",
+  "Ꮋ": "h",
+  "Ꮯ": "c",
+  "Ꭼ": "e"
+ },
+ "banned": [
+  {
+   "w": "nigger",
+   "lang": "en",
+   "kind": "racist",
+   "match": "anywhere"
   },
-  "banned": [
-    "bougnoule",
-    "nigger",
-    "niglet",
-    "youpin",
-    "gazthejews",
-    "gazezles",
-    "heilhitler",
-    "siegheil",
-    "whitepower",
-    "racewar",
-    "guerredesraces"
-  ],
-  "allowed": [
-    "niger",
-    "nigeria",
-    "nigerian",
-    "nigerien",
-    "nigel",
-    "nigella"
-  ]
+  {
+   "w": "niglet",
+   "lang": "en",
+   "kind": "racist",
+   "match": "anywhere"
+  },
+  {
+   "w": "jigaboo",
+   "lang": "en",
+   "kind": "racist",
+   "match": "anywhere"
+  },
+  {
+   "w": "spear chucker",
+   "lang": "en",
+   "kind": "racist",
+   "match": "anywhere"
+  },
+  {
+   "w": "porch monkey",
+   "lang": "en",
+   "kind": "racist",
+   "match": "anywhere"
+  },
+  {
+   "w": "coon",
+   "lang": "en",
+   "kind": "racist",
+   "match": "word",
+   "note": "mot entier seulement : raccoon, cocoon, et le nom Coonan"
+  },
+  {
+   "w": "gook",
+   "lang": "en",
+   "kind": "racist",
+   "match": "word"
+  },
+  {
+   "w": "chink",
+   "lang": "en",
+   "kind": "racist",
+   "match": "word",
+   "note": "mot entier seulement, et il refusera l'expression a chink in the armour"
+  },
+  {
+   "w": "ching chong",
+   "lang": "en",
+   "kind": "racist",
+   "match": "anywhere"
+  },
+  {
+   "w": "slant eyes",
+   "lang": "en",
+   "kind": "racist",
+   "match": "anywhere"
+  },
+  {
+   "w": "wetback",
+   "lang": "en",
+   "kind": "racist",
+   "match": "anywhere"
+  },
+  {
+   "w": "beaner",
+   "lang": "en",
+   "kind": "racist",
+   "match": "word"
+  },
+  {
+   "w": "raghead",
+   "lang": "en",
+   "kind": "racist",
+   "match": "anywhere"
+  },
+  {
+   "w": "towelhead",
+   "lang": "en",
+   "kind": "racist",
+   "match": "anywhere"
+  },
+  {
+   "w": "paki",
+   "lang": "en",
+   "kind": "racist",
+   "match": "word",
+   "note": "mot entier seulement : Pakistan et pakistani doivent passer"
+  },
+  {
+   "w": "redskin",
+   "lang": "en",
+   "kind": "racist",
+   "match": "word",
+   "note": "mot entier seulement : une equipe et une variete de pomme de terre portent ce nom"
+  },
+  {
+   "w": "redskins",
+   "lang": "en",
+   "kind": "racist",
+   "match": "word"
+  },
+  {
+   "w": "bougnoule",
+   "lang": "fr",
+   "kind": "racist",
+   "match": "anywhere"
+  },
+  {
+   "w": "sale negre",
+   "lang": "fr",
+   "kind": "racist",
+   "match": "anywhere"
+  },
+  {
+   "w": "sudaca",
+   "lang": "es",
+   "kind": "racist",
+   "match": "word"
+  },
+  {
+   "w": "kanake",
+   "lang": "de",
+   "kind": "racist",
+   "match": "word"
+  },
+  {
+   "w": "untermensch",
+   "lang": "de",
+   "kind": "racist",
+   "match": "anywhere"
+  },
+  {
+   "w": "untermenschen",
+   "lang": "de",
+   "kind": "racist",
+   "match": "anywhere"
+  },
+  {
+   "w": "youpin",
+   "lang": "fr",
+   "kind": "antisemitic",
+   "match": "anywhere"
+  },
+  {
+   "w": "gaz the jews",
+   "lang": "en",
+   "kind": "antisemitic",
+   "match": "anywhere"
+  },
+  {
+   "w": "gas the jews",
+   "lang": "en",
+   "kind": "antisemitic",
+   "match": "anywhere"
+  },
+  {
+   "w": "gazez les",
+   "lang": "fr",
+   "kind": "antisemitic",
+   "match": "anywhere"
+  },
+  {
+   "w": "juden raus",
+   "lang": "de",
+   "kind": "antisemitic",
+   "match": "anywhere"
+  },
+  {
+   "w": "holohoax",
+   "lang": "en",
+   "kind": "antisemitic",
+   "match": "anywhere"
+  },
+  {
+   "w": "six gorillion",
+   "lang": "en",
+   "kind": "antisemitic",
+   "match": "anywhere"
+  },
+  {
+   "w": "mort aux juifs",
+   "lang": "fr",
+   "kind": "antisemitic",
+   "match": "anywhere"
+  },
+  {
+   "w": "heil hitler",
+   "lang": "de",
+   "kind": "nazi",
+   "match": "anywhere"
+  },
+  {
+   "w": "sieg heil",
+   "lang": "de",
+   "kind": "nazi",
+   "match": "anywhere"
+  },
+  {
+   "w": "white power",
+   "lang": "en",
+   "kind": "nazi",
+   "match": "anywhere"
+  },
+  {
+   "w": "white pride",
+   "lang": "en",
+   "kind": "nazi",
+   "match": "anywhere"
+  },
+  {
+   "w": "race war",
+   "lang": "en",
+   "kind": "nazi",
+   "match": "anywhere"
+  },
+  {
+   "w": "guerre des races",
+   "lang": "fr",
+   "kind": "nazi",
+   "match": "anywhere"
+  },
+  {
+   "w": "blood and honour",
+   "lang": "en",
+   "kind": "nazi",
+   "match": "anywhere"
+  },
+  {
+   "w": "blood and soil",
+   "lang": "en",
+   "kind": "nazi",
+   "match": "anywhere"
+  },
+  {
+   "w": "blut und boden",
+   "lang": "de",
+   "kind": "nazi",
+   "match": "anywhere"
+  },
+  {
+   "w": "auslander raus",
+   "lang": "de",
+   "kind": "nazi",
+   "match": "anywhere"
+  },
+  {
+   "w": "hitler did nothing wrong",
+   "lang": "en",
+   "kind": "nazi",
+   "match": "anywhere"
+  },
+  {
+   "w": "kill all jews",
+   "lang": "en",
+   "kind": "genocidal",
+   "match": "anywhere"
+  },
+  {
+   "w": "kill all muslims",
+   "lang": "en",
+   "kind": "genocidal",
+   "match": "anywhere"
+  },
+  {
+   "w": "kill all blacks",
+   "lang": "en",
+   "kind": "genocidal",
+   "match": "anywhere"
+  },
+  {
+   "w": "mort aux arabes",
+   "lang": "fr",
+   "kind": "genocidal",
+   "match": "anywhere"
+  },
+  {
+   "w": "mort aux noirs",
+   "lang": "fr",
+   "kind": "genocidal",
+   "match": "anywhere"
+  },
+  {
+   "w": "faggot",
+   "lang": "en",
+   "kind": "homophobic",
+   "match": "anywhere"
+  },
+  {
+   "w": "faggots",
+   "lang": "en",
+   "kind": "homophobic",
+   "match": "anywhere"
+  },
+  {
+   "w": "shemale",
+   "lang": "en",
+   "kind": "transphobic",
+   "match": "anywhere"
+  },
+  {
+   "w": "tranny",
+   "lang": "en",
+   "kind": "transphobic",
+   "match": "word",
+   "note": "mot entier seulement : tranny veut aussi dire boite de vitesses"
+  },
+  {
+   "w": "maricon",
+   "lang": "es",
+   "kind": "homophobic",
+   "match": "word"
+  }
+ ],
+ "script": [
+  {
+   "w": "жид",
+   "lang": "ru",
+   "kind": "antisemitic",
+   "note": "en cyrillique SEULEMENT. Le polonais zyd est le mot ordinaire pour juif et doit passer."
+  },
+  {
+   "w": "жиды",
+   "lang": "ru",
+   "kind": "antisemitic"
+  },
+  {
+   "w": "хачик",
+   "lang": "ru",
+   "kind": "racist"
+  },
+  {
+   "w": "черножопый",
+   "lang": "ru",
+   "kind": "racist"
+  }
+ ],
+ "codes": [
+  "1488",
+  "14/88",
+  "88/14"
+ ],
+ "allowed": [
+  "niger",
+  "nigeria",
+  "nigerian",
+  "nigerien",
+  "nigel",
+  "nigella",
+  "nigerianer",
+  "nigerien",
+  "nigercongo"
+ ],
+ "known_collisions": {
+  "a chink in the armour": "the English idiom is refused. Known, accepted, and one line to remove if it ever bites",
+  "faggots, the food": "the British dish of the same name is refused",
+  "redskin potatoes": "the potato variety is refused. The football team is not, because it is written in the plural, which is also refused",
+  "tranny, the gearbox": "car slang for a transmission is refused",
+  "1488, the year": "a fifteenth century date written on its own is refused, because 1488 on its own is overwhelmingly the code"
+ }
 }

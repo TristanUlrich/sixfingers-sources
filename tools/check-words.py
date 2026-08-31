@@ -85,9 +85,43 @@ def main():
             wrong.append((case.get('why', ''), 'wanted "%s", got "%s"' % (case.get('want'), got)))
             print('    WRONG   %s' % case.get('why', ''))
 
+    # ----------------------------------------------------------------- l audit
+    # Le tableau ci-dessus prouve que le garde-fou repond bien AUX CAS ECRITS. Il ne
+    # prouve pas qu une entree ajoutee un soir sert a quelque chose : une entree mal
+    # ecrite, ou plus courte que ce que sa passe autorise, dort dans la liste sans que
+    # rien ne soit rouge. C est exactement la famille de panne qui a coute cher ici.
+    print('  the list itself')
+    data = words.load()
+    for b in data['banned']:
+        total += 1
+        hit = words.check(b['w'])
+        if not hit:
+            wrong.append((b['w'], 'is in the list and catches nothing, not even itself'))
+            print('    WRONG   an entry catches nothing, not even itself')
+        elif b['match'] == 'anywhere' and ' ' not in b['w'] and len(words.bare(b['w'])) < 5:
+            wrong.append((b['w'], 'is matched anywhere and is shorter than five letters'))
+            print('    WRONG   an entry under five letters is matched anywhere')
+        else:
+            print('    ok      an entry catches itself (%s pass)' % hit['pass'])
+    for s in data['script']:
+        total += 1
+        if words.check(s['w']):
+            print('    ok      a non-latin entry catches itself')
+        else:
+            wrong.append((s['w'], 'non-latin entry catches nothing'))
+            print('    WRONG   a non-latin entry catches nothing')
+    for c in data['codes']:
+        total += 1
+        if words.check(c):
+            print('    ok      a code catches itself')
+        else:
+            wrong.append((c, 'code catches nothing'))
+            print('    WRONG   a code catches nothing')
+
     print()
     if not wrong:
-        print('%d of %d: the python side of the word guard agrees with the table.' % (total, total))
+        print('%d of %d: the python side of the word guard agrees with the table,' % (total, total))
+        print('and every entry in the list catches at least itself.')
         print('Open /tools/words-selftest.html in the site to hold the browser side')
         print('to the same table.')
         return 0
