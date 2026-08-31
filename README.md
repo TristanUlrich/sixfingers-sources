@@ -156,6 +156,49 @@ somewhere was not a database it owns.
 
 ---
 
+## Under the bonnet
+
+Three things in this repository are worth opening if you care how it is built. All
+three exist because the same failure kept happening: **a result that is perfectly
+valid and perfectly wrong, with nothing red anywhere.**
+
+### Nothing here is the reference. The written tables are.
+
+The rules that decide what the site will use are written twice: once in the
+browser, once in the python here. On 25 August 2026 the two drifted apart in
+silence, and the only real record on the shelf was refused for three pushes by the
+machine that is supposed to welcome it.
+
+So neither copy is authoritative any more. [`tools/cases.json`](tools/cases.json) is:
+30 written records and whether each must be let in. `tools/check-cases.py` holds the
+python to it on every push, and a self-test inside the site **fetches this table
+live** and holds the browser to the same one.
+
+### The proposal you send gets an answer in about a minute
+
+[`.github/workflows/answer-proposal.yml`](.github/workflows/answer-proposal.yml)
+reads the record you paste into the form, runs it through the same checker, and
+replies with what passes and what does not. Correct the issue and it looks again,
+**rewriting its own comment** instead of stacking a new one.
+
+It never runs what you sent, it never puts your text inside a command, and it is
+held to its own written table of 15 cases, with two rules that hold on every one of
+them: it never reprints a word from the hate list, and it never leaves a code fence
+open through which a proposal could write Markdown in its place.
+
+### The word guard, and the half of it that matters
+
+[**`tools/WORD-GUARD.md`**](tools/WORD-GUARD.md) is the long version. The short one:
+six passes, a lookalike table derived from the Unicode security data, two tiers so
+that ambiguous words are held for a person rather than refused by a machine, and
+**297 written cases of which 191 must PASS** — Scunthorpe, Niger, Nègre, Kiké, and
+swearing in four languages.
+
+A guard that refuses somebody's real name does more harm than a word that gets
+through, so the test corpus is mostly real names.
+
+---
+
 ## Licence, and what it actually means
 
 | | |
