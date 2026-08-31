@@ -67,9 +67,20 @@ concurrency:
 
 jobs:
   answer:
-    # Seulement les propositions de machine. Le formulaire « Something is wrong »
-    # porte une autre étiquette, et un bug ne se juge pas au vérificateur de fiches.
-    if: contains(github.event.issue.labels.*.name, 'new source')
+    # Seulement les propositions de machine : un rapport de bug ne se juge pas au
+    # vérificateur de fiches.
+    #
+    # DEUX CONDITIONS, ET LA SECONDE EST LÀ PARCE QUE LA PREMIÈRE A DÉJÀ MENTI.
+    # Le formulaire déclare `labels: ["new source"]`, mais GitHub ne pose que les
+    # étiquettes QUI EXISTENT DÉJÀ dans le dépôt, sans rien dire quand elle manque.
+    # Elle manquait. La toute première proposition de l'histoire du dépôt est donc
+    # sortie sans étiquette, le robot a été « skipped », et rien n'était rouge nulle
+    # part. Les étiquettes ont été créées le 31 août 2026 — et on ne dépend plus
+    # d'elles seules : le titre « The source, as JSON » ne peut venir que de ce
+    # formulaire-là, et personne ne peut le supprimer par mégarde dans un réglage.
+    if: >-
+      contains(github.event.issue.labels.*.name, 'new source') ||
+      contains(github.event.issue.body, '### The source, as JSON')
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
