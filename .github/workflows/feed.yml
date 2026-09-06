@@ -301,8 +301,43 @@ jobs:
               'items': items,
               'posts': posts,
           }
-          pathlib.Path('feed.json').write_text(json.dumps(out, indent=1) + '\n')
-          print('feed.json :', len(items), 'machines,', len(posts), 'publications')
+          # ------------------------------------------------------------------
+          # ON N'ÉCRIT QUE SI QUELQUE CHOSE A VRAIMENT BOUGÉ
+          # ------------------------------------------------------------------
+          #
+          # L'étape suivante refuse déjà de committer un fichier identique, et son
+          # commentaire l'annonce depuis le premier jour. Elle n'a jamais rien
+          # refusé : `generated` porte l'heure, il change à CHAQUE réveil, et un
+          # fichier dont la première ligne change n'est jamais identique. Le
+          # garde-fou était là, il était juste désarmé par le champ posé au-dessus
+          # de lui.
+          #
+          # Compté le 6 septembre 2026 : 233 commits « feed: recompte » sur les 268
+          # que compte ce dépôt. 87 % de l'histoire d'un dépôt PUBLIC, qui est la
+          # porte d'entrée de la communauté, est un robot qui réécrit le même
+          # fichier une fois par heure, et les vraies modifications sont enterrées
+          # dessous.
+          #
+          # On compare donc ce qui a du sens : les machines et les publications.
+          # `generated` est exclu de la comparaison, parce que c'est justement le
+          # champ qui ne dit rien de ce que le mur contient. Quand rien n'a bougé,
+          # on ne touche pas au fichier : il garde son ancienne heure, et l'étape
+          # suivante ne trouve rien à committer, pour de bon cette fois.
+          #
+          # Conséquence assumée, et le site a été corrigé avec : l'heure du fichier
+          # n'est plus « quand le robot a regardé » mais « de quand date ce mur ».
+          # C'est ce que le site écrit maintenant : « as of », pas « read ».
+          try:
+              before = json.loads(pathlib.Path('feed.json').read_text())
+          except Exception:
+              before = None
+          if (before is not None
+                  and before.get('items') == out['items']
+                  and before.get('posts') == out['posts']):
+              print('rien n a bouge : feed.json est laisse tel quel')
+          else:
+              pathlib.Path('feed.json').write_text(json.dumps(out, indent=1) + '\n')
+              print('feed.json :', len(items), 'machines,', len(posts), 'publications')
           print('cache :', cache_d, 'discussion(s),', cache_c, 'commentaire(s)')
           PY
 
@@ -311,8 +346,10 @@ jobs:
           git config user.name  "sixfingers-bot"
           git config user.email "bot@users.noreply.github.com"
           git add feed.json
-          # `--quiet --exit-code`: no empty commit every hour, which
-          # would fill the history with noise and bury the real changes.
+          # Pas de commit vide toutes les heures. Cette garde existait deja et ne
+          # tenait pas : c'est l'etape d'avant qui reecrivait le fichier a chaque
+          # fois, a cause de son champ `generated`. Elle ne le reecrit plus quand
+          # rien n'a bouge, donc celle-ci sert enfin a quelque chose.
           if git diff --cached --quiet; then
             echo "rien n'a bougé"
           else
