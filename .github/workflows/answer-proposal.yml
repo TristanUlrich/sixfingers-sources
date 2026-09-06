@@ -87,6 +87,7 @@ jobs:
           persist-credentials: false
 
       - name: Read the proposal, and write the answer
+        id: judge
         env:
           ISSUE_BODY: ${{ github.event.issue.body }}
           ISSUE_TITLE: ${{ github.event.issue.title }}
@@ -117,6 +118,7 @@ jobs:
             exit 1
           fi
           echo "verdict: $code"
+          echo "code=$code" >> "$GITHUB_OUTPUT"
 
       - name: Say it, once
         env:
@@ -145,3 +147,47 @@ jobs:
             gh api -X POST "repos/$REPO/issues/$NUMBER/comments" --input payload.json > /dev/null
             echo "wrote a comment"
           fi
+
+      # ----------------------------------------------------------------------
+      # ET LE VERDICT SE VOIT DEPUIS LA LISTE
+      #
+      # Le commentaire dit tout, mais il faut ouvrir la conversation pour le lire.
+      # Une liste de trente propositions ne disait donc rien du tout : il fallait
+      # les ouvrir une par une pour savoir laquelle avait deja passe les regles.
+      # Deux etiquettes reglent ca, et la liste se trie.
+      #
+      # Elles sont CREEES si elles manquent. Ce fichier porte deja la lecon en
+      # haut : GitHub n'applique une etiquette que si elle existe deja, et ne dit
+      # rien quand elle manque. Le premier robot de ce depot a ete saute pour
+      # cette raison exacte. On ne suppose donc pas qu'elles sont la.
+      #
+      # Le nom n'a ni espace ni deux-points, pour qu'il traverse une adresse web
+      # sans encodage : c'est le DELETE plus bas qui l'exige, et un bug d'encodage
+      # dans un chemin est une facon idiote de laisser une etiquette fausse en
+      # place.
+      - name: Show the verdict on the list, not only in the conversation
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.issue.number }}
+          CODE: ${{ steps.judge.outputs.code }}
+        run: |
+          make_label() {
+            gh api -X POST "repos/$REPO/labels" \
+              -f name="$1" -f color="$2" -f description="$3" > /dev/null 2>&1 || true
+          }
+          make_label 'checker-passed'  '0e8a16' 'The record passes every rule. A human still reads it.'
+          make_label 'checker-refused' 'b60205' 'The record breaks a rule. The comment says which.'
+
+          add()  { gh api -X POST "repos/$REPO/issues/$NUMBER/labels" -f "labels[]=$1" > /dev/null; }
+          drop() { gh api -X DELETE "repos/$REPO/issues/$NUMBER/labels/$1" > /dev/null 2>&1 || true; }
+
+          # 0 passe, 1 refuse, 2 il n'y avait rien a juger : dans ce dernier cas on
+          # RETIRE les deux, sinon un verdict perime reste affiche sur une fiche
+          # que la personne vient justement de vider en la corrigeant.
+          case "$CODE" in
+            0) drop 'checker-refused'; add 'checker-passed' ;;
+            1) drop 'checker-passed';  add 'checker-refused' ;;
+            *) drop 'checker-passed';  drop 'checker-refused' ;;
+          esac
+          echo "labelled for verdict $CODE"
