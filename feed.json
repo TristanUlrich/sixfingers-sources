@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-17T13:27:39Z",
+ "generated": "2026-09-17T18:14:10Z",
  "items": [
   {
    "source": {
@@ -28,12 +28,12 @@
      "note": "Six pictures, one job, from the button to the folder landing, with four volunteers. In a four-way race from the same address it took 75.8s, Rev Animated 526.1s, and two models listed with volunteers were never picked up at all."
     }
    },
-   "by": "sixfingers-bot",
+   "by": "Tristan Ulrich",
    "up": 0,
    "down": 0,
    "comments": 0,
    "discuss": "https://github.com/TristanUlrich/sixfingers-sources/discussions/3",
-   "at": "2026-09-17T07:39:53Z"
+   "at": "2026-09-17T18:54:34+02:00"
   },
   {
    "source": {
@@ -63,17 +63,18 @@
      "note": "Six pictures, one job, measured against three other candidates given the same work at the same moment. Dreamshaper was given up on after 600 seconds without a single picture."
     }
    },
-   "by": "sixfingers-bot",
+   "by": "Tristan Ulrich",
    "up": 0,
    "down": 0,
    "comments": 0,
    "discuss": "https://github.com/TristanUlrich/sixfingers-sources/discussions/2",
-   "at": "2026-09-17T07:39:53Z"
+   "at": "2026-09-17T18:54:34+02:00"
   }
  ],
  "posts": [
   {
    "kind": "source",
+   "id": "D_kwDOT8ZbLc4AoyWU",
    "n": 3,
    "title": "source: deliberate",
    "url": "https://github.com/TristanUlrich/sixfingers-sources/discussions/3",
@@ -87,6 +88,7 @@
   },
   {
    "kind": "source",
+   "id": "D_kwDOT8ZbLc4AoxVA",
    "n": 2,
    "title": "source: icbinp",
    "url": "https://github.com/TristanUlrich/sixfingers-sources/discussions/2",
@@ -100,6 +102,7 @@
   },
   {
    "kind": "post",
+   "id": "D_kwDOT8ZbLc4AoxU0",
    "n": 1,
    "title": "The wall is open",
    "url": "https://github.com/TristanUlrich/sixfingers-sources/discussions/1",
