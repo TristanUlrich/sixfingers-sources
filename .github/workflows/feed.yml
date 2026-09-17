@@ -135,7 +135,7 @@ jobs:
             repository(owner:$owner, name:$name) {
               discussions(first:100, orderBy:{field:UPDATED_AT, direction:DESC}) {
                 nodes {
-                  number title url bodyText createdAt locked
+                  id number title url bodyText createdAt locked
                   category { name emoji }
                   author { login }
                   comments(last:8) {
@@ -246,6 +246,15 @@ jobs:
 
               posts.append({
                   'kind': kind,
+                  # L'IDENTIFIANT GRAPHQL DE LA DISCUSSION, ET IL SERT AU SITE.
+                  # Un J'aime et un commentaire ecrits depuis le site sont des
+                  # mutations GraphQL, et les deux exigent l'identifiant du noeud,
+                  # pas son numero. Sans lui le site devrait poser une question
+                  # supplementaire a GitHub avant chaque geste, avec le jeton de la
+                  # personne, juste pour traduire un numero qu'il a deja. Le robot
+                  # parle deja a GitHub et l'a sous la main : il l'ecrit ici une
+                  # fois pour toutes. Il est public et ne sert a rien sans jeton.
+                  'id': d.get('id'),
                   'n': d['number'],
                   'title': clip(title, 140),
                   'url': d['url'],
