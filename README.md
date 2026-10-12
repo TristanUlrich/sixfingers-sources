@@ -4,13 +4,13 @@
 
 # SIXFINGERS
 
-### Type a phrase. Six pictures arrive in a folder you have to knock on to open.
+### A laundromat for phrases. Write one, pick a machine, and six pictures burst out of the door.
 
 **[→ Open it. sixfingers.vercel.app](https://sixfingers.vercel.app)**
 
 No account. No key. No payment. No advertising. Nothing to install.
 
-<img src="art/screenshot.png" width="760" alt="A desktop that looks like Windows XP, with an open folder showing six pictures of hands reaching out of a lake">
+<img src="art/laundromat.jpg" width="760" alt="The wall of an old laundromat seen from the front: seven coloured washing machines, a yellow instructions sign, a pink neon reading sixfingers, a chequered floor">
 
 </div>
 
@@ -18,21 +18,32 @@ No account. No key. No payment. No advertising. Nothing to install.
 
 ## What it is
 
-A small website dressed as an operating system from 2001.
+One wall of an old laundromat, seen from the front. Seven washing machines, each
+running a different image model. Everything that is not the room is drawn in
+pixels.
 
-You type something. One request goes out to the [AI Horde](https://aihorde.net) —
-a few hundred people who lend their graphics cards away for free — and six
-pictures come back as a **sealed folder on your desktop**. You knock on it three
-times. It gives.
+You write a phrase on the floor and pick a machine. Its red display tells you how
+many volunteer graphics cards can run it right now; at zero it is out of order.
+Drop a coin: the words are sucked in one by one, the drum turns, and the wash is
+the real progress of your job on the [AI Horde](https://aihorde.net), a few
+hundred people who lend their graphics cards away for free. When it beeps, you
+hold the door until it bursts, and six pictures come out.
 
-The pictures are made by Stable Diffusion 1.5, the model that got composition
+<div align="center">
+<img src="art/laundromat-done.jpg" width="760" alt="A washing machine glowing after its wash, with pixel rays and sparkles, and a bubble saying: it is done, hold the door until it bursts">
+</div>
+
+The default machine runs Stable Diffusion 1.5, the model that got composition
 right and anatomy wrong. Hands come back with the wrong number of fingers more
-often than with anything since. **That is where the name comes from**, and it is
-the joke the whole site is built around.
+often than with anything since. **That is where the name comes from.**
 
-Everything you make stays in your browser. Nothing is uploaded, nothing is
-tracked, and there is no server that could hold your pictures even if it wanted
-to.
+One free wash every six hours, six in your pocket at most. Everything you make
+stays in your browser. Every file you download carries a visible "AI ·
+SIXFINGERS" mark and the IPTC metadata that says it was made by a machine.
+
+*Until 12 October 2026 the site was dressed as Windows XP. The laundromat
+replaced it; the community features below were built for that version and are
+not plugged into the laundromat yet. They will come back.*
 
 ---
 
@@ -45,7 +56,7 @@ knows how to ask, the rules a machine has to meet, a checker anybody can run, an
 the discussions where people talk about it.
 
 > **The code is closed and the shelf is open.** Those two turn out to be
-> separable, because *adding a model is not adding code* — a machine here is a
+> separable, because *adding a model is not adding code*, a machine here is a
 > record, never a program. There is no field for code, and there never will be, so
 > there is nothing to escape from. That single decision is what makes it safe to
 > let strangers add things.
@@ -67,7 +78,7 @@ faces and hopeless at hands. Which one fails in the funniest way. Nobody has
 tried them all, and the answer changes as volunteers come and go.
 
 **To propose one**, all you need is its name on the Horde and a sentence about
-what it actually does — not what it advertises:
+what it actually does, not what it advertises:
 
 ```json
 {
@@ -83,7 +94,7 @@ what it actually does — not what it advertises:
 }
 ```
 
-That is the whole thing. No address, no headers, no request body — **a Horde entry
+That is the whole thing. No address, no headers, no request body, **a Horde entry
 is a name and an opinion**, which is also why it is the safest kind of
 contribution this project can accept.
 
@@ -94,7 +105,7 @@ contribution this project can accept.
 
 `measured` is optional, and it is the most useful thing anybody can add. The rule
 of this project is that **a number shown to somebody is a number somebody
-measured** — so if you time a pack, write the number down, and the site will print
+measured**, so if you time a pack, write the number down, and the site will print
 it next to the machine with the date.
 
 *(For reference: Stable Diffusion 1.5 returns six pictures in about a minute.
@@ -105,12 +116,12 @@ seconds without producing one.)*
 
 ## Machines outside the Horde
 
-If you know a **free, keyless image API**, it can go on the shelf too — with a
+If you know a **free, keyless image API**, it can go on the shelf too, with a
 full record: address, what to send, and where the picture sits in the answer.
 [`sources/SCHEMA.md`](sources/SCHEMA.md) explains every field in plain words, and
 [`sources/example-pics.json`](sources/example-pics.json) is a file to copy.
 
-Check it before you propose it — the same rules the site itself applies:
+Check it before you propose it, the same rules the site itself applies:
 
 ```bash
 python3 tools/check-source.py sources/your-source.json
@@ -118,7 +129,7 @@ python3 tools/check-source.py sources/your-source.json
 
 **Be warned that this is harder than it sounds.** A record that passes every
 check is not a machine that answers. Pollinations passes all sixty checks, returns
-a picture to `curl`, and returns **403 to a web browser** — a bot check that looks
+a picture to `curl`, and returns **403 to a web browser**, a bot check that looks
 at *who is asking* rather than *what is asked*. Measured three times, most
 recently on 25 August 2026. No record can fix that.
 
@@ -137,19 +148,19 @@ asked.
 | **Pictures are repainted** | every image is redrawn in a canvas before it is kept, so nothing hidden in a file survives |
 
 Everything is reviewed by hand. A record here is not live until the site ships
-with it.
+with it. (The laundromat currently ships its seven fixed machines.)
 
 ---
 
 ## The wall
 
 The **discussions in this repository are the site's social side.** Post a picture
-you made, propose a machine, or argue about which model has the worst hands — it
-appears inside SIXFINGERS itself, drawn in the shape of a website from 2007,
-within about a minute.
+you made, propose a machine, or argue about which model has the worst hands. In
+the Windows XP version they appeared inside SIXFINGERS itself within about a
+minute; the laundromat will show them again once its back room is built.
 
 Reading it needs nothing at all. Writing needs a GitHub account, because writing
-in public needs an account somewhere — and this project would rather that
+in public needs an account somewhere, and this project would rather that
 somewhere was not a database it owns.
 
 → **[The wall](../../discussions)**
@@ -191,7 +202,7 @@ open through which a proposal could write Markdown in its place.
 [**`tools/WORD-GUARD.md`**](tools/WORD-GUARD.md) is the long version. The short one:
 six passes, a lookalike table derived from the Unicode security data, two tiers so
 that ambiguous words are held for a person rather than refused by a machine, and
-**297 written cases of which 191 must PASS** — Scunthorpe, Niger, Nègre, Kiké, and
+**297 written cases of which 191 must PASS**, Scunthorpe, Niger, Nègre, Kiké, and
 swearing in four languages.
 
 A guard that refuses somebody's real name does more harm than a word that gets
@@ -204,7 +215,7 @@ through, so the test corpus is mostly real names.
 | | |
 |---|---|
 | **The site** | closed source, **all rights reserved**, not in this repository |
-| **This catalogue** | open — read it, run the checker, add to it |
+| **This catalogue** | open, read it, run the checker, add to it |
 | **What you may not do** | copy, host, rebuild or adapt SIXFINGERS itself |
 
 The V1 shipped AGPL-3.0 by mistake. That grant is withdrawn.
