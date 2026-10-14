@@ -8,7 +8,7 @@ A laundromat for prompts. You write one, pick a washing machine, and six picture
 
 **[sixfingers.vercel.app](https://sixfingers.vercel.app)**
 
-<img src="docs/screenshots/room-day.jpg" width="900" alt="The front wall of an old laundromat: seven coloured washing machines, a yellow INSTRUCTIONS sign, a pink neon that reads sixfingers, a chequered floor. A grey prompt idea is typing itself on the floor.">
+<img src="docs/screenshots/room-day.jpg" width="900" alt="The front wall of an old laundromat: seven coloured washing machines, a yellow INSTRUCTIONS sign, a pink neon that reads sixfingers, a chequered floor. The prompt line waits on the floor.">
 
 </div>
 
@@ -30,39 +30,39 @@ The first version of the site, from August to October 2026, was dressed as Windo
 
 ## How a wash goes
 
-**Pick a machine.** Clicking a machine walks you up to it. Its card says which model it runs, what that model is good at, and three numbers read from the Horde a moment ago: the estimated wait, how many jobs are in line, and how many volunteer computers are running it.
+**Pick a machine.** Clicking a machine walks you up to it. Its card says which model it runs and what that model is good at, then three numbers: "wait", how long a wash would take if you started now; "ahead", how many requests are already waiting for this machine; and "helpers", how many volunteer computers are running its model right now.
 
-<img src="docs/screenshots/machine-card.jpg" width="900" alt="Close-up of the blue Brushwork machine with its card: Deliberate, 2023, a short description, then ~3m wait now, 6 in line, 8 computers, and a Generate button with a coin">
+<img src="docs/screenshots/machine-card.jpg" width="900" alt="Close-up of the yellow Daydream machine with its card: Anything Diffusion, 2023, a short description, then the wait, the number of requests ahead and the computers online, and a Generate button with a coin">
 
-**Drop a coin.** The coin goes into the slot on the machine, the door swings open and the letters of your prompt fly in one at a time.
+**Drop a coin.** The coin goes into the slot, the door swings open and the letters of your prompt fly in one at a time.
 
-<img src="docs/screenshots/letters-fly-in.jpg" width="900" alt="The door of the blue machine swings open and the letters of a heron waiting for a train tumble into the drum">
+<img src="docs/screenshots/letters-fly-in.jpg" width="900" alt="The door of the yellow machine swings open and the letters of the prompt tumble into the drum">
 
-**Wait.** The drum is real physics: the letters have weight, they pile up and roll over each other, the three paddles lift them and drop them, and at the spin they get pressed flat against the wall like real laundry. The card shows the actual state of your job on the Horde: waiting in line, then painting, and each of the six squares fills in when a real picture is finished.
+**Wait in line.** The red display on the machine becomes a countdown, like a real one, and the card shows the same number. It only ever goes down, one second per second. The drum runs a programme picked at random for each wash: turns one way then the other, rocking, short shakes, pauses, and quick bursts of spin that pin the letters to the wall before letting them drop.
 
-<img src="docs/screenshots/washing.jpg" width="900" alt="The machine mid-wash: white pixel letters tumbling in water behind the glass, and on the card three of the six squares filled with coarse pixel versions of finished pictures, 3/6 ready, about a minute left">
+<img src="docs/screenshots/washing.jpg" width="900" alt="The machine mid-wash: pixel letters tumbling in water behind the glass, the card with six squares in coarse pixels and the countdown">
+
+**Your turn.** When a volunteer picks up your prompt, the machine chimes and says so. From there the time is ours: the six pictures appear one by one in the squares as they really finish, the drum rinses, drains and spins, and the countdown reaches 0:00 exactly when the machine stops.
 
 You don't have to stand there. Up to three machines can wash at once, one coin each, and you can walk between them; a machine that finishes while you're elsewhere lights up and beeps.
 
-**Hold the door.** When the machine is done it stops shaking and glows. You press and hold on it, the pressure builds, and the door blows open.
+**Hold the door.** When the machine is done it glows. You press and hold on it, the drum rumbles, steam hisses through the seal, and the door blows open.
 
-<img src="docs/screenshots/done.jpg" width="900" alt="The blue machine glowing after its wash, with the letters resting in the drum and a pink line on the floor that says hold the door (or space)">
+<img src="docs/screenshots/done.jpg" width="900" alt="The yellow machine glowing after its wash, with a pink line on the floor that says hold the door">
 
-<img src="docs/screenshots/holding-door.jpg" width="900" alt="Holding the door of the blue machine: the glass glows white, the letters are pressed in a pile, and a pink line on the floor says keep holding">
+<img src="docs/screenshots/holding-door.jpg" width="900" alt="Holding the door: the glass glows, and a pink line on the floor says keep holding">
 
-<img src="docs/screenshots/door-bursts.jpg" width="900" alt="The first picture, a heron on a railway track, spinning out of the burst door with a spray of pixel drops">
+**Six pictures come out,** one at a time. You can keep them, share them, love them, or wash the same prompt in another machine.
 
-**Six pictures come out,** one at a time. You can keep them, share them, or wash the same prompt in another machine.
+<img src="docs/screenshots/one-picture.jpg" width="900" alt="The first picture large in the middle of the screen">
 
-<img src="docs/screenshots/one-picture.jpg" width="900" alt="A heron painted in oils by an autumn river, large in the middle of the screen, with the four earlier pictures lined up underneath">
+<img src="docs/screenshots/six-pictures.jpg" width="900" alt="All six pictures from the Daydream machine together">
 
-<img src="docs/screenshots/six-pictures.jpg" width="900" alt="All six pictures from the Brushwork machine together: a heron on the tracks in loud colours, a train at a platform, a watercolour heron, two orange signs over a field, a heron painted in oils by a river, and an empty railway line through autumn trees">
+Those six are a real wash on the Daydream machine with the prompt "a lighthouse keeper feeding seagulls in a storm", made for this page on 14 October 2026.
 
-Those six are a real wash on the Brushwork machine with the prompt "a heron waiting for a train". It took 87 seconds.
+The collection keeps every wash with its prompt, its machine and its date, in your browser. Accounts are built (Supabase, hosted in Paris) so that a collection can follow you from one device to another; signing in with Google and GitHub opens as soon as those two are switched on.
 
-The collection keeps every wash with its prompt, its machine and its date. For now it lives in your browser. Optional accounts are on their way, so a collection can follow you from one device to another; the storage is set up (Supabase, hosted in Paris), and the sign-in options aren't open yet.
-
-<img src="docs/screenshots/collection.jpg" width="900" alt="The collection window in pixel style: a search box, sorting by newest, oldest or machine, and the heron wash with its six pictures, its machine and its time">
+<img src="docs/screenshots/collection.jpg" width="900" alt="The collection window in pixel style: a search box, sorting by newest, oldest or machine, and the wash with its six pictures">
 
 ## The room changes with the time
 
@@ -75,12 +75,13 @@ The light coming into the room follows your own clock: daylight, sunset, and nig
 </tr>
 </table>
 
-It also works on a phone, where the prompt moves up above the keyboard and the machines are close enough to touch.
+It also works on a phone: the machines are close enough to touch, you swipe from one to the next, the card slides up underneath, and the prompt moves above the keyboard.
 
 <table>
 <tr>
-<td><img src="docs/screenshots/phone-room.jpg" width="300" alt="SIXFINGERS on a phone at sunset: the INSTRUCTIONS sign, three machines and the prompt line on the floor"></td>
-<td><img src="docs/screenshots/phone-machine.jpg" width="300" alt="The Standard machine on a phone, with its card underneath: Stable Diffusion 1.5, 2022, ~3m wait now, 10 in line, 8 computers"></td>
+<td><img src="docs/screenshots/phone-room.jpg" width="260" alt="SIXFINGERS on a phone at night: the sign, the machines and the prompt line on the floor"></td>
+<td><img src="docs/screenshots/phone-machine.jpg" width="260" alt="The High Gloss machine on a phone, with its card underneath"></td>
+<td><img src="docs/screenshots/phone-washing.jpg" width="260" alt="The High Gloss machine washing on a phone, with the countdown"></td>
 </tr>
 </table>
 
@@ -91,7 +92,7 @@ From left to right on the wall. Each machine adds a "recipe" to your prompt: a f
 | Machine | Model | What it does |
 |---|---|---|
 | Brushwork | Deliberate | Paints everything. Each picture gets its own technique (oil with thick impasto, watercolour, gouache, impressionist, Dutch golden age, acrylic), its own brushwork and its own palette. |
-| Freehand | Anything Diffusion | A strong anime style that ignores half of what you type. The recipe moves between cel shading, manga panels, chibi and 1990s anime stills. |
+| Daydream | Anything Diffusion | A strong anime style that ignores half of what you type, and the regulars' favourite (there's a note on it that says so). The recipe moves between cel shading, manga panels, chibi and 1990s anime stills. |
 | Sketch | Anything V5 | Pencil, ink and paper: graphite, pen, charcoal, ink wash, clean lineart. One picture in six keeps a little watercolour, because six black and white faces in a row felt grim. |
 | Standard | Stable Diffusion 1.5 | No recipe at all. Your prompt goes in as you typed it. This is the model everything else here was built from, and the one with the most extra fingers. |
 | High Gloss | Dreamshaper | The most capable and the least surprising. Concept art, glossy renders, storybook illustration, studio light. |
@@ -102,19 +103,28 @@ I picked the models with a stopwatch. On 12 October 2026 I sent the same prompt 
 
 ## How the wait is estimated
 
-Each machine has a small red display under its name. It shows how long a wash would take if you started it now. The fastest machines light up green, and a machine with no volunteer running its model is out of order.
+This took four tries, and the fourth is the one worth describing.
 
-The Horde publishes how much work is waiting and how fast that work gets done, both for each model and for the whole network. The work is counted in "megapixel-steps", roughly the size of a picture times the number of passes it takes to draw it. The estimate takes half of each:
+What the real washes showed, once they were recorded: a wash is two very different waits. First the line, until a volunteer picks up the request. Then the work, which is short: the six pictures of a wash usually come back within 12 to 33 seconds of each other. The line is the long and unpredictable part. And it follows one thing far better than anything else: how many requests are already waiting for that particular model. The Horde's overall queue (often 600 or 700 requests) said almost nothing, because each computer only serves the models it has loaded.
+
+So a machine announces:
 
 ```
-model queue = work waiting for this model / speed of the computers running it
-Horde queue = work waiting on the whole Horde / what the Horde gets through per minute
-wait = (model queue + Horde queue) / 2 + 20 seconds
+line  = (10 s + 7 s per request waiting for this model) x a learned margin x 1.15 + 10 s
+ritual = the time this machine usually needs to finish six pictures, + 8 s, + 12 s of spin (35 to 70 s)
+wait   = line + ritual
 ```
 
-The model alone wasn't enough. On 13 October, High Gloss announced 30 seconds and took three minutes, because an anonymous visitor goes to the back of the line and the same computers also serve other models. Real washes correct the figure. After each one, the site records three numbers, anonymously: the machine, the wait it announced and the wait it really took. Each machine's estimate is then multiplied by the median ratio of the last 48 hours, measured across all visitors. Once you have washed twice on a machine, your own browser's ratio takes over for you.
+The learned margin comes from every wash anyone has done on that machine in the last two weeks (its 30 most recent): the 85th percentile of how long the line really took compared to the rule, so that the announced time is one you will almost never go over. With few measurements it leans towards a cautious default.
 
-The site reads the Horde again once a minute. During a wash, the time left counts down with the clock and adjusts as the queue moves, but it never jumps up by more than a tenth at once. The site never shows your place in the Horde's overall queue, because that counts every job on every model and made it look as if five hundred people were in front of you.
+During the wash, the countdown follows two rules.
+
+- **In line, it only goes down.** If a volunteer picks you up early, the ritual takes what was left (up to 75 seconds), so the clock usually doesn't even jump: it keeps going down and reaches zero when the machine stops. If the line is slower than announced, the ritual can shrink to 35 seconds to absorb it.
+- **If that is not enough, it says so.** The card reads "small delay: +30s", then "+60s" at most, never more than twice; after that it waits and says the line is slow tonight. Tapping the line explains it in full.
+
+"Ahead" is the Horde's place in its queue multiplied by this model's share of that queue, because only this model's requests stand between you and its computers. It never goes up during a wash.
+
+After each real wash, the site sends what it measured, without any identifier: the machine, the prompt, how it ended, the time announced, the line and the work as they really were, the state of the Horde when it started, and whether it was a phone. That is what the margins learn from. When you love a picture, the picture itself, its recipe and its seed are kept too, in a private store nobody can read through the site. You can switch all of this off in your profile.
 
 ## What the site sticks to
 
@@ -132,13 +142,13 @@ To go easy on the volunteers, pictures are small (384 pixels, or 320 when a mode
 
 It has no dependencies and no build step: plain JavaScript modules served as they are, and one stylesheet.
 
-The room is one photograph of a laundromat that I generated with an image model and retouched area by area, 6336 by 3564 pixels. Day, sunset and night are relit copies of that same picture, and each copy is cut into layers: the wall without machines, each drum without its door, each door on its own hinge, and an out-of-order version of every machine. At rest each machine is exactly the background, pixel for pixel; when it shakes or the door opens, the layers underneath show. One CSS transform scales the whole room to your screen, so every coordinate in the code is a pixel of that one image.
+The room is one photograph of a laundromat that I generated with an image model and retouched area by area, 6336 by 3564 pixels. The name plates are re-engraved by a script, and the few details on the machines (a note on Daydream, dried paint on Brushwork, an old photo on Photographic) were added with one edit of the daylight picture, then relit for sunset and night. Day, sunset and night are relit copies of that same picture, and each copy is cut into layers: the wall without machines, each drum without its door, each door on its own hinge, and an out-of-order version of every machine. At rest each machine is exactly the background, pixel for pixel; when it shakes or the door opens, the layers underneath show. One CSS transform scales the whole room to your screen, so every coordinate in the code is a pixel of that one image.
 
 Everything that isn't the room is drawn in code, in whole pixels: the windows, the buttons, the icons, the coins, the letters in the drum. There is one pixel unit for the whole interface, so nothing has bigger or finer pixels than its neighbour. The typeface is my own, written in the code as rows of `#` and `.`, and accents are drawn once and placed on the letter, so an "é" can't drift away from its "e".
 
 The drum is a little physics simulation: gravity at the scale of a real 50 cm drum, a wall that drags the letters by friction, three paddles, letters that collide and stack and roll over each other, and a spin cycle fast enough to pin them to the wall. The machine's shaking comes from the load. When the letters sit off-centre it wobbles, and every drop gives it a small knock.
 
-The sounds are synthesised by a script and only load after your first click. The radio in the corner plays six real stations and connects to nothing until you switch it on.
+The machine's sounds are real recordings released into the public domain on Freesound (washing, rinsing, spinning, draining, filling, the door unlocking, steam bursting), cut, looped and levelled by a script; the rest of the room (the street, the neon, the bell) is synthesised. Nothing loads before your first click. The radio in the corner plays six real stations and connects to nothing until you switch it on.
 
 The site's code is private. The repository you're reading holds the parts that are meant to be open.
 
@@ -196,6 +206,8 @@ For now the laundromat ships its seven fixed machines. The community catalogue a
 
 To the volunteers of the [AI Horde](https://aihorde.net), who lend their graphics cards so that strangers can make pictures for free. Every picture on SIXFINGERS was painted on one of their machines. If you have a graphics card that sits idle, you can [lend it too](https://github.com/Haidra-Org/horde-worker-reGen).
 
+To the people who recorded and gave away the sounds of the machine, all under CC0 on [Freesound](https://freesound.org): ilmari_freesound, afnan808, hansfbaier, ohrpilot, somatik7, PhilllChabbb, greatsoundstube, pengo_au and craigsmith.
+
 To the people who trained and shared the seven models. Stable Diffusion 1.5 was developed by Robin Rombach and Patrick Esser. The Horde's pages for the other six don't name their authors, and I'd rather leave a blank than guess: Deliberate, Anything Diffusion, Anything V5, Dreamshaper, AbsoluteReality and ICBINP.
 
 ## Support
@@ -210,4 +222,4 @@ tristanulrichlobey@gmail.com, or open an [issue](../../issues).
 
 Copyright (c) 2026 Tristan Ulrich. All rights reserved.
 
-SIXFINGERS is not open source. The site, its code, its artwork, its sounds, its typeface and its name are not licensed to anyone. This repository is public so that you can read the catalogue, run the checkers and propose a machine; [`LICENSE`](LICENSE) says exactly what that allows, and nothing beyond it.
+SIXFINGERS is not open source. The site, its code, its artwork, its own sounds, its typeface and its name are not licensed to anyone (the recordings credited above stay in the public domain). This repository is public so that you can read the catalogue, run the checkers and propose a machine; [`LICENSE`](LICENSE) says exactly what that allows, and nothing beyond it.
