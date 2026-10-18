@@ -7,7 +7,7 @@ marketing, no exclamation marks. If you are guessing, say you are guessing.
 
 **Be patient.** Tristan reads every proposal himself and he does not write code. If
 your proposal cannot be understood from its own description, he will ask rather than
-guess — and asking takes days sometimes, not minutes.
+guess, and asking takes days sometimes, not minutes.
 
 **No harassment, no abuse, no contempt.** Not toward him, not toward another
 contributor, not toward the volunteers who lend graphics cards to the AI Horde.

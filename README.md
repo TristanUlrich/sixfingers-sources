@@ -6,7 +6,7 @@
 
 A laundromat for prompts. You write one, pick a washing machine, and six pictures come out of the door.
 
-**[sixfingers.vercel.app](https://sixfingers.vercel.app)**
+**[sixfingers.art](https://sixfingers.art)**
 
 <img src="docs/screenshots/room-day.jpg" width="900" alt="The front wall of an old laundromat: seven coloured washing machines, a yellow INSTRUCTIONS sign, a pink neon that reads sixfingers, a chequered floor. The prompt line waits on the floor.">
 

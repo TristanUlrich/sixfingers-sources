@@ -10,7 +10,7 @@ open to strangers at all.
 
 | | |
 |---|---|
-| **A name on the AI Horde** | `"kind": "horde"`. You name a model the Horde already runs. No address, no headers, no request. **Start here** — it is six lines, and there are 163 models waiting. |
+| **A name on the AI Horde** | `"kind": "horde"`. You name a model the Horde already runs. No address, no headers, no request. **Start here**, it is six lines, and there are 163 models waiting. |
 | **A machine with its own address** | No `kind` field. You give the address, the request and where the picture sits in the answer. Everything below the Horde section is about this shape. |
 
 Both are checked the same way and both land in the same shelf. The second shape
@@ -95,7 +95,7 @@ Pick something that is not already taken: the shelf has amber, grey and sage on 
 today. A colour close to one of those reads as a duller version of it rather than
 as its own thing, which is a mistake that has already been made here once.
 
-**`finish`** is what the folder is *made of* — the surface of the whole thing,
+**`finish`** is what the folder is *made of*, the surface of the whole thing,
 not a logo or a badge. **It is reserved for the machines this project publishes
 itself**, and that is a deliberate line rather than a technical one: the shelf
 should say at a glance which machines are the house's and which came from
@@ -119,14 +119,14 @@ For the record, the seven that exist:
 | `strata` | faint stacked layers. For merges of merges |
 
 Seven, and no more. Below 40 pixels a finish is not drawn at all: at that size it
-would be dirt, and the colour does the work alone — which is the other half of why
+would be dirt, and the colour does the work alone, which is the other half of why
 the colour is the field worth thinking about.
 
 ### `measured`, and the rule behind it
 
 The site never prints a number nobody took. If you write
 `"pack_seconds": 46.6`, it means you asked that model for six pictures and watched
-a clock. Every value must be a number or a short note, nothing else — no objects,
+a clock. Every value must be a number or a short note, nothing else, no objects,
 no `true`, nothing that could be dressed up as a measurement without being one.
 
 If you did not measure it, leave `measured` out. An entry with no numbers is fine.
@@ -185,7 +185,7 @@ its answer.
 | `query` | GET only | The query, as a flat object with placeholders. Must use `{prompt}`. |
 | `response` | yes | Where the picture is. See below. |
 | `size` | yes | `width` and `height`, **whole numbers**, multiples of 8, from 128 to 1024. |
-| `count` | no | `one-per-call` (default) or `n` — use `n` only if one call really returns several pictures, and then `{n}` must appear in the request. |
+| `count` | no | `one-per-call` (default) or `n`, use `n` only if one call really returns several pictures, and then `{n}` must appear in the request. |
 | `timeoutMs` | no | A whole number of milliseconds, 5000 to 180000. Defaults to 120000. |
 | `colour` | no | **One** colour as `#rrggbb` and the site builds the shades, or the three named `c1`, `c2` and `c3` if you would rather set them yourself. |
 
@@ -218,17 +218,17 @@ means the prompt arrives at your machine as a string whatever it happens to say.
 
 `response.kind` is one of three:
 
-**`json-base64`** — the answer is JSON and the picture is base64 inside it.
+**`json-base64`**: the answer is JSON and the picture is base64 inside it.
 ```json
 "response": { "kind": "json-base64", "path": "images.0" }
 ```
 
-**`json-url`** — the answer is JSON and it holds an `https` address to fetch.
+**`json-url`**: the answer is JSON and it holds an `https` address to fetch.
 ```json
 "response": { "kind": "json-url", "path": "output.url" }
 ```
 
-**`binary`** — the answer *is* the picture. No `path`.
+**`binary`**: the answer *is* the picture. No `path`.
 ```json
 "response": { "kind": "binary" }
 ```
@@ -243,7 +243,7 @@ No brackets: `images[0]` is refused.
 
 Worth knowing, because it changes what you should declare:
 
-- Only **PNG, JPEG and WEBP** are accepted. **SVG is refused** — it is a document
+- Only **PNG, JPEG and WEBP** are accepted. **SVG is refused**, it is a document
   that can contain a script, not a picture.
 - For base64, the type is decided by **looking at the first bytes**, never by
   trusting a label.
@@ -279,7 +279,7 @@ python3 tools/check-source.py sources/your-source.json
 ```
 
 Same rules as the site, no dependencies, both shapes. It also runs by itself on
-every proposal, so you will get the same answer either way — it is just faster to
+every proposal, so you will get the same answer either way, it is just faster to
 hear it from your own machine.
 
 ## And how we know the two copies still agree
@@ -290,7 +290,7 @@ Two rule sets that quietly disagree are worse than one, because the one people
 check is not the one that runs. It happened here, on 25 August 2026, and nothing
 went red for three pushes.
 
-So neither copy is the reference. **`tools/cases.json` is** — one written table of
+So neither copy is the reference. **`tools/cases.json` is**, one written table of
 records and whether each must be let in. `tools/check-cases.py` holds this side to
 it on every push; a page inside the site holds the browser side to the same table.
 Change a rule in one place and the table turns it red.

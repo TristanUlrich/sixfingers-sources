@@ -13,10 +13,10 @@ Everything below is either in this repository or measured against it.
 
 | | |
 |---|---|
-| the list | [`tools/words.json`](words.json) — 52 entries, 5 languages, 6 categories |
+| the list | [`tools/words.json`](words.json), 52 entries, 5 languages, 6 categories |
 | the two readers | [`tools/words.py`](words.py) here, `js/words.js` in the site |
-| the written table | [`tools/words-cases.json`](words-cases.json) — 297 cases |
-| the runner | [`tools/check-words.py`](check-words.py) — 357 checks, on every push |
+| the written table | [`tools/words-cases.json`](words-cases.json), 297 cases |
+| the runner | [`tools/check-words.py`](check-words.py), 357 checks, on every push |
 
 ---
 

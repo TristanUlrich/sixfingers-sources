@@ -46,7 +46,7 @@ JSON box empty. About a minute later the robot answers with the finished record 
 everything that passed or failed.
 
 **The colour is yours.** Write one value like `#6f9b62` and the site builds the
-whole folder from it. The *finishes* — the material the folder is made of — are
+whole folder from it. The *finishes*, the material the folder is made of, are
 reserved for the machines this project publishes itself; that is how the shelf
 shows at a glance which ones are the house's, and it is the only thing not on
 offer. Everyone gets the same folder and the same freedom of colour.
@@ -80,7 +80,7 @@ request with **one source per pull request**.
    decides nothing.
 2. Tristan reads it. He does not write code, so a proposal that cannot be understood
    from its own description will be asked about rather than guessed at.
-3. If it is accepted, it is merged — and it goes live **only when the site is next
+3. If it is accepted, it is merged, and it goes live **only when the site is next
    deployed**. The site never fetches this catalogue over the network while it is
    running, on purpose: nothing merged here can reach a visitor until it is shipped
    deliberately.

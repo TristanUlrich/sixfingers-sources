@@ -9,7 +9,7 @@ body:
         For anything about the site's own code, note that the site is closed and not
         in this repository. Bugs in the site are still worth reporting here.
 
-        **If it is a security problem, do not describe it in a public issue** — see
+        **If it is a security problem, do not describe it in a public issue**, see
         [SECURITY.md](../blob/main/SECURITY.md).
   - type: dropdown
     id: what
