@@ -60,7 +60,7 @@ You don't have to stand there. Up to three machines can wash at once, one coin e
 
 Those six are a real wash on the Daydream machine with the prompt "a lighthouse keeper feeding seagulls in a storm", made for this page on 14 October 2026.
 
-The collection keeps every wash with its prompt, its machine and its date, in your browser. Accounts are built (Supabase, hosted in Paris) so that a collection can follow you from one device to another; signing in with Google and GitHub opens as soon as those two are switched on.
+The collection keeps every wash with its prompt, its machine and its date, in your browser. You can sign in with Google or GitHub (accounts run on Supabase, hosted in Paris) so that a collection follows you from one device to another. Signing in is optional.
 
 <img src="docs/screenshots/collection.jpg" width="900" alt="The collection window in pixel style: a search box, sorting by newest, oldest or machine, and the wash with its six pictures">
 
