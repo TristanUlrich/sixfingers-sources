@@ -58,7 +58,7 @@ You don't have to stand there. Up to three machines can wash at once, one coin e
 
 <img src="docs/screenshots/six-pictures.jpg" width="900" alt="All six pictures from the Daydream machine together">
 
-Those six are a real wash on the Daydream machine with the prompt "a lighthouse keeper feeding seagulls in a storm", made for this page on 14 October 2026.
+Those six are a real wash on the Daydream machine with the prompt "a lighthouse keeper feeding seagulls in a storm", made for this page on 19 October 2026.
 
 The collection keeps every wash with its prompt, its machine and its date, in your browser. You can sign in with Google or GitHub (accounts run on Supabase, hosted in Paris) so that a collection follows you from one device to another. Signing in is optional.
 
@@ -75,15 +75,18 @@ The light coming into the room follows your own clock: daylight, sunset, and nig
 </tr>
 </table>
 
-It also works on a phone: the machines are close enough to touch, you swipe from one to the next, the card slides up underneath, and the prompt moves above the keyboard.
+It also works on a phone and a tablet: the machine stands under the icons, its card sits underneath at a fixed size, you swipe or tap the arrows to go from one machine to the next, the pages take the whole screen, and the prompt moves above the keyboard.
 
 <table>
 <tr>
 <td><img src="docs/screenshots/phone-room.jpg" width="260" alt="SIXFINGERS on a phone at night: the sign, the machines and the prompt line on the floor"></td>
 <td><img src="docs/screenshots/phone-machine.jpg" width="260" alt="The High Gloss machine on a phone, with its card underneath"></td>
 <td><img src="docs/screenshots/phone-washing.jpg" width="260" alt="The High Gloss machine washing on a phone, with the countdown"></td>
+<td><img src="docs/screenshots/phone-page.jpg" width="260" alt="The how it works page on a phone, taking the whole screen"></td>
 </tr>
 </table>
+
+<img src="docs/screenshots/tablet-machine.jpg" width="420" alt="The Cinematic machine on a tablet held upright, with its card underneath">
 
 ## The seven machines
 
@@ -120,11 +123,23 @@ The learned margin comes from every wash anyone has done on that machine in the 
 During the wash, the countdown follows two rules.
 
 - **In line, it only goes down.** If a volunteer picks you up early, the ritual takes what was left (up to 75 seconds), so the clock usually doesn't even jump: it keeps going down and reaches zero when the machine stops. If the line is slower than announced, the ritual can shrink to 35 seconds to absorb it.
-- **If that is not enough, it says so.** The card reads "small delay: +30s", then "+60s" at most, never more than twice; after that it waits and says the line is slow tonight. Tapping the line explains it in full.
+- **If that is not enough, it says so.** The card reads "small delay: +30s", then "+60s" at most, never more than twice. Tapping the line explains it in full.
+- **One big honest correction.** The real washes showed where the rule breaks: a machine with only two or three volunteer computers behind it. On 19 October a High Gloss wash was announced at 1:28 and waited nine minutes in line, because anonymous visitors are served after people who hold Horde points. So, twenty seconds into the line, the site compares its clock with the Horde's own estimate for that request. If the Horde expects much longer, the clock moves up once, by the full amount, and the card says "busy line: few volunteers on this machine". It never creeps up thirty seconds at a time.
 
 "Ahead" is the Horde's place in its queue multiplied by this model's share of that queue, because only this model's requests stand between you and its computers. It never goes up during a wash.
 
 After each real wash, the site sends what it measured, without any identifier: the machine, the prompt, how it ended, the time announced, the line and the work as they really were, the state of the Horde when it started, and whether it was a phone. That is what the margins learn from. When you love a picture, the picture itself, its recipe and its seed are kept too, in a private store nobody can read through the site. You can switch all of this off in your profile.
+
+## A wash does not get lost
+
+A wash can take several minutes, and on a phone the browser drops a page as soon as you switch to another app. Losing a wash and forgetting your prompt is the worst thing that can happen here, so the site plans for it.
+
+- **It picks up where it was.** As soon as the Horde accepts the six requests, the site writes down what it needs to find them again: the machine, the prompt, the recipes, the seed, and the six request numbers. If the page closes, the same machine resumes the same wash when you come back, with no new coin, all the way to the door. The Horde only keeps a request for a while, so after twenty minutes the site stops trying and just puts your prompt back on the line.
+- **Your prompt comes back.** If a wash is stopped or fails, its prompt is written back on the floor, ready to send again.
+- **It sends it again by itself, once.** If no volunteer can take the request (the Horde says so), if the Horde loses it, or if all six come back empty, the same prompt goes back in line once, without a new coin, and the card says "sent again".
+- **No machine is ever out of order.** When nobody is running a machine's model, it borrows the closest one (Cinematic and Photographic lean on each other, Daydream and Sketch too) and keeps its own recipe, and its card says "tonight on Dreamshaper: no volunteer runs Deliberate".
+- **Stragglers don't hold it hostage.** If three pictures or more are back and nobody has picked up the others for three minutes, those are let go and the wash finishes with what it has.
+- **Private browsing works.** Safari's private mode refuses to store pictures as files in the browser's database, which used to jam the end of every wash. The pictures are now stored as raw bytes when that happens, and turned back into pictures when read.
 
 ## What the site sticks to
 
@@ -148,9 +163,49 @@ Everything that isn't the room is drawn in code, in whole pixels: the windows, t
 
 The drum is a little physics simulation: gravity at the scale of a real 50 cm drum, a wall that drags the letters by friction, three paddles, letters that collide and stack and roll over each other, and a spin cycle fast enough to pin them to the wall. The machine's shaking comes from the load. When the letters sit off-centre it wobbles, and every drop gives it a small knock.
 
-The machine's sounds are real recordings released into the public domain on Freesound (washing, rinsing, spinning, draining, filling, the door unlocking, steam bursting), cut, looped and levelled by a script; the rest of the room (the street, the neon, the bell) is synthesised. Nothing loads before your first click. The radio in the corner plays six real stations and connects to nothing until you switch it on.
+The sounds are real recordings released into the public domain on Freesound: the washing, rinsing, spinning, draining and filling, the door unlocking, the cards being turned over and laid on a table, the shop bell over the door, and the room itself (two real laundromats, one for the day and a calmer one for the night). A script cuts them, loops them without a click and levels them to the same loudness; the authors are credited in the legal notice. The smaller interface sounds are synthesised. Nothing loads before your first click. The radio in the corner plays six real stations and connects to nothing until you switch it on.
 
 The site's code is private. The repository you're reading holds the parts that are meant to be open.
+
+## Phones, tablets and Safari
+
+Most visitors are on a phone, and phones are where a site like this breaks. On a phone the room is framed from top to bottom: the icons sit on the tiled wall, the machine takes the space it can, its card has a fixed size underneath (the same before, during and after a wash), and the prompt line sits under it. The pages (coins, profile, collection, how it works) take the whole screen; a picture opened from them stays a window on top. A tablet held upright gets the same layout with a tighter pixel unit.
+
+Safari draws a large layer in tiles, and tiles that are not ready yet used to show as flat beige squares during a zoom or when sliding from one machine to the next. Behind the room there is now a "lining": the same photograph at a lower resolution, placed as a single image that Safari shows in one piece, moving exactly with the room. A tile that is late shows the lining, nearly identical, instead of a hole. Inside the room nothing uses a blend mode, a mask or a colour filter on a phone, because each of those forces Safari to redraw tiles every frame.
+
+Every release goes through three checks: a full wash on a desktop and on a phone-sized Chrome (two machines at once, stopping, double clicks, saving the collection, every window), and the whole journey played and filmed in WebKit, Safari's own engine, at iPhone 13 and iPhone SE sizes. The WebKit run is what found the private-browsing jam, the yellow sign reappearing behind the icons on a real iPhone screen, and the beige tiles.
+
+## Speed
+
+Measured with Lighthouse on a simulated mid-range phone:
+
+| | Before (14 October) | Now (18 October) |
+|---|---|---|
+| Performance score | 36 | 59 to 72 |
+| Main thread blocked while loading | 8.2 s | about 0.6 s |
+| Room photograph visible | 6.6 s | about 4 s |
+| Accessibility, best practices, SEO | | 100, 100, 100 |
+
+What changed: the room first appears with the medium photograph (already downloaded for the lining) and the large one replaces it once decoded; the pattern for blocked pictures and the rays of a finished machine are drawn when the browser is idle, from arrays rather than pixel by pixel; the custom pointer is only drawn where there is a mouse; the prompt line no longer rebuilds its canvas on every letter. The collection shows a small thumbnail per picture, made once per visit, instead of decoding every full picture.
+
+## Security and privacy
+
+- **What the page may talk to** is listed in its Content Security Policy: the site itself, the AI Horde, the account service (Supabase, hosted in Paris) and the storage the Horde returns pictures from. Nothing else, so an injected script could not send anything elsewhere. Scripts can only come from the site, and the page refuses to build HTML from strings at all (`require-trusted-types-for 'script'`).
+- **The database** cannot be read from the site. Anonymous measurements, messages and error reports go in through functions that check and bound every field, cap how many arrive per hour, and delete anything older than three years.
+- **Error reports**: when the site breaks on a visitor's device, it sends the error, the file and line, and a rough description of the device (system, browser, screen size), at most five times per visit, never a name. You can switch this off with the rest in your profile.
+- **Sign in** with Google or GitHub is optional; the site only uses the email address. A cancelled sign-in is handled cleanly.
+- `/.well-known/security.txt` says where to report a vulnerability.
+
+## Accessibility
+
+You can do everything with a keyboard (Tab, Enter, the arrow keys for machines, Space to hold the door, Escape to go back, M for sound). Reduced motion is respected. On a phone you can pinch to zoom the pages. A "plain text" setting in the profile replaces the pixel font with a standard one in the pages and on the machine card. Generated pictures have their prompt as text alternative.
+
+## Little things
+
+- **The clock on the wall** changes the time of day when you tap it: your own time, day, dusk, night.
+- **Ideas on the line**: when the prompt line is empty, grey ideas type themselves. There are about 3,000: animals, food, cinema, games, music, sport, art history, places, objects, memes, the classics of AI image making ("Will Smith eating spaghetti", "an avocado armchair", "a horse riding an astronaut"), famous people in harmless absurd scenes, and some written for one machine in particular.
+- **Tell us**: a page in the profile and in "how it works" sends a message (an idea, a problem) straight to me, with the screen size and browser, never a name.
+- **Save your collection to a file** and load it in any browser; the file is named after your latest prompt.
 
 ## What this repository is
 
