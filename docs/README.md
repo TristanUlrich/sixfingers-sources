@@ -8,6 +8,7 @@ Write-ups on how [SIXFINGERS](https://sixfingers.art) is built, each with the me
 | [Two worlds](two-worlds.md) | A photographic room over an interface built entirely in whole pixels, with a typeface written in the source as a grid of `#` and `.`. The single rule the whole visual system follows. |
 | [The honest countdown](wait-time.md) | Estimating a trustworthy wait over the AI Horde's volunteer render queue: a model refit nightly from real washes, and a countdown built never to lie. |
 | [The word guard](../tools/WORD-GUARD.md) | A homoglyph-aware content defence that keeps the site from printing a slur in its own chrome, held to a written table of 297 cases, and careful never to refuse a real name. The code is public, here in this repository. |
+| [A machine is data, never code](catalogue.md) | How the open catalogue stays safe to let strangers extend: no executable field, the rule set chosen rather than guessed, the SSRF and injection refusals, and every returned image redrawn through a canvas. The checker is public, here. |
 
 ## Assets
 
