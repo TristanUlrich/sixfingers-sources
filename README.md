@@ -12,6 +12,8 @@ A laundromat for prompts. You write one, pick a washing machine, and six picture
 
 </div>
 
+**Contents** · [What it is](#what-it-is) · [How a wash goes](#how-a-wash-goes) · [The seven machines](#the-seven-machines) · [How it is built](#how-it-is-built) · [Engineering notes](#engineering-notes) · [The repository](#what-this-repository-is)
+
 ## What it is
 
 SIXFINGERS is a small website that makes pictures with AI image models. It is dressed as one wall of an old laundromat. There are seven machines, and each one runs a different model. You write a prompt on the floor (the sentence you give the model), drop a coin in a machine, and your words get pulled in and washed. When the machine beeps you hold the door until it bursts, and six pictures come out.
@@ -176,6 +178,7 @@ The site's code is private. The repository you're reading holds the parts that a
 The hard parts of SIXFINGERS are written up on their own, each with the measurements and the real code. The site's source is private; these are the stories meant to be read.
 
 - **[The grey squares](docs/grey-squares.md)** — a rendering bug that only appeared on a real phone, traced to a GPU memory ceiling, and fixed by rebuilding the room as a single WebGL texture instead of a tiled DOM surface. Two weeks of correct optimizations that changed nothing, then the one that did.
+- **[Two worlds](docs/two-worlds.md)** — the site is two layers that never touch: a photographic room, and an interface drawn entirely in whole pixels, down to a typeface written in the source as a grid of `#` and `.`. Why that strictness is what makes it read as one made object instead of a template.
 - **[The honest countdown](docs/wait-time.md)** — putting a trustworthy number on a wait nobody controls, over a queue of volunteer graphics cards. The model refit nightly from real washes, and the rules that keep the countdown from ever lying.
 - **[The word guard](tools/WORD-GUARD.md)** — a small, measured defence that keeps the site from ever printing a slur in its own chrome: homoglyph-aware, held to a written table of 297 cases, and careful never to refuse somebody's real name. Its code is in this repository.
 

@@ -152,4 +152,4 @@ The full internal note on the renderer, and the engine itself, are in the privat
 
 ---
 
-*More engineering notes: [The honest countdown](wait-time.md) · [The word guard](../tools/WORD-GUARD.md) · [all notes](README.md)*
+*More engineering notes: [Two worlds](two-worlds.md) · [The honest countdown](wait-time.md) · [The word guard](../tools/WORD-GUARD.md) · [all notes](README.md)*

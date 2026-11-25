@@ -79,4 +79,4 @@ The estimator and the countdown are in the private repository (`js/laverie/atten
 
 ---
 
-*More engineering notes: [The grey squares](grey-squares.md) · [The word guard](../tools/WORD-GUARD.md) · [all notes](README.md)*
+*More engineering notes: [The grey squares](grey-squares.md) · [Two worlds](two-worlds.md) · [The word guard](../tools/WORD-GUARD.md) · [all notes](README.md)*
