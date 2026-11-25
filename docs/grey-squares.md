@@ -149,3 +149,7 @@ The useful part of this is not WebGL. It is the week and a half before it.
 When a run of individually correct optimizations keeps moving the benchmark and never moves the symptom, the problem is no longer in the details, and more tuning inside the wrong structure will go on paying off on paper and failing in the hand. The faster path was a different question, asked earlier: not "what here costs too much?", which always has an answer and always feels like progress, but "did I build this in a shape the platform is built to run?". The grey squares were never a defect to be whittled down. They were the platform refusing the one thing it is worst at, a huge surface zoomed and panned on a device with little memory to spare, and the only real fix was to stop asking it.
 
 The full internal note on the renderer, and the engine itself, are in the private repository. This repository is the open side of SIXFINGERS: it holds the story and the parts meant to be read, not the site's source. You can see the result at [sixfingers.art](https://sixfingers.art).
+
+---
+
+*More engineering notes: [The honest countdown](wait-time.md) · [The word guard](../tools/WORD-GUARD.md) · [all notes](README.md)*

@@ -76,3 +76,7 @@ The interesting part of this was not the regression. It was accepting that an es
 The two lessons I would carry to another project: measure the thing itself rather than trusting the provider's own estimate, which here was wrong by a factor of twenty in the worst case I recorded, and decide in advance how a number is allowed to behave when it is wrong, because that behaviour, not the average error, is what people actually feel.
 
 The estimator and the countdown are in the private repository (`js/laverie/attente.js`). This repository is the open side of SIXFINGERS: it holds the write-ups and the parts meant to be read, not the site's source. You can watch a real countdown at [sixfingers.art](https://sixfingers.art).
+
+---
+
+*More engineering notes: [The grey squares](grey-squares.md) · [The word guard](../tools/WORD-GUARD.md) · [all notes](README.md)*

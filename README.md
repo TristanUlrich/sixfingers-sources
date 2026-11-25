@@ -171,6 +171,16 @@ The sounds are real recordings released into the public domain on Freesound: the
 
 The site's code is private. The repository you're reading holds the parts that are meant to be open.
 
+## Engineering notes
+
+The hard parts of SIXFINGERS are written up on their own, each with the measurements and the real code. The site's source is private; these are the stories meant to be read.
+
+- **[The grey squares](docs/grey-squares.md)** — a rendering bug that only appeared on a real phone, traced to a GPU memory ceiling, and fixed by rebuilding the room as a single WebGL texture instead of a tiled DOM surface. Two weeks of correct optimizations that changed nothing, then the one that did.
+- **[The honest countdown](docs/wait-time.md)** — putting a trustworthy number on a wait nobody controls, over a queue of volunteer graphics cards. The model refit nightly from real washes, and the rules that keep the countdown from ever lying.
+- **[The word guard](tools/WORD-GUARD.md)** — a small, measured defence that keeps the site from ever printing a slur in its own chrome: homoglyph-aware, held to a written table of 297 cases, and careful never to refuse somebody's real name. Its code is in this repository.
+
+The full set, with the diagrams and screenshots, is the [engineering notebook](docs/).
+
 ## Phones, tablets and Safari
 
 Most visitors are on a phone, and phones are where a site like this breaks. On a phone the room is framed from top to bottom: the icons sit on the tiled wall, the machine takes the space it can, its card has a fixed size underneath (the same before, during and after a wash), and the prompt line sits under it. The pages (coins, profile, collection, how it works) take the whole screen; a picture opened from them stays a window on top. A tablet held upright gets the same layout with a tighter pixel unit.
