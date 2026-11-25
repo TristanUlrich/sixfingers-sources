@@ -36,7 +36,7 @@ The first version of the site, from August to October 2026, was dressed as Windo
 
 **Drop a coin.** The coin goes into the slot, the door swings open and the letters of your prompt fly in one at a time.
 
-<img src="docs/screenshots/letters-fly-in.jpg" width="900" alt="The door of the yellow machine swings open and the letters of the prompt tumble into the drum">
+<img src="docs/img/wash.gif" width="820" alt="A real wash on the green Daydream machine: a coin goes in, the door swings open, and the letters of the prompt 'a red bicycle in the rain' fly in and tumble in the drum while the countdown starts.">
 
 **Wait in line.** The red display on the machine becomes a countdown, like a real one, and the card shows the same number. It only ever goes down, one second per second. The drum runs a programme picked at random for each wash: turns one way then the other, rocking, short shakes, pauses, and quick bursts of spin that pin the letters to the wall before letting them drop.
 
@@ -110,15 +110,15 @@ This took four tries, and the fourth is the one worth describing.
 
 What the real washes showed, once they were recorded: a wash is two very different waits. First the line, until a volunteer picks up the request. Then the work, which is short: the six pictures of a wash usually come back within 12 to 33 seconds of each other. The line is the long and unpredictable part. And it follows one thing far better than anything else: how many requests are already waiting for that particular model. The Horde's overall queue (often 600 or 700 requests) said almost nothing, because each computer only serves the models it has loaded.
 
-So a machine announces:
+So a machine announces a line and a ritual, and adds them:
 
 ```
-line  = (10 s + 7 s per request waiting for this model) x a learned margin x 1.15 + 10 s
-ritual = the time this machine usually needs to finish six pictures, + 8 s, + 12 s of spin (35 to 70 s)
+line   = exp(a + b · ln(1 + requests_for_this_model / volunteers_running_it) + margin)
+ritual = the time this machine usually needs for six pictures, + 8 s, + 12 s of spin (35 to 70 s)
 wait   = line + ritual
 ```
 
-The learned margin comes from every wash anyone has done on that machine in the last two weeks (its 30 most recent): the 85th percentile of how long the line really took compared to the rule, so that the announced time is one you will almost never go over. With few measurements it leans towards a cautious default.
+The `a`, `b` and margin are not fixed. They are refit from the last 40 anonymous washes on the Horde, because the Horde changes from one day to the next, and the margin is set so the announced time lands above the real one roughly seven times in ten: an estimate that is usually a little pessimistic keeps the promise, one that is usually optimistic breaks it. What the line tracks is requests per volunteer, not the raw request count and not the Horde's global queue; on 62 recorded washes that ratio predicted the real wait far better (0.83, against 0.75 for the count alone and nothing for the global queue). The full model, and the rules that keep the countdown honest once it is running, are in [The honest countdown](docs/wait-time.md).
 
 During the wash, the countdown follows two rules.
 
@@ -157,7 +157,11 @@ To go easy on the volunteers, pictures are small (384 pixels, or 320 when a mode
 
 It has no dependencies and no build step: plain JavaScript modules served as they are, and one stylesheet.
 
-The room is one photograph of a laundromat that I generated with an image model and retouched area by area, 6336 by 3564 pixels. The name plates are re-engraved by a script, and the few details on the machines (a note on Daydream, dried paint on Brushwork, an old photo on Photographic) were added with one edit of the daylight picture, then relit for sunset and night. Day, sunset and night are relit copies of that same picture, and each copy is cut into layers: the wall without machines, each drum without its door, each door on its own hinge, and an out-of-order version of every machine. At rest each machine is exactly the background, pixel for pixel; when it shakes or the door opens, the layers underneath show. One CSS transform scales the whole room to your screen, so every coordinate in the code is a pixel of that one image.
+The room is one photograph of a laundromat that I generated with an image model and retouched area by area, 6336 by 3564 pixels. The name plates are re-engraved by a script, and the few details on the machines (a note on Daydream, dried paint on Brushwork, an old photo on Photographic) were added with one edit of the daylight picture, then relit for sunset and night. Day, sunset and night are relit copies of that same picture, and each copy is cut into layers: the wall without machines, each drum without its door, each door on its own hinge, and an out-of-order version of every machine. At rest each machine is exactly the background, pixel for pixel; when it shakes or the door opens, the layers underneath show. The whole photograph is uploaded to the graphics card once as a WebGL texture, and a canvas the size of your screen draws the part the camera is looking at, so panning and zooming change three numbers rather than asking the browser to re-tile a six-thousand-pixel surface. Every coordinate in the code is still a pixel of that one image.
+
+<img src="docs/img/room-rendering.svg" width="900" alt="Two panels showing the room rendered two ways. On the left, 'before': the room as one oversized DOM surface cut into tiles, with several tiles evicted to grey and the GPU tile memory over budget. On the right, 'after': the room as a single GPU texture drawn by a screen-sized canvas, with the camera reduced to three numbers and the memory well under budget.">
+
+Drawing the room this way was the hardest problem in the project. It used to be a single large element scaled with a CSS transform, which the browser rasterizes in tiles, and on a phone that ran out of tile memory and painted grey squares in place of the room. [The grey squares](docs/grey-squares.md) is the full account, with the measurements, the debugging and the renderer itself.
 
 Everything that isn't the room is drawn in code, in whole pixels: the windows, the buttons, the icons, the coins, the letters in the drum. There is one pixel unit for the whole interface, so nothing has bigger or finer pixels than its neighbour. The typeface is my own, written in the code as rows of `#` and `.`, and accents are drawn once and placed on the letter, so an "é" can't drift away from its "e".
 
@@ -171,7 +175,7 @@ The site's code is private. The repository you're reading holds the parts that a
 
 Most visitors are on a phone, and phones are where a site like this breaks. On a phone the room is framed from top to bottom: the icons sit on the tiled wall, the machine takes the space it can, its card has a fixed size underneath (the same before, during and after a wash), and the prompt line sits under it. The pages (coins, profile, collection, how it works) take the whole screen; a picture opened from them stays a window on top. A tablet held upright gets the same layout with a tighter pixel unit.
 
-Safari draws a large layer in tiles, and tiles that are not ready yet used to show as flat beige squares during a zoom or when sliding from one machine to the next. Behind the room there is now a "lining": the same photograph at a lower resolution, placed as a single image that Safari shows in one piece, moving exactly with the room. A tile that is late shows the lining, nearly identical, instead of a hole. Inside the room nothing uses a blend mode, a mask or a colour filter on a phone, because each of those forces Safari to redraw tiles every frame.
+On a phone the room is the single WebGL texture described above, which is what cleared the tiling artifacts an earlier version showed: flat grey or beige squares during a zoom or while sliding from one machine to the next. The older page-based room is kept underneath as a fallback for a device without WebGL, drawn as one lower-resolution image that moves with the room rather than a surface the browser has to tile. Inside the room nothing uses a blend mode, a mask or a colour filter on a phone, because each of those forces the browser to redraw every frame.
 
 Every release goes through three checks: a full wash on a desktop and on a phone-sized Chrome (two machines at once, stopping, double clicks, saving the collection, every window), and the whole journey played and filmed in WebKit, Safari's own engine, at iPhone 13 and iPhone SE sizes. The WebKit run is what found the private-browsing jam, the yellow sign reappearing behind the icons on a real iPhone screen, and the beige tiles.
 
@@ -221,6 +225,7 @@ This is the public side of SIXFINGERS. It holds no site code. It holds the catal
 | `.github/workflows/` | The robot that answers a proposal in about a minute, the check that runs on every pull request, and the one that writes `feed.json`. |
 | `feed.json`, `moderation.json` | The feed of community machines and discussions, and a list that can only hide things from it. |
 | `art/` | Pictures for this page and for links. |
+| `docs/` | Screenshots, the architecture diagram, and engineering write-ups such as [The grey squares](docs/grey-squares.md). |
 
 Everything runs on the python3 that comes with macOS or Linux, with nothing to install:
 
