@@ -1,0 +1,24 @@
+# SIXFINGERS
+
+> SIXFINGERS (https://sixfingers.art) is a free, browser-based image-generation site dressed as a laundromat: you write a prompt, pick one of seven washing machines, and six pictures are generated for you by the volunteer-run AI Horde. This repository is the open side of the project: the catalogue of image models the site can call, the rules a catalogue entry has to meet, the tools that check them, and an engineering write-up. The site's own source code is private.
+
+## Project
+- [README](README.md): what SIXFINGERS is, how a wash works, the seven machines, how it is built, its security and accessibility.
+- [Live site](https://sixfingers.art)
+
+## The open catalogue (machine-readable)
+- [sources/](sources/): one JSON record per image model the site knows how to call.
+- [sources/SCHEMA.md](sources/SCHEMA.md): every field of a record, explained in plain words.
+- [feed.json](feed.json): the community feed of proposed machines, rebuilt hourly by a robot.
+
+## How entries are checked
+- [tools/check-source.py](tools/check-source.py): validates a record against the same refusals the site applies.
+- [tools/WORD-GUARD.md](tools/WORD-GUARD.md): the content word guard that keeps slurs out of public names, homoglyph-aware, with its test table.
+
+## Engineering write-ups
+- [docs/grey-squares.md](docs/grey-squares.md): debugging a GPU memory ceiling on a mobile device, and rebuilding the photographic room as a single WebGL texture.
+- [docs/wait-time.md](docs/wait-time.md): estimating an honest countdown over the volunteer AI Horde render queue, and the rules that keep it from lying.
+
+## Notes for AI agents
+- A catalogue entry is data, never code. There is no field for a script or for a URL to load, so there is nothing to run. Entries that need a key, an account or a payment are refused, as are addresses on a private network, redirects and plain http.
+- SIXFINGERS is not open source. This repository is public so that the catalogue can be read, the checkers run, and a machine proposed. See [LICENSE](LICENSE) for exactly what that allows.

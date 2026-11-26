@@ -12,21 +12,39 @@ A laundromat for prompts. You write one, pick a washing machine, and six picture
 
 </div>
 
+**A free, browser-based image generator, dressed as a laundromat and built on my own.** You write a prompt, pick one of seven washing machines, drop a coin, and six pictures are generated for you by a volunteer network of graphics cards. It is live at **[sixfingers.art](https://sixfingers.art)**, with no sign-up and nothing to pay.
+
+I'm Tristan Ulrich, a student in Paris. I designed it, decided it and shipped it myself. Behind the laundromat it is about 18,000 lines of hand-written JavaScript with no dependencies and no build step, a photographic set relit and cut into layers, a WebGL renderer, a typeface written in the source, a wait estimator refit from real data, and one rule throughout: every number on the screen is measured.
+
+**Here to see how it's built?** Each hard part is written up on its own:
+
+- [The grey squares](docs/grey-squares.md) — a GPU memory ceiling on mobile, and the WebGL texture that fixed it.
+- [Two worlds](docs/two-worlds.md) — a photographic room over an interface drawn entirely in whole pixels, down to a typeface written as a grid of `#` and `.`.
+- [The honest countdown](docs/wait-time.md) — estimating a trustworthy wait over a volunteer render queue nobody controls.
+- [The word guard](tools/WORD-GUARD.md) — homoglyph-aware content safety, held to a written table of cases.
+- [A machine is data, never code](docs/catalogue.md) — opening the catalogue to strangers without opening a hole.
+
+The rest of this page is the site itself: what it is, why I made it, and how each part works.
+
+**Contents** · [What it is](#what-it-is) · [How a wash goes](#how-a-wash-goes) · [The seven machines](#the-seven-machines) · [How it is built](#how-it-is-built) · [Engineering notes](#engineering-notes) · [The repository](#what-this-repository-is)
+
 ## What it is
 
 SIXFINGERS is a small website that makes pictures with AI image models. It is dressed as one wall of an old laundromat. There are seven machines, and each one runs a different model. You write a prompt on the floor (the sentence you give the model), drop a coin in a machine, and your words get pulled in and washed. When the machine beeps you hold the door until it bursts, and six pictures come out.
 
 It's free and you don't sign up for anything. The pictures come from the [AI Horde](https://aihorde.net), a network of people who lend their graphics cards to strangers for free.
 
-I'm Tristan Ulrich, a student in Paris, and I make it on my own.
-
 ## Why it exists
 
-Image models are bad at hands. Ask one for a person waving and there is a fair chance the hand comes back with six fingers, or four, or a thumb on the wrong side. Stable Diffusion 1.5, the model behind the orange machine in the middle, was the first one that most people could run, and it gets the composition of a picture right while getting the anatomy wrong. That is where the name comes from. The sign on the wall says so too: "Not responsible for extra fingers."
+I made this because I missed something, and I wanted a place to go back to it.
 
-A free model on volunteer computers can take a minute, sometimes several, and most sites cover that with a spinner. I wanted the wait to be the part you enjoy. A laundromat is a room built for waiting: you put something in, you watch it go round, and you get your things back a little changed. Words going into a machine and coming back as six pictures felt like a fair description of what these models do.
+For a few years at the start of the 2020s, asking a machine for a picture was new, and it was bad in a way that was its own reward. You typed a sentence, you waited, and what came back was never quite what you asked for: a face with the eyes not level, a hand with six fingers, a street whose signs spelled nothing in no language. You could not predict it, and that unpredictability was the whole pleasure of it. It felt less like running a tool than like asking something strange a question and watching what it dreamed up. That period was short. The models got good, the mistakes got rare, the surprise wore off, and the waiting got designed away behind a progress bar. SIXFINGERS is an attempt to keep the parts of the bad old version that were worth keeping: the not-knowing, the small wait, and the little ceremony of getting something back.
 
-The first version of the site, from August to October 2026, was dressed as Windows XP, and six pictures arrived as a "pack" you opened by knocking on it. The laundromat replaced it on 12 October 2026.
+The name is from that era too. Image models are bad at hands: ask one for a person waving and the hand can come back with six fingers, or four, or a thumb on the wrong side. Stable Diffusion 1.5, the model behind the orange machine in the middle, was the first one most people could actually run, and it gets the composition of a picture right while getting the anatomy wrong. That gap, between what it grasps and what it cannot, is where the six fingers live, and the name, and the sign on the wall: "Not responsible for extra fingers."
+
+A free model on volunteer computers can take a minute, sometimes several, and most sites hide that behind a spinner. I wanted the wait to be the part you enjoy, so I built a room made for waiting. A laundromat is exactly that: you put something in, you watch it go round, and you get your things back a little changed. Words going into a machine and coming out as six pictures felt like a fair description of what these models do to a sentence.
+
+The first version, from August to October 2026, was a fake Windows XP desktop, and six pictures arrived as a sealed pack you opened by knocking on it. The laundromat replaced it on 12 October 2026, and the idea finally had the room it wanted.
 
 ## How a wash goes
 
@@ -36,7 +54,7 @@ The first version of the site, from August to October 2026, was dressed as Windo
 
 **Drop a coin.** The coin goes into the slot, the door swings open and the letters of your prompt fly in one at a time.
 
-<img src="docs/screenshots/letters-fly-in.jpg" width="900" alt="The door of the yellow machine swings open and the letters of the prompt tumble into the drum">
+<img src="docs/img/wash.gif" width="820" alt="A real wash on the green Daydream machine: a coin goes in, the door swings open, and the letters of the prompt 'a red bicycle in the rain' fly in and tumble in the drum while the countdown starts.">
 
 **Wait in line.** The red display on the machine becomes a countdown, like a real one, and the card shows the same number. It only ever goes down, one second per second. The drum runs a programme picked at random for each wash: turns one way then the other, rocking, short shakes, pauses, and quick bursts of spin that pin the letters to the wall before letting them drop.
 
@@ -54,15 +72,13 @@ You don't have to stand there. Up to three machines can wash at once, one coin e
 
 **Six pictures come out,** one at a time. You can keep them, share them, love them, or wash the same prompt in another machine.
 
-<img src="docs/screenshots/one-picture.jpg" width="900" alt="The first picture large in the middle of the screen">
+<img src="docs/img/door-burst.gif" width="820" alt="Holding the door on the glowing Brushwork machine until it bursts open and a finished picture, an astronaut on horseback painted like an old oil portrait, flies out and settles in the middle of the screen.">
 
-<img src="docs/screenshots/six-pictures.jpg" width="900" alt="All six pictures from the Daydream machine together">
-
-Those six are a real wash on the Daydream machine with the prompt "a lighthouse keeper feeding seagulls in a storm", made for this page on 19 October 2026.
+That is a real wash on the Brushwork machine, for the prompt "an astronaut riding a horse". Each of the six pictures comes out on its own, and no two are alike.
 
 The collection keeps every wash with its prompt, its machine and its date, in your browser. You can sign in with Google or GitHub (accounts run on Supabase, hosted in Paris) so that a collection follows you from one device to another. Signing in is optional.
 
-<img src="docs/screenshots/collection.jpg" width="900" alt="The collection window in pixel style: a search box, sorting by newest, oldest or machine, and the wash with its six pictures">
+<img src="docs/img/collection.png" width="900" alt="The collection window in pixel style, holding two washes side by side: six variations of 'a cat wearing a tiny hat' and six of 'an astronaut riding a horse', each a different take, with a search box and tabs to sort by newest, oldest or machine.">
 
 ## The room changes with the time
 
@@ -110,15 +126,15 @@ This took four tries, and the fourth is the one worth describing.
 
 What the real washes showed, once they were recorded: a wash is two very different waits. First the line, until a volunteer picks up the request. Then the work, which is short: the six pictures of a wash usually come back within 12 to 33 seconds of each other. The line is the long and unpredictable part. And it follows one thing far better than anything else: how many requests are already waiting for that particular model. The Horde's overall queue (often 600 or 700 requests) said almost nothing, because each computer only serves the models it has loaded.
 
-So a machine announces:
+So a machine announces a line and a ritual, and adds them:
 
 ```
-line  = (10 s + 7 s per request waiting for this model) x a learned margin x 1.15 + 10 s
-ritual = the time this machine usually needs to finish six pictures, + 8 s, + 12 s of spin (35 to 70 s)
+line   = exp(a + b · ln(1 + requests_for_this_model / volunteers_running_it) + margin)
+ritual = the time this machine usually needs for six pictures, + 8 s, + 12 s of spin (35 to 70 s)
 wait   = line + ritual
 ```
 
-The learned margin comes from every wash anyone has done on that machine in the last two weeks (its 30 most recent): the 85th percentile of how long the line really took compared to the rule, so that the announced time is one you will almost never go over. With few measurements it leans towards a cautious default.
+The `a`, `b` and margin are not fixed. They are refit from the last 40 anonymous washes on the Horde, because the Horde changes from one day to the next, and the margin is set so the announced time lands above the real one roughly seven times in ten: an estimate that is usually a little pessimistic keeps the promise, one that is usually optimistic breaks it. What the line tracks is requests per volunteer, not the raw request count and not the Horde's global queue; on 62 recorded washes that ratio predicted the real wait far better (0.83, against 0.75 for the count alone and nothing for the global queue). The full model, and the rules that keep the countdown honest once it is running, are in [The honest countdown](docs/wait-time.md).
 
 During the wash, the countdown follows two rules.
 
@@ -157,7 +173,11 @@ To go easy on the volunteers, pictures are small (384 pixels, or 320 when a mode
 
 It has no dependencies and no build step: plain JavaScript modules served as they are, and one stylesheet.
 
-The room is one photograph of a laundromat that I generated with an image model and retouched area by area, 6336 by 3564 pixels. The name plates are re-engraved by a script, and the few details on the machines (a note on Daydream, dried paint on Brushwork, an old photo on Photographic) were added with one edit of the daylight picture, then relit for sunset and night. Day, sunset and night are relit copies of that same picture, and each copy is cut into layers: the wall without machines, each drum without its door, each door on its own hinge, and an out-of-order version of every machine. At rest each machine is exactly the background, pixel for pixel; when it shakes or the door opens, the layers underneath show. One CSS transform scales the whole room to your screen, so every coordinate in the code is a pixel of that one image.
+The room is one photograph of a laundromat that I generated with an image model and retouched area by area, 6336 by 3564 pixels. The name plates are re-engraved by a script, and the few details on the machines (a note on Daydream, dried paint on Brushwork, an old photo on Photographic) were added with one edit of the daylight picture, then relit for sunset and night. Day, sunset and night are relit copies of that same picture, and each copy is cut into layers: the wall without machines, each drum without its door, each door on its own hinge, and an out-of-order version of every machine. At rest each machine is exactly the background, pixel for pixel; when it shakes or the door opens, the layers underneath show. The whole photograph is uploaded to the graphics card once as a WebGL texture, and a canvas the size of your screen draws the part the camera is looking at, so panning and zooming change three numbers rather than asking the browser to re-tile a six-thousand-pixel surface. Every coordinate in the code is still a pixel of that one image.
+
+<img src="docs/img/room-rendering.svg" width="900" alt="Two panels showing the room rendered two ways. On the left, 'before': the room as one oversized DOM surface cut into tiles, with several tiles evicted to grey and the GPU tile memory over budget. On the right, 'after': the room as a single GPU texture drawn by a screen-sized canvas, with the camera reduced to three numbers and the memory well under budget.">
+
+Drawing the room this way was the hardest problem in the project. It used to be a single large element scaled with a CSS transform, which the browser rasterizes in tiles, and on a phone that ran out of tile memory and painted grey squares in place of the room. [The grey squares](docs/grey-squares.md) is the full account, with the measurements, the debugging and the renderer itself.
 
 Everything that isn't the room is drawn in code, in whole pixels: the windows, the buttons, the icons, the coins, the letters in the drum. There is one pixel unit for the whole interface, so nothing has bigger or finer pixels than its neighbour. The typeface is my own, written in the code as rows of `#` and `.`, and accents are drawn once and placed on the letter, so an "é" can't drift away from its "e".
 
@@ -167,11 +187,24 @@ The sounds are real recordings released into the public domain on Freesound: the
 
 The site's code is private. The repository you're reading holds the parts that are meant to be open.
 
+## Engineering notes
+
+The hard parts of SIXFINGERS are written up on their own, each with the measurements and the real code. The site's source is private; these are the stories meant to be read.
+
+- **[The grey squares](docs/grey-squares.md)** — a rendering bug that only appeared on a real phone, traced to a GPU memory ceiling, and fixed by rebuilding the room as a single WebGL texture instead of a tiled DOM surface. Two weeks of correct optimizations that changed nothing, then the one that did.
+- **[Two worlds](docs/two-worlds.md)** — the site is two layers that never touch: a photographic room, and an interface drawn entirely in whole pixels, down to a typeface written in the source as a grid of `#` and `.`. Why that strictness is what makes it read as one made object instead of a template.
+- **[The honest countdown](docs/wait-time.md)** — putting a trustworthy number on a wait nobody controls, over a queue of volunteer graphics cards. The model refit nightly from real washes, and the rules that keep the countdown from ever lying.
+- **[The word guard](tools/WORD-GUARD.md)** — a small, measured defence that keeps the site from ever printing a slur in its own chrome: homoglyph-aware, held to a written table of 297 cases, and careful never to refuse somebody's real name. Its code is in this repository.
+- **[A machine is data, never code](docs/catalogue.md)** — the open catalogue lets strangers add machines the site then calls, which is a server-side request forgery and injection surface. How it is made safe: no executable field, the rule set chosen by an explicit flag rather than guessed, the SSRF and injection refusals, and every returned image redrawn through a canvas. The checker is public in this repository.
+- **[Measured, honest, responsible](docs/product-principles.md)** — the rules the product is run by, not just the code: every number measured, no dark patterns or invented metrics, AI-labelled downloads for the EU AI Act, privacy by default, accessibility, and being kind to the volunteers who power it. The judgment behind the engineering.
+
+The full set, with the diagrams and screenshots, is the [engineering notebook](docs/).
+
 ## Phones, tablets and Safari
 
 Most visitors are on a phone, and phones are where a site like this breaks. On a phone the room is framed from top to bottom: the icons sit on the tiled wall, the machine takes the space it can, its card has a fixed size underneath (the same before, during and after a wash), and the prompt line sits under it. The pages (coins, profile, collection, how it works) take the whole screen; a picture opened from them stays a window on top. A tablet held upright gets the same layout with a tighter pixel unit.
 
-Safari draws a large layer in tiles, and tiles that are not ready yet used to show as flat beige squares during a zoom or when sliding from one machine to the next. Behind the room there is now a "lining": the same photograph at a lower resolution, placed as a single image that Safari shows in one piece, moving exactly with the room. A tile that is late shows the lining, nearly identical, instead of a hole. Inside the room nothing uses a blend mode, a mask or a colour filter on a phone, because each of those forces Safari to redraw tiles every frame.
+On a phone the room is the single WebGL texture described above, which is what cleared the tiling artifacts an earlier version showed: flat grey or beige squares during a zoom or while sliding from one machine to the next. The older page-based room is kept underneath as a fallback for a device without WebGL, drawn as one lower-resolution image that moves with the room rather than a surface the browser has to tile. Inside the room nothing uses a blend mode, a mask or a colour filter on a phone, because each of those forces the browser to redraw every frame.
 
 Every release goes through three checks: a full wash on a desktop and on a phone-sized Chrome (two machines at once, stopping, double clicks, saving the collection, every window), and the whole journey played and filmed in WebKit, Safari's own engine, at iPhone 13 and iPhone SE sizes. The WebKit run is what found the private-browsing jam, the yellow sign reappearing behind the icons on a real iPhone screen, and the beige tiles.
 
@@ -221,6 +254,7 @@ This is the public side of SIXFINGERS. It holds no site code. It holds the catal
 | `.github/workflows/` | The robot that answers a proposal in about a minute, the check that runs on every pull request, and the one that writes `feed.json`. |
 | `feed.json`, `moderation.json` | The feed of community machines and discussions, and a list that can only hide things from it. |
 | `art/` | Pictures for this page and for links. |
+| `docs/` | Screenshots, the architecture diagram, and engineering write-ups such as [The grey squares](docs/grey-squares.md). |
 
 Everything runs on the python3 that comes with macOS or Linux, with nothing to install:
 

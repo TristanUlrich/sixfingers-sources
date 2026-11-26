@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <defs>
+    <style>
+      .title { fill: #f3ead6; font-size: 30px; font-weight: 700; }
+      .sub { fill: #8f8676; font-size: 17px; }
+      .head { font-size: 19px; font-weight: 700; letter-spacing: .5px; }
+      .lbl { fill: #c9bfab; font-size: 15px; }
+      .mono { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; }
+      .small { fill: #8f8676; font-size: 13px; }
+      .cap { fill: #c9bfab; font-size: 14.5px; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="660" fill="#0d0b0a"/>
+  <text x="48" y="54" class="title">Rendering the room: from a tiled DOM surface to one GPU texture</text>
+  <text x="48" y="82" class="sub">The same photograph, drawn two ways. The one on the left runs out of tile memory on a phone; the one on the right does not.</text>
+
+  <!-- ================= BEFORE ================= -->
+  <g transform="translate(48,112)">
+    <rect width="534" height="500" rx="10" fill="#14120f" stroke="#3a3530"/>
+    <text x="24" y="38" class="head" fill="#ff5c9a">BEFORE</text>
+    <text x="110" y="38" class="head" fill="#c9bfab">one tiled DOM surface</text>
+
+    <!-- the oversized room surface, clipped by the panel to imply it continues -->
+    <text x="24" y="70" class="small mono">room element &#183; 6336 &#215; 3564 px, scaled by a CSS transform</text>
+    <g transform="translate(24,84)">
+      <!-- full surface (extends past the visible area) -->
+      <rect x="-30" y="-6" width="560" height="250" fill="#1a1714" stroke="#2c2824"/>
+      <!-- tile grid -->
+      <g stroke="#2c2824" stroke-width="1">
+        <line x1="56" y1="-6" x2="56" y2="244"/><line x1="142" y1="-6" x2="142" y2="244"/>
+        <line x1="228" y1="-6" x2="228" y2="244"/><line x1="314" y1="-6" x2="314" y2="244"/>
+        <line x1="400" y1="-6" x2="400" y2="244"/><line x1="486" y1="-6" x2="486" y2="244"/>
+        <line x1="-30" y1="75" x2="530" y2="75"/><line x1="-30" y1="156" x2="530" y2="156"/>
+      </g>
+      <!-- evicted (grey) tiles = checkerboarding -->
+      <rect x="-30" y="-6" width="86" height="81" fill="#4a4a4a"/>
+      <rect x="400" y="-6" width="86" height="81" fill="#4a4a4a"/>
+      <rect x="142" y="156" width="86" height="88" fill="#4a4a4a"/>
+      <rect x="486" y="156" width="44" height="88" fill="#4a4a4a"/>
+      <text x="-18" y="40" class="small" fill="#0d0b0a" font-weight="700">evicted</text>
+      <!-- the visible screen -->
+      <rect x="150" y="40" width="210" height="150" fill="none" stroke="#ff5c9a" stroke-width="3"/>
+      <text x="158" y="60" class="small" fill="#ff5c9a" font-weight="700">screen</text>
+      <!-- a couple of painted machines to read it as the room -->
+      <rect x="176" y="96" width="34" height="70" rx="4" fill="#5aa8d8" opacity="0.85"/>
+      <rect x="220" y="96" width="34" height="70" rx="4" fill="#6cc63a" opacity="0.85"/>
+      <rect x="264" y="96" width="34" height="70" rx="4" fill="#e8913f" opacity="0.85"/>
+      <rect x="308" y="96" width="34" height="70" rx="4" fill="#d0473a" opacity="0.85"/>
+    </g>
+
+    <text x="24" y="372" class="lbl">Pan and zoom re-rasterize tiles across the whole surface.</text>
+
+    <!-- memory bar: over budget -->
+    <g transform="translate(24,392)">
+      <text x="0" y="0" class="small">GPU tile memory</text>
+      <rect x="0" y="12" width="486" height="22" rx="4" fill="#110f0d" stroke="#2c2824"/>
+      <rect x="2" y="14" width="470" height="18" rx="3" fill="#ff6b6b"/>
+      <line x1="432" y1="6" x2="432" y2="40" stroke="#f3ead6" stroke-width="2" stroke-dasharray="3 3"/>
+      <text x="436" y="52" class="small" fill="#f3ead6">budget</text>
+      <text x="0" y="52" class="small" fill="#ff6b6b" font-weight="700">over budget &#8594; tiles dropped to grey</text>
+    </g>
+
+    <text x="24" y="470" class="cap">A 6000 px surface, zoomed and panned on a dense phone screen,</text>
+    <text x="24" y="490" class="cap">asks for more tiles than the pool holds. The compositor evicts them.</text>
+  </g>
+
+  <!-- ================= AFTER ================= -->
+  <g transform="translate(618,112)">
+    <rect width="534" height="500" rx="10" fill="#14120f" stroke="#3a3530"/>
+    <text x="24" y="38" class="head" fill="#ff5c9a">AFTER</text>
+    <text x="96" y="38" class="head" fill="#c9bfab">one GPU texture</text>
+
+    <!-- GPU box with the texture -->
+    <g transform="translate(24,70)">
+      <rect x="0" y="0" width="212" height="168" rx="8" fill="#1a1714" stroke="#2c2824"/>
+      <text x="14" y="26" class="small mono" fill="#8f8676">GPU memory</text>
+      <rect x="18" y="40" width="176" height="104" rx="4" fill="#0d0b0a" stroke="#3a3530"/>
+      <!-- the whole room, small, inside the texture -->
+      <rect x="28" y="70" width="18" height="46" rx="3" fill="#5aa8d8"/>
+      <rect x="52" y="70" width="18" height="46" rx="3" fill="#6cc63a"/>
+      <rect x="76" y="70" width="18" height="46" rx="3" fill="#e05a96"/>
+      <rect x="100" y="70" width="18" height="46" rx="3" fill="#e8913f"/>
+      <rect x="124" y="70" width="18" height="46" rx="3" fill="#3fb8c8"/>
+      <rect x="148" y="70" width="18" height="46" rx="3" fill="#d0473a"/>
+      <text x="28" y="60" class="small" fill="#8f8676">room texture</text>
+      <text x="14" y="160" class="small mono" fill="#8fd47a">uploaded once</text>
+    </g>
+
+    <!-- camera pill -->
+    <g transform="translate(24,262)">
+      <rect x="0" y="0" width="212" height="52" rx="26" fill="#0d0b0a" stroke="#ff5c9a"/>
+      <text x="24" y="24" class="small mono" fill="#f3ead6">camera</text>
+      <text x="24" y="42" class="small mono" fill="#8f8676">zoom, x, y &#183; three floats</text>
+    </g>
+
+    <!-- arrows into the canvas -->
+    <path d="M236 150 H270 Q282 150 282 162 V196" fill="none" stroke="#8f8676" stroke-width="2" marker-end="url(#arrow)"/>
+    <path d="M236 288 H300 Q318 288 318 270 V250" fill="none" stroke="#ff5c9a" stroke-width="2" marker-end="url(#arrowp)"/>
+    <defs>
+      <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#8f8676"/></marker>
+      <marker id="arrowp" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#ff5c9a"/></marker>
+    </defs>
+
+    <!-- screen-size canvas showing the visible view -->
+    <g transform="translate(300,70)">
+      <rect x="0" y="0" width="210" height="244" rx="8" fill="#0d0b0a" stroke="#ff5c9a" stroke-width="3"/>
+      <text x="12" y="24" class="small" fill="#ff5c9a" font-weight="700">screen-size canvas</text>
+      <rect x="34" y="96" width="30" height="86" rx="4" fill="#6cc63a"/>
+      <rect x="80" y="96" width="30" height="86" rx="4" fill="#e8913f"/>
+      <rect x="126" y="96" width="30" height="86" rx="4" fill="#d0473a"/>
+      <text x="12" y="230" class="small mono" fill="#8f8676">samples the texture</text>
+    </g>
+
+    <text x="24" y="372" class="lbl">Pan and zoom change three numbers. Nothing is tiled.</text>
+
+    <!-- memory bar: well under budget -->
+    <g transform="translate(24,392)">
+      <text x="0" y="0" class="small">GPU texture memory</text>
+      <rect x="0" y="12" width="486" height="22" rx="4" fill="#110f0d" stroke="#2c2824"/>
+      <rect x="2" y="14" width="196" height="18" rx="3" fill="#8fd47a"/>
+      <line x1="432" y1="6" x2="432" y2="40" stroke="#f3ead6" stroke-width="2" stroke-dasharray="3 3"/>
+      <text x="436" y="52" class="small" fill="#f3ead6">budget</text>
+      <text x="0" y="52" class="small" fill="#8fd47a" font-weight="700">well under budget, nothing to evict</text>
+    </g>
+
+    <text x="24" y="470" class="cap">The photograph lives in the GPU. A screen-sized canvas draws the</text>
+    <text x="24" y="490" class="cap">view the camera points at. No tiling, no eviction, no late repaint.</text>
+  </g>
+
+  <text x="48" y="648" class="small">SIXFINGERS &#183; sixfingers.art &#183; engine: js/laverie/salle-gl.js (private). Measured on a mid-range Android phone; see docs/grey-squares.md.</text>
+</svg>
