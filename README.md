@@ -78,7 +78,7 @@ That is a real wash on the Brushwork machine, for the prompt "an astronaut ridin
 
 The collection keeps every wash with its prompt, its machine and its date, in your browser. You can sign in with Google or GitHub (accounts run on Supabase, hosted in Paris) so that a collection follows you from one device to another. Signing in is optional.
 
-<img src="docs/screenshots/collection.jpg" width="900" alt="The collection window in pixel style: a search box, sorting by newest, oldest or machine, and the wash with its six pictures">
+<img src="docs/img/collection.png" width="900" alt="The collection window in pixel style, holding two washes side by side: six variations of 'a cat wearing a tiny hat' and six of 'an astronaut riding a horse', each a different take, with a search box and tabs to sort by newest, oldest or machine.">
 
 ## The room changes with the time
 
