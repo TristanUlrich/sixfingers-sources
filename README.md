@@ -196,6 +196,7 @@ The hard parts of SIXFINGERS are written up on their own, each with the measurem
 - **[The honest countdown](docs/wait-time.md)** — putting a trustworthy number on a wait nobody controls, over a queue of volunteer graphics cards. The model refit nightly from real washes, and the rules that keep the countdown from ever lying.
 - **[The word guard](tools/WORD-GUARD.md)** — a small, measured defence that keeps the site from ever printing a slur in its own chrome: homoglyph-aware, held to a written table of 297 cases, and careful never to refuse somebody's real name. Its code is in this repository.
 - **[A machine is data, never code](docs/catalogue.md)** — the open catalogue lets strangers add machines the site then calls, which is a server-side request forgery and injection surface. How it is made safe: no executable field, the rule set chosen by an explicit flag rather than guessed, the SSRF and injection refusals, and every returned image redrawn through a canvas. The checker is public in this repository.
+- **[Measured, honest, responsible](docs/product-principles.md)** — the rules the product is run by, not just the code: every number measured, no dark patterns or invented metrics, AI-labelled downloads for the EU AI Act, privacy by default, accessibility, and being kind to the volunteers who power it. The judgment behind the engineering.
 
 The full set, with the diagrams and screenshots, is the [engineering notebook](docs/).
 
