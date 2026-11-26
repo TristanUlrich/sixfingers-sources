@@ -12,6 +12,20 @@ A laundromat for prompts. You write one, pick a washing machine, and six picture
 
 </div>
 
+**A free, browser-based image generator, dressed as a laundromat and built on my own.** You write a prompt, pick one of seven washing machines, drop a coin, and six pictures are generated for you by a volunteer network of graphics cards. It is live at **[sixfingers.art](https://sixfingers.art)**, with no sign-up and nothing to pay.
+
+I'm Tristan Ulrich, a student in Paris. I designed it, decided it and shipped it myself. Behind the laundromat it is about 18,000 lines of hand-written JavaScript with no dependencies and no build step, a photographic set relit and cut into layers, a WebGL renderer, a typeface written in the source, a wait estimator refit from real data, and one rule throughout: every number on the screen is measured.
+
+**Here to see how it's built?** Each hard part is written up on its own:
+
+- [The grey squares](docs/grey-squares.md) — a GPU memory ceiling on mobile, and the WebGL texture that fixed it.
+- [Two worlds](docs/two-worlds.md) — a photographic room over an interface drawn entirely in whole pixels, down to a typeface written as a grid of `#` and `.`.
+- [The honest countdown](docs/wait-time.md) — estimating a trustworthy wait over a volunteer render queue nobody controls.
+- [The word guard](tools/WORD-GUARD.md) — homoglyph-aware content safety, held to a written table of cases.
+- [A machine is data, never code](docs/catalogue.md) — opening the catalogue to strangers without opening a hole.
+
+The rest of this page is the site itself: what it is, why I made it, and how each part works.
+
 **Contents** · [What it is](#what-it-is) · [How a wash goes](#how-a-wash-goes) · [The seven machines](#the-seven-machines) · [How it is built](#how-it-is-built) · [Engineering notes](#engineering-notes) · [The repository](#what-this-repository-is)
 
 ## What it is
@@ -20,15 +34,17 @@ SIXFINGERS is a small website that makes pictures with AI image models. It is dr
 
 It's free and you don't sign up for anything. The pictures come from the [AI Horde](https://aihorde.net), a network of people who lend their graphics cards to strangers for free.
 
-I'm Tristan Ulrich, a student in Paris, and I make it on my own.
-
 ## Why it exists
 
-Image models are bad at hands. Ask one for a person waving and there is a fair chance the hand comes back with six fingers, or four, or a thumb on the wrong side. Stable Diffusion 1.5, the model behind the orange machine in the middle, was the first one that most people could run, and it gets the composition of a picture right while getting the anatomy wrong. That is where the name comes from. The sign on the wall says so too: "Not responsible for extra fingers."
+I made this because I missed something, and I wanted a place to go back to it.
 
-A free model on volunteer computers can take a minute, sometimes several, and most sites cover that with a spinner. I wanted the wait to be the part you enjoy. A laundromat is a room built for waiting: you put something in, you watch it go round, and you get your things back a little changed. Words going into a machine and coming back as six pictures felt like a fair description of what these models do.
+For a few years at the start of the 2020s, asking a machine for a picture was new, and it was bad in a way that was its own reward. You typed a sentence, you waited, and what came back was never quite what you asked for: a face with the eyes not level, a hand with six fingers, a street whose signs spelled nothing in no language. You could not predict it, and that unpredictability was the whole pleasure of it. It felt less like running a tool than like asking something strange a question and watching what it dreamed up. That period was short. The models got good, the mistakes got rare, the surprise wore off, and the waiting got designed away behind a progress bar. SIXFINGERS is an attempt to keep the parts of the bad old version that were worth keeping: the not-knowing, the small wait, and the little ceremony of getting something back.
 
-The first version of the site, from August to October 2026, was dressed as Windows XP, and six pictures arrived as a "pack" you opened by knocking on it. The laundromat replaced it on 12 October 2026.
+The name is from that era too. Image models are bad at hands: ask one for a person waving and the hand can come back with six fingers, or four, or a thumb on the wrong side. Stable Diffusion 1.5, the model behind the orange machine in the middle, was the first one most people could actually run, and it gets the composition of a picture right while getting the anatomy wrong. That gap, between what it grasps and what it cannot, is where the six fingers live, and the name, and the sign on the wall: "Not responsible for extra fingers."
+
+A free model on volunteer computers can take a minute, sometimes several, and most sites hide that behind a spinner. I wanted the wait to be the part you enjoy, so I built a room made for waiting. A laundromat is exactly that: you put something in, you watch it go round, and you get your things back a little changed. Words going into a machine and coming out as six pictures felt like a fair description of what these models do to a sentence.
+
+The first version, from August to October 2026, was a fake Windows XP desktop, and six pictures arrived as a sealed pack you opened by knocking on it. The laundromat replaced it on 12 October 2026, and the idea finally had the room it wanted.
 
 ## How a wash goes
 
@@ -56,11 +72,9 @@ You don't have to stand there. Up to three machines can wash at once, one coin e
 
 **Six pictures come out,** one at a time. You can keep them, share them, love them, or wash the same prompt in another machine.
 
-<img src="docs/screenshots/one-picture.jpg" width="900" alt="The first picture large in the middle of the screen">
+<img src="docs/img/door-burst.gif" width="820" alt="Holding the door on the glowing Brushwork machine until it bursts open and a finished picture, an astronaut on horseback painted like an old oil portrait, flies out and settles in the middle of the screen.">
 
-<img src="docs/screenshots/six-pictures.jpg" width="900" alt="All six pictures from the Daydream machine together">
-
-Those six are a real wash on the Daydream machine with the prompt "a lighthouse keeper feeding seagulls in a storm", made for this page on 19 October 2026.
+That is a real wash on the Brushwork machine, for the prompt "an astronaut riding a horse". Each of the six pictures comes out on its own, and no two are alike.
 
 The collection keeps every wash with its prompt, its machine and its date, in your browser. You can sign in with Google or GitHub (accounts run on Supabase, hosted in Paris) so that a collection follows you from one device to another. Signing in is optional.
 
